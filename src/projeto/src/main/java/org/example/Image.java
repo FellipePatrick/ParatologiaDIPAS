@@ -5,6 +5,11 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.core.CvType;
+import org.opencv.core.Size;
 
 public class Image {
      /**
@@ -56,12 +61,47 @@ public class Image {
         //Recebe o resultado da imagem tratada da classe processImagePhone
         Mat result =  processImagePhone(image);
 
-        ArrayList<Mat> lista = findObjects(result, path);
+        Mat result2 = alargamento(result);
+
+        ArrayList<Mat> lista = findObjects(result2, path);
 
         // Salva a imagem
-        Imgcodecs.imwrite(path + "\\result\\result.jpeg" ,result);
+        Imgcodecs.imwrite(path + "\\result\\original.jpeg" ,result2);
     }
 
+
+    public static Mat alargamento(Mat inputImage) {
+        // Convertendo a imagem para escala de cinza
+        Mat grayImage = new Mat();
+        Imgproc.cvtColor(inputImage, grayImage, Imgproc.COLOR_BGR2GRAY);
+
+        // Encontrando os valores mínimo e máximo de intensidade na imagem
+        Core.MinMaxLocResult minMax = Core.minMaxLoc(grayImage);
+        double minVal = minMax.minVal;
+        double maxVal = minMax.maxVal;
+
+        // Calculando a diferença entre os valores mínimo e máximo
+        double difference = maxVal - minVal;
+
+        // Criando uma cópia da imagem de entrada para modificar
+        Mat outputImage = inputImage.clone();
+
+        // Alargando o contraste pixel a pixel
+        for (int y = 0; y < inputImage.rows(); y++) {
+            for (int x = 0; x < inputImage.cols(); x++) {
+                double[] pixel = inputImage.get(y, x);
+                for (int c = 0; c < inputImage.channels(); c++) {
+                    // Alargando o valor do pixel
+                    double newValue = (pixel[c] - minVal) * 255 / difference;
+                    newValue = Math.max(0, Math.min(255, newValue)); // Garantindo que o valor esteja dentro do intervalo [0, 255]
+                    pixel[c] = newValue;
+                }
+                outputImage.put(y, x, pixel);
+            }
+        }
+
+        return outputImage;
+    }
     private static ArrayList<Mat> findObjects(Mat result, String path) {
         ArrayList<Mat> lista = new ArrayList<>();
         // Converte a imagem para escala de cinza
@@ -70,7 +110,7 @@ public class Image {
 
         // Exemplo de valores de threshold (ajuste conforme necessário)
         int threshold1 = 50;
-        int threshold2 = 200;
+        int threshold2 = 255;
 
         // Aplica o detector de bordas Canny
         Mat edges = new Mat();
@@ -80,7 +120,7 @@ public class Image {
         List<MatOfPoint> filteredContours = new ArrayList<>();
 
         // Define a área mínima desejada para considerar um contorno
-        double minArea = 50; // Ajuste conforme necessário
+        double minArea = 150; // Ajuste conforme necessário
 
         // Encontrar contornos
         MatOfPoint largestContour = new MatOfPoint();
@@ -95,6 +135,12 @@ public class Image {
                 filteredContours.add(contour);
             }
         }
+        // Desenha os contornos na imagem original
+        Mat resultWithContours = result.clone();
+        Imgproc.drawContours(resultWithContours, filteredContours, -1, new Scalar(0, 255, 0), 2); // Desenha todos os contornos filtrados em verde
+
+        // Salva a imagem resultante
+        Imgcodecs.imwrite(path + "\\result\\object_t.jpeg", resultWithContours);
 
         for (int i = 0; i < filteredContours.size(); i++) {
             // Cria uma máscara para o contorno atual
@@ -108,7 +154,7 @@ public class Image {
             result.copyTo(temp, mask);
 
             // Salva a imagem resultante
-            Imgcodecs.imwrite(path + "\\result\\object_" + i + ".jpeg", temp);
+            //Imgcodecs.imwrite(path + "\\result\\object_" + i + ".jpeg", temp);
         }
 
         return lista;

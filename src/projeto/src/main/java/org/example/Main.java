@@ -21,6 +21,6 @@ public class Main {
 
 
         //Segmentando apenas uma imagem especifica
-        Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\", "image2.jpeg");
+        Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\", "image6.jpeg");
     }
 }
