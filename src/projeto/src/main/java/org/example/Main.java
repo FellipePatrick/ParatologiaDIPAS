@@ -17,10 +17,10 @@ package org.example;
 public class Main {
     public static void main(String[] args) {
         //Segmentando uma pasta de imagens
-        //Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", "jpeg" , 36);
+        //Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\", "jpeg" , 36);
 
 
         //Segmentando apenas uma imagem especifica
-        Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\", "image6.jpeg");
+        Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", 25);
     }
 }

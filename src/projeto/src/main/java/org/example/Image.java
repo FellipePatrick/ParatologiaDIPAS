@@ -36,9 +36,7 @@ public class Image {
                 System.out.println("Erro ao carregar a imagem!");
                 return;
             }
-            // Salvar a imagem com os círculos detectados
-            Imgcodecs.imwrite(path + "\\result\\result" + cont + ".jpeg", processImagePhone(image));
-
+            segmentImage(path, cont);
         }
     }
 
@@ -47,12 +45,11 @@ public class Image {
      *
      * @param path O caminho para o diretório que contém os arquivos de imagem.
      *
-     * @param imageName É o nome da imagem.
      */
-    public static void segmentImage(String path, String imageName){
+    public static void segmentImage(String path, int cont){
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         // Carrega a imagem
-        Mat image = Imgcodecs.imread(path + imageName);
+        Mat image = Imgcodecs.imread(path +"\\image" +cont +".jpeg");
         // Verifica se a imagem foi carregada corretamente
         if (image.empty()) {
             System.out.println("Erro ao carregar a imagem!");
@@ -61,104 +58,134 @@ public class Image {
         //Recebe o resultado da imagem tratada da classe processImagePhone
         Mat result =  processImagePhone(image);
 
-        Mat result2 = alargamento(result);
-
-        ArrayList<Mat> lista = findObjects(result2, path);
+        Mat orig = result;
 
         // Salva a imagem
-        Imgcodecs.imwrite(path + "\\result\\original.jpeg" ,result2);
+        Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
+
+       result = ajustaBrilhoContraste(result);
+
+       //Salva a imagem
+        Imgcodecs.imwrite(path + "\\result\\alar"+ cont + ".jpeg" ,result);
+
+        String outputPath = path+"\\result\\";
+        Mat outputImage = findBlackRegion(orig, result, outputPath);
+
+
+    }
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
+    public static Mat findBlackRegion(Mat imageOriginal, Mat inputImage, String outputPath) {
+        // Verificar se a imagem de entrada é vazia
+        if (inputImage.empty()) {
+            throw new IllegalArgumentException("A imagem de entrada está vazia");
+        }
 
-    public static Mat alargamento(Mat inputImage) {
-        // Convertendo a imagem para escala de cinza
-        Mat grayImage = new Mat();
-        Imgproc.cvtColor(inputImage, grayImage, Imgproc.COLOR_BGR2GRAY);
+        Mat grayImage = inputImage;
 
-        // Encontrando os valores mínimo e máximo de intensidade na imagem
-        Core.MinMaxLocResult minMax = Core.minMaxLoc(grayImage);
-        double minVal = minMax.minVal;
-        double maxVal = minMax.maxVal;
+        // Aplicar um limiar para binarizar a imagem (0 -> preto, 255 -> branco)
+        Mat binaryImage = new Mat();
+        Imgproc.threshold(grayImage, binaryImage, 50, 255, Imgproc.THRESH_BINARY_INV);
 
-        // Calculando a diferença entre os valores mínimo e máximo
-        double difference = maxVal - minVal;
+        // Encontrar contornos na imagem binarizada
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(binaryImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // Criando uma cópia da imagem de entrada para modificar
-        Mat outputImage = inputImage.clone();
+        // Inicializar variáveis para encontrar o maior contorno (região preta)
+        double maxArea = 0;
+        Rect largestRect = new Rect();
 
-        // Alargando o contraste pixel a pixel
-        for (int y = 0; y < inputImage.rows(); y++) {
-            for (int x = 0; x < inputImage.cols(); x++) {
-                double[] pixel = inputImage.get(y, x);
-                for (int c = 0; c < inputImage.channels(); c++) {
-                    // Alargando o valor do pixel
-                    double newValue = (pixel[c] - minVal) * 255 / difference;
-                    newValue = Math.max(0, Math.min(255, newValue)); // Garantindo que o valor esteja dentro do intervalo [0, 255]
-                    pixel[c] = newValue;
-                }
-                outputImage.put(y, x, pixel);
+        for (MatOfPoint contour : contours) {
+            Rect rect = Imgproc.boundingRect(contour);
+            double area = rect.area();
+            if (area > maxArea) {
+                maxArea = area;
+                largestRect = rect;
             }
+        }
+
+        // Criar uma imagem de saída destacando a região com alta concentração de preto
+        Mat outputImage = inputImage.clone();
+        Imgproc.rectangle(outputImage, largestRect.tl(), largestRect.br(), new Scalar(0, 255, 0), 2);
+
+        // Salvar a imagem de saída com a região destacada
+        Imgcodecs.imwrite(outputPath + "black_region_highlighted" + ".jpeg", outputImage);
+
+        // Cortar a região encontrada da imagem original
+        Mat croppedImage = new Mat(imageOriginal, largestRect);
+
+        // Salvar a imagem cortada
+        Imgcodecs.imwrite(outputPath + "black_region_cropped" + ".jpeg", croppedImage);
+
+        return croppedImage;
+    }
+
+    public static Mat ajustaBrilhoContraste(Mat inputImage) {
+        // Verificar se a imagem de entrada é vazia
+        if (inputImage.empty()) {
+            throw new IllegalArgumentException("A imagem de entrada está vazia");
+        }
+
+        // Converter a imagem para escala de cinza se ainda não estiver
+        Mat grayImage = new Mat();
+        if (inputImage.channels() > 1) {
+            Imgproc.cvtColor(inputImage, grayImage, Imgproc.COLOR_BGR2GRAY);
+        } else {
+            grayImage = inputImage.clone();
+        }
+
+        // Criar a imagem de saída
+        Mat outputImage = Mat.zeros(grayImage.size(), CvType.CV_8UC1);
+
+        int atual = 170;
+        double aux = 2.55;
+        for (int x = 1; x <= 100; x++) {
+            for (int i = 0; i < grayImage.rows(); i++) {
+                for (int j = 0; j < grayImage.cols(); j++) {
+                    if (grayImage.get(i, j)[0] == atual) {
+                        outputImage.put(i, j, aux);
+                    }
+                }
+            }
+            aux += 5.1;
+            atual += 1;
         }
 
         return outputImage;
     }
-    private static ArrayList<Mat> findObjects(Mat result, String path) {
-        ArrayList<Mat> lista = new ArrayList<>();
-        // Converte a imagem para escala de cinza
-        Mat grayImage = new Mat();
-        Imgproc.cvtColor(result, grayImage, Imgproc.COLOR_BGR2GRAY);
 
-        // Exemplo de valores de threshold (ajuste conforme necessário)
-        int threshold1 = 50;
-        int threshold2 = 255;
 
-        // Aplica o detector de bordas Canny
-        Mat edges = new Mat();
-        Imgproc.Canny(grayImage, edges, threshold1, threshold2);
-
-        // Lista para armazenar os contornos filtrados
-        List<MatOfPoint> filteredContours = new ArrayList<>();
-
-        // Define a área mínima desejada para considerar um contorno
-        double minArea = 150; // Ajuste conforme necessário
-
-        // Encontrar contornos
-        MatOfPoint largestContour = new MatOfPoint();
-        Mat hierarchy = new Mat();
-        List<MatOfPoint> contours = new ArrayList<>();
-        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        // Filtra os contornos com área menor que minArea
-        for (MatOfPoint contour : contours) {
-            double area = Imgproc.contourArea(contour);
-            if (area > minArea) {
-                filteredContours.add(contour);
+    public static Mat aplicaFiltroPassaAlta(Mat inputImage) {
+        // Definir o kernel de passa alta
+        Mat kernel = new Mat(3, 3, CvType.CV_32F) {
+            {
+                put(0, 0, -1);
+                put(0, 1, -1);
+                put(0, 2, -1);
+                put(1, 0, -1);
+                put(1, 1,  8);
+                put(1, 2, -1);
+                put(2, 0, -1);
+                put(2, 1, -1);
+                put(2, 2, -1);
             }
-        }
-        // Desenha os contornos na imagem original
-        Mat resultWithContours = result.clone();
-        Imgproc.drawContours(resultWithContours, filteredContours, -1, new Scalar(0, 255, 0), 2); // Desenha todos os contornos filtrados em verde
+        };
 
-        // Salva a imagem resultante
-        Imgcodecs.imwrite(path + "\\result\\object_t.jpeg", resultWithContours);
+        // Criar a imagem de saída
+        Mat outputImage = new Mat();
 
-        for (int i = 0; i < filteredContours.size(); i++) {
-            // Cria uma máscara para o contorno atual
-            Mat mask = Mat.zeros(edges.size(), CvType.CV_8UC1);
-            Imgproc.drawContours(mask, filteredContours, i, new Scalar(255), -1);
+        // Aplicar a convolução com o kernel de passa alta
+        Imgproc.filter2D(inputImage, outputImage, -1, kernel);
 
-            // Cria uma imagem temporária com o mesmo tamanho da imagem original
-            Mat temp = new Mat(result.size(), result.type(), Scalar.all(0)); // Preenche a imagem com preto
-
-            // Aplica a máscara na imagem original
-            result.copyTo(temp, mask);
-
-            // Salva a imagem resultante
-            //Imgcodecs.imwrite(path + "\\result\\object_" + i + ".jpeg", temp);
-        }
-
-        return lista;
+        return outputImage;
     }
+
+
+
+
 
     /**
      * O método processImagePhone serve para tratar a imagem recebida do celular com reflexos e outras coisas diversas, e como resultado
@@ -169,10 +196,9 @@ public class Image {
      */
 
     //futuramente para tentar tratar melhor, tentar pegar um canal do HSV, a magenta talvez de certo
-    private static Mat processImagePhone(Mat image){
+    private static Mat processImagePhone(Mat image) {
         // Dividir a imagem nos canais de cores
-        List<Mat> channels;
-        channels = new ArrayList<>();
+        List<Mat> channels = new ArrayList<>();
         Core.split(image, channels);
 
         // Pegar o canal vermelho
@@ -195,7 +221,7 @@ public class Image {
         Imgproc.findContours(dilatedImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         double maxArea = 0;
 
-        //Encontra o maior contorno
+        // Encontra o maior contorno
         for (MatOfPoint contour : contours) {
             double area = Imgproc.contourArea(contour);
             if (area > maxArea) {
@@ -207,15 +233,32 @@ public class Image {
         // Criar uma imagem preta com o mesmo tamanho da imagem original
         Mat mask = Mat.zeros(image.size(), CvType.CV_8UC1);
 
-        // Desenhar o maior contorno (círculo) na máscara com a cor branca
+        // Desenhar o maior contorno na máscara com a cor branca
         Imgproc.drawContours(mask, Collections.singletonList(largestContour), -1, new Scalar(255), -1);
 
-        // Pinta de preto na imagem original onde a máscara é preta
+        // Pinta de branco na imagem original onde a máscara é branca
         Mat result = new Mat();
-        Core.bitwise_and(image, image, result, mask);
+        image.copyTo(result, mask);
 
-        // Retorna o resultado
-        return result;
+        // Criar uma imagem branca com o mesmo tamanho da imagem original
+        Mat whiteImage = new Mat(image.size(), image.type(), new Scalar(255, 255, 255));
+
+        // Pinta de branco a região correspondente
+        Core.bitwise_not(mask, mask);  // Inverte a máscara
+        whiteImage.copyTo(result, mask);
+
+        // Desenhar apenas o contorno de branco na imagem original com espessura aumentada
+        Imgproc.drawContours(result, Collections.singletonList(largestContour), -1, new Scalar(255, 255, 255), 15); // Espessura do contorno = 5
+
+        // Encontrar o retângulo delimitador do maior contorno
+        Rect boundingRect = Imgproc.boundingRect(largestContour);
+
+        // Realizar o crop da imagem original usando o retângulo delimitador
+        Mat croppedImage = new Mat(result, boundingRect);
+
+        // Retornar a imagem cortada
+        return croppedImage;
     }
+
 
 }
