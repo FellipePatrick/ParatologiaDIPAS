@@ -1,5 +1,7 @@
 package org.example;
 import org.opencv.core.*;
+import org.opencv.features2d.Features2d;
+import org.opencv.features2d.SIFT;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
@@ -61,23 +63,77 @@ public class Image {
         Mat orig = result;
 
         // Salva a imagem
-        Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
+        //Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
 
        result = ajustaBrilhoContraste(result);
 
-       //Salva a imagem
-        Imgcodecs.imwrite(path + "\\result\\alar"+ cont + ".jpeg" ,result);
+        //Salva a imagem
+        //Imgcodecs.imwrite(path + "\\result\\alar"+ cont + ".jpeg" ,result);
 
         String outputPath = path+"\\result\\";
-        Mat outputImage = findBlackRegion(orig, result, outputPath);
+        Mat outputImage = findBlackRegion(orig, result, outputPath, cont);
 
+        //findObjects(result, path, orig, cont);
 
     }
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    public static Mat findBlackRegion(Mat imageOriginal, Mat inputImage, String outputPath) {
+    private static void findObjects(Mat result, String path, Mat image, int cont) {
+        // Converte a imagem para escala de cinza se não estiver em escala de cinza
+        Mat grayImage = new Mat();
+        if (result.channels() > 1) {
+            Imgproc.cvtColor(result, grayImage, Imgproc.COLOR_BGR2GRAY);
+        } else {
+            grayImage = result;
+        }
+
+        // Aplica o detector de bordas Canny
+        Mat edges = new Mat();
+        Imgproc.Canny(grayImage, edges, 200, 250);
+
+        // Lista para armazenar os contornos filtrados
+        List<MatOfPoint> filteredContours = new ArrayList<>();
+
+        // Define a área mínima desejada para considerar um contorno
+        double minArea = 200; // Ajuste conforme necessário
+
+        // Encontrar contornos
+        Mat hierarchy = new Mat();
+        List<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        // Filtra os contornos com área menor que minArea
+        for (MatOfPoint contour : contours) {
+            double area = Imgproc.contourArea(contour);
+            if (area > minArea) {
+                filteredContours.add(contour);
+            }
+        }
+
+        // Desenha os contornos filtrados na imagem original
+        for (MatOfPoint contour : filteredContours) {
+            Imgproc.drawContours(image, Collections.singletonList(contour), -1, new Scalar(0, 255, 0), 2);
+        }
+
+        // Salvar a imagem com os contornos detectados
+        Imgcodecs.imwrite(path + "\\result\\contours" +cont+".jpeg", image);
+
+        // Processa e salva cada contorno individualmente
+        for (int i = 0; i < filteredContours.size(); i++) {
+            Mat mask = Mat.zeros(edges.size(), CvType.CV_8UC1);
+            Imgproc.drawContours(mask, filteredContours, i, new Scalar(255), -1);
+
+            Mat temp = new Mat(result.size(), result.type(), Scalar.all(0)); // Preenche a imagem com preto
+            result.copyTo(temp, mask);
+
+            // Salva a imagem resultante
+            //Imgcodecs.imwrite(path + "\\result\\object_" + i + ".jpeg", temp);
+        }
+    }
+
+    public static Mat findBlackRegion(Mat imageOriginal, Mat inputImage, String outputPath, int cont) {
         // Verificar se a imagem de entrada é vazia
         if (inputImage.empty()) {
             throw new IllegalArgumentException("A imagem de entrada está vazia");
@@ -112,13 +168,14 @@ public class Image {
         Imgproc.rectangle(outputImage, largestRect.tl(), largestRect.br(), new Scalar(0, 255, 0), 2);
 
         // Salvar a imagem de saída com a região destacada
-        Imgcodecs.imwrite(outputPath + "black_region_highlighted" + ".jpeg", outputImage);
+        Imgcodecs.imwrite(outputPath + "black_region_highlighted" +cont+ ".jpeg", outputImage);
+
 
         // Cortar a região encontrada da imagem original
         Mat croppedImage = new Mat(imageOriginal, largestRect);
 
         // Salvar a imagem cortada
-        Imgcodecs.imwrite(outputPath + "black_region_cropped" + ".jpeg", croppedImage);
+        //Imgcodecs.imwrite(outputPath + "black_region_cropped" + ".jpeg", croppedImage);
 
         return croppedImage;
     }
@@ -156,35 +213,6 @@ public class Image {
 
         return outputImage;
     }
-
-
-    public static Mat aplicaFiltroPassaAlta(Mat inputImage) {
-        // Definir o kernel de passa alta
-        Mat kernel = new Mat(3, 3, CvType.CV_32F) {
-            {
-                put(0, 0, -1);
-                put(0, 1, -1);
-                put(0, 2, -1);
-                put(1, 0, -1);
-                put(1, 1,  8);
-                put(1, 2, -1);
-                put(2, 0, -1);
-                put(2, 1, -1);
-                put(2, 2, -1);
-            }
-        };
-
-        // Criar a imagem de saída
-        Mat outputImage = new Mat();
-
-        // Aplicar a convolução com o kernel de passa alta
-        Imgproc.filter2D(inputImage, outputImage, -1, kernel);
-
-        return outputImage;
-    }
-
-
-
 
 
     /**
