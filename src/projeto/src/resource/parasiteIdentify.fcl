@@ -1,0 +1,7 @@
+FUNCTION_BLOCK identify
+
+VAR_INPUT				// Define input variables
+	size : REAL;
+END_VAR
+
+END_FUNCTION_BLOCK

@@ -1,4 +1,4 @@
-package org.example;
+package main.java.org.example;
 
 //para dar certo o projeto, tem que ter o opencv instalado no projeto
 
@@ -17,10 +17,10 @@ package org.example;
 public class Main {
     public static void main(String[] args) {
         //Segmentando uma pasta de imagens
-        Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\", "jpeg" , 36);
+        //Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\", "jpeg" , 36);
 
 
         //Segmentando apenas uma imagem especifica
-        //Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", 2);
+        Image.segmentImage("C:\\Users\\vitin\\Documents\\Bolsa\\EAJ\\ParatologiaDIPAS\\img\\", 25);
     }
 }

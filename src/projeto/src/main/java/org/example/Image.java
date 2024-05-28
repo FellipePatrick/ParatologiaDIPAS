@@ -1,4 +1,4 @@
-package org.example;
+package main.java.org.example;
 import org.opencv.core.*;
 import org.opencv.features2d.Features2d;
 import org.opencv.features2d.SIFT;
