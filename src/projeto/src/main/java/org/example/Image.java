@@ -16,7 +16,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.CvType;
 import org.opencv.core.Size;
 
-public class Image{
+public class Image {
     /**
      * Classe Image, que fornece métodos para análise de imagens.
      *
@@ -32,6 +32,7 @@ public class Image{
      * @param qtdImages A quantidade de imagens a serem processadas.
      */
     public static void segmentImages(String path, String extension, int qtdImages){
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         for (int cont = 1; cont <= qtdImages; cont++) {
             // Carrega a imagem da vez
             Mat image = Imgcodecs.imread(path +"\\image" +cont +"."+ extension);
@@ -51,6 +52,7 @@ public class Image{
      *
      */
     public static void segmentImage(String path, int cont){
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         // Carrega a imagem
         Mat image = Imgcodecs.imread(path +"\\image" +cont +".jpeg");
         // Verifica se a imagem foi carregada corretamente
@@ -64,17 +66,14 @@ public class Image{
         Mat orig = result;
 
         // Salva a imagem
-        Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
+        //Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
 
         result = ajustaBrilhoContraste(result);
-
 
         //Salva a imagem
         Imgcodecs.imwrite(path + "\\result\\alar"+ cont + ".jpeg" ,result);
 
-
         String outputPath = path+"\\result\\";
-
 
         List<Mat> outputImage = findBlackRegion(orig, result, outputPath, cont);
 
@@ -102,7 +101,7 @@ public class Image{
         List<MatOfPoint> filteredContours = new ArrayList<>();
 
         // Define a área mínima desejada para considerar um contorno
-        double minArea = 10; // Ajuste conforme necessário
+        double minArea = 200; // Ajuste conforme necessário
 
         // Encontrar contornos
         Mat hierarchy = new Mat();
@@ -134,10 +133,9 @@ public class Image{
             result.copyTo(temp, mask);
 
             // Salva a imagem resultante
-            Imgcodecs.imwrite(path + "\\result\\object_" + i + ".jpeg", temp);
+            //Imgcodecs.imwrite(path + "\\result\\object_" + i + ".jpeg", temp);
         }
     }
-
 
     public static List<Mat> findBlackRegion(Mat imageOriginal, Mat inputImage, String outputPath, int cont) {
         // Verificar se a imagem de entrada é vazia
@@ -149,7 +147,7 @@ public class Image{
 
         // Aplicar um limiar para binarizar a imagem (0 -> preto, 255 -> branco)
         Mat binaryImage = new Mat();
-        Imgproc.threshold(grayImage, binaryImage, 100, 255, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(grayImage, binaryImage, 50, 255, Imgproc.THRESH_BINARY_INV);
 
         // Encontrar contornos na imagem binarizada
         List<MatOfPoint> contours = new ArrayList<>();
@@ -158,88 +156,60 @@ public class Image{
 
         // Lista para armazenar as regiões cortadas
         List<Mat> croppedImages = new ArrayList<>();
-         int x = 5;
+        int x = 5;
+
         // Processar cada contorno que atenda aos critérios de área e circularidade
         for (MatOfPoint contour : contours) {
             Rect rect = Imgproc.boundingRect(contour);
             double area = rect.area();
-            if (area >= 3000) {
+            if (area >= 500) {
                 // Calcular a circularidade
                 double perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
                 double circularity = 4 * Math.PI * area / (perimeter * perimeter);
+
                 // Criar uma imagem de saída destacando a região com alta concentração de preto
                 Mat outputImage = inputImage.clone();
                 Imgproc.rectangle(outputImage, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
 
                 // Salvar a imagem de saída com a região destacada
-                Imgcodecs.imwrite(outputPath + "blackimg"+x + cont + ".jpeg", outputImage);
+                //Imgcodecs.imwrite(outputPath + "blackimg" + x + cont + ".jpeg", outputImage);
 
                 // Cortar a região encontrada da imagem original
                 Mat croppedImage = new Mat(imageOriginal, rect);
                 croppedImages.add(croppedImage);
 
                 // Salvar a imagem cortada (opcional)
-                //Imgcodecs.imwrite(outputPath + "blackimgcurted"+x + cont + ".jpeg", croppedImage);
+                Imgcodecs.imwrite(outputPath + "blackimgcurted" + x + cont + ".jpeg", croppedImage);
 
                 cont++;
-
             }
         }
 
         return croppedImages;
     }
-    public static void resetDiretorio(String path){
-        // Substitua "seu/diretorio/caminho" pelo caminho do seu diretório
-        String directoryPath = path;
-        File directory = new File(directoryPath);
 
-        // Verifica se o caminho é um diretório
-        if (!directory.isDirectory()) {
-            System.out.println("O caminho fornecido não é um diretório.");
-            return;
-        }
 
-        // Cria um filtro para listar apenas os arquivos .jpeg
-        FilenameFilter jpegFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith(".jpeg");
-            }
-        };
 
-        // Lista todos os arquivos .jpeg no diretório
-        File[] jpegFiles = directory.listFiles(jpegFilter);
 
-        // Verifica se há arquivos .jpeg no diretório
-        if (jpegFiles == null || jpegFiles.length == 0) {
-            System.out.println("Nenhum arquivo .jpeg encontrado no diretório.");
-            return;
-        }
 
-        // Apaga todos os arquivos .jpeg
-        for (File jpegFile : jpegFiles) {
-            if (jpegFile.delete()) {
-                //System.out.println("Arquivo " + jpegFile.getName() + " foi apagado com sucesso.");
-            } else {
-                System.out.println("Falha ao apagar o arquivo " + jpegFile.getName() + ".");
-            }
-        }
-
-    }
     public static Mat ajustaBrilhoContraste(Mat inputImage) {
         // Verificar se a imagem de entrada é vazia
         if (inputImage.empty()) {
             throw new IllegalArgumentException("A imagem de entrada está vazia");
         }
 
+        // Converter a imagem para escala de cinza se ainda não estiver
         Mat grayImage = new Mat();
-        Imgproc.cvtColor(inputImage, grayImage, Imgproc.COLOR_BGR2GRAY);
+        if (inputImage.channels() > 1) {
+            Imgproc.cvtColor(inputImage, grayImage, Imgproc.COLOR_BGR2GRAY);
+        } else {
+            grayImage = inputImage.clone();
+        }
 
         // Encontrar contornos
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(grayImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-
 
         // Encontrar o maior contorno
         double maxArea = 0;
@@ -274,25 +244,60 @@ public class Image{
         double averageBrightness = sum / totalPixels;
         System.out.println("Brilho médio: " + averageBrightness);
 
-        // Ajustar o brilho e contraste dentro do maior contorno
-        int atual = (int) averageBrightness - 50;
-        atual = 170;
-        double aux = 2.55;
-        Mat adjustedImage = grayImage.clone();
-        for (int x = 1; x <= 100; x++) {
-            for (int i = 0; i < grayImage.rows(); i++) {
-                for (int j = 0; j < grayImage.cols(); j++) {
-                    if (mask.get(i, j)[0] == 255 && grayImage.get(i, j)[0] == atual) {
-                        adjustedImage.put(i, j, aux);
-                    }
-                }
+        // Calcular histograma
+        int[] histData = new int[256];
+        for (int i = 0; i < grayImage.rows(); i++) {
+            for (int j = 0; j < grayImage.cols(); j++) {
+                int h = (int) grayImage.get(i, j)[0];
+                histData[h]++;
             }
-            aux += 5.1;
-            atual += 1;
         }
 
-        return adjustedImage;
+        // Algoritmo de Otsu
+        int total = grayImage.rows() * grayImage.cols();
+        float sumHist = 0;
+        for (int t = 0; t < 256; t++) sumHist += t * histData[t];
+
+        float sumB = 0;
+        int wB = 0;
+        int wF = 0;
+        float varMax = 0;
+        int threshold = 0;
+
+        for (int t = 0; t < 256; t++) {
+            wB += histData[t];
+            if (wB == 0) continue;
+
+            wF = total - wB;
+            if (wF == 0) break;
+
+            sumB += (float) (t * histData[t]);
+
+            float mB = sumB / wB;
+            float mF = (sumHist - sumB) / wF;
+
+            float varBetween = (float) wB * (float) wF * (mB - mF) * (mB - mF);
+
+            if (varBetween > varMax) {
+                varMax = varBetween;
+                threshold = t;
+            }
+        }
+
+        // Aplicar a limiarização binária com o limiar encontrado por Otsu
+
+        int aux = 40;
+        if(averageBrightness < 160)
+            aux = 100;
+        else if(averageBrightness > 160 && averageBrightness < 200)
+            aux = 60;
+
+        Mat outputImage = new Mat();
+        Imgproc.threshold(grayImage, outputImage, (threshold - aux), 255, Imgproc.THRESH_BINARY);
+
+        return outputImage;
     }
+
 
     /**
      * O método processImagePhone serve para tratar a imagem recebida do celular com reflexos e outras coisas diversas, e como resultado
@@ -303,18 +308,30 @@ public class Image{
      */
 
     //futuramente para tentar tratar melhor, tentar pegar um canal do HSV, a magenta talvez de certo
-    public static Mat processImagePhone(Mat image) {
+    private static Mat processImagePhone(Mat image) {
         // Dividir a imagem nos canais de cores
         List<Mat> channels = new ArrayList<>();
         Core.split(image, channels);
 
-        // Pegar o canal vermelho
-        // No OpenCV, os canais são BGR, portanto o canal vermelho é o terceiro canal (índice 2)
+        // Pegar o canal vermelho (índice 2)
         Mat redChannel = channels.get(2);
 
-        // Aplicar a limiarização binária no canal vermelho
+        // Calcular o brilho médio da imagem
+        double sum = 0;
+        int totalPixels = redChannel.rows() * redChannel.cols();
+        for (int i = 0; i < redChannel.rows(); i++) {
+            for (int j = 0; j < redChannel.cols(); j++) {
+                sum += redChannel.get(i, j)[0];
+            }
+        }
+        double averageBrightness = sum / totalPixels;
+
+        // Ajustar o limiar baseado no brilho médio
+        double thresholdValue = averageBrightness;
+
+        // Aplicar a limiarização binária no canal vermelho com o novo limiar
         Mat binaryImage = new Mat();
-        Imgproc.threshold(redChannel, binaryImage, 50, 255, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(redChannel, binaryImage, thresholdValue, 255, Imgproc.THRESH_BINARY);
 
         // Aplicar a dilatação na imagem binarizada
         Mat dilatedImage = new Mat();
@@ -366,4 +383,44 @@ public class Image{
         // Retornar a imagem cortada
         return croppedImage;
     }
+
+    public static void resetDiretorio(String path){
+        // Substitua "seu/diretorio/caminho" pelo caminho do seu diretório
+        String directoryPath = path;
+        File directory = new File(directoryPath);
+
+        // Verifica se o caminho é um diretório
+        if (!directory.isDirectory()) {
+            System.out.println("O caminho fornecido não é um diretório.");
+            return;
+        }
+
+        // Cria um filtro para listar apenas os arquivos .jpeg
+        FilenameFilter jpegFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.toLowerCase().endsWith(".jpeg");
+            }
+        };
+
+        // Lista todos os arquivos .jpeg no diretório
+        File[] jpegFiles = directory.listFiles(jpegFilter);
+
+        // Verifica se há arquivos .jpeg no diretório
+        if (jpegFiles == null || jpegFiles.length == 0) {
+            System.out.println("Nenhum arquivo .jpeg encontrado no diretório.");
+            return;
+        }
+
+        // Apaga todos os arquivos .jpeg
+        for (File jpegFile : jpegFiles) {
+            if (jpegFile.delete()) {
+                //System.out.println("Arquivo " + jpegFile.getName() + " foi apagado com sucesso.");
+            } else {
+                System.out.println("Falha ao apagar o arquivo " + jpegFile.getName() + ".");
+            }
+        }
+
+    }
+
 }

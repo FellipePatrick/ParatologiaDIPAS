@@ -17,13 +17,12 @@ package org.example;
 public class Main {
     public static void main(String[] args) {
 
-        Image.resetDiretorio("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\result");
+        org.example.Image.resetDiretorio("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\result");
 
         //Segmentando uma pasta de imagens
-        //Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\", "jpeg" , 107);
-
+        //org.example.Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\", "jpeg" , 107);
 
         //Segmentando apenas uma imagem especifica
-        Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", 16);
+        org.example.Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", 66);
     }
 }
