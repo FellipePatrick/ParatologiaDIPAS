@@ -23,6 +23,6 @@ public class Main {
         //org.example.Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\", "jpeg" , 107);
 
         //Segmentando apenas uma imagem especifica
-        org.example.Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", 66);
+        org.example.Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", 14, "não");
     }
 }

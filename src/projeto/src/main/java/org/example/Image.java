@@ -41,7 +41,7 @@ public class Image {
                 System.out.println("Erro ao carregar a imagem!");
                 return;
             }
-            segmentImage(path, cont);
+            segmentImage(path, cont, "não");
         }
     }
 
@@ -51,7 +51,7 @@ public class Image {
      * @param path O caminho para o diretório que contém os arquivos de imagem.
      *
      */
-    public static void segmentImage(String path, int cont){
+    public static void segmentImage(String path, int cont, String zoom){
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         // Carrega a imagem
         Mat image = Imgcodecs.imread(path +"\\image" +cont +".jpeg");
@@ -60,24 +60,38 @@ public class Image {
             System.out.println("Erro ao carregar a imagem!");
             return;
         }
-        //Recebe o resultado da imagem tratada da classe processImagePhone
-        Mat result =  processImagePhone(image);
+        Mat result;
 
-        Mat orig = result;
+        Mat orig;
+       if(zoom.equalsIgnoreCase("sim")){
 
-        // Salva a imagem
-        //Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
+           result = ajustaBrilhoContrasteZoom(image);
+           //Salva a imagem
+           Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
+           String outputPath = path+"\\result\\";
 
-        result = ajustaBrilhoContraste(result);
+           List<Mat> outputImage = findBlackRegion(image, result, outputPath, cont);
 
-        //Salva a imagem
-        Imgcodecs.imwrite(path + "\\result\\alar"+ cont + ".jpeg" ,result);
+       }else{
+           //Recebe o resultado da imagem tratada da classe processImagePhone
+           result =  processImagePhone(image);
 
-        String outputPath = path+"\\result\\";
+           orig = result;
 
-        List<Mat> outputImage = findBlackRegion(orig, result, outputPath, cont);
+           // Salva a imagem
+           Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
 
-        //findObjects(result, path, orig, cont);
+           result = ajustaBrilhoContraste(result);
+
+           //Salva a imagem
+           Imgcodecs.imwrite(path + "\\result\\alar"+ cont + ".jpeg" ,result);
+
+           String outputPath = path+"\\result\\";
+
+           List<Mat> outputImage = findBlackRegion(orig, result, outputPath, cont);
+
+           //findObjects(result, path, orig, cont);
+       }
 
     }
     static {
@@ -145,7 +159,7 @@ public class Image {
 
         Mat grayImage = inputImage;
 
-        // Aplicar um limiar para binarizar a imagem (0 -> preto, 255 -> branco)
+        // Aplicar um limiar para binarizar a imagem (50 -> preto, 255 -> branco)
         Mat binaryImage = new Mat();
         Imgproc.threshold(grayImage, binaryImage, 50, 255, Imgproc.THRESH_BINARY_INV);
 
@@ -162,35 +176,32 @@ public class Image {
         for (MatOfPoint contour : contours) {
             Rect rect = Imgproc.boundingRect(contour);
             double area = rect.area();
-            if (area >= 500) {
+            if (area >= 250) {
                 // Calcular a circularidade
                 double perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
                 double circularity = 4 * Math.PI * area / (perimeter * perimeter);
+                if(circularity > 0.2){
+                    // Criar uma imagem de saída destacando a região com alta concentração de preto
+                    Mat outputImage = inputImage.clone();
+                    Imgproc.rectangle(outputImage, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
 
-                // Criar uma imagem de saída destacando a região com alta concentração de preto
-                Mat outputImage = inputImage.clone();
-                Imgproc.rectangle(outputImage, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
+                    // Salvar a imagem de saída com a região destacada
+                    Imgcodecs.imwrite(outputPath + "blackimg" + x + cont + ".jpeg", outputImage);
 
-                // Salvar a imagem de saída com a região destacada
-                //Imgcodecs.imwrite(outputPath + "blackimg" + x + cont + ".jpeg", outputImage);
+                    // Cortar a região encontrada da imagem original
+                    Mat croppedImage = new Mat(imageOriginal, rect);
+                    croppedImages.add(croppedImage);
 
-                // Cortar a região encontrada da imagem original
-                Mat croppedImage = new Mat(imageOriginal, rect);
-                croppedImages.add(croppedImage);
+                    // Salvar a imagem cortada (opcional)
+                    //Imgcodecs.imwrite(outputPath + "blackimgcurted" + x + cont + ".jpeg", croppedImage);
 
-                // Salvar a imagem cortada (opcional)
-                Imgcodecs.imwrite(outputPath + "blackimgcurted" + x + cont + ".jpeg", croppedImage);
-
-                cont++;
+                    cont++;
+                }
             }
         }
 
         return croppedImages;
     }
-
-
-
-
 
     public static Mat ajustaBrilhoContraste(Mat inputImage) {
         // Verificar se a imagem de entrada é vazia
@@ -294,6 +305,85 @@ public class Image {
 
         Mat outputImage = new Mat();
         Imgproc.threshold(grayImage, outputImage, (threshold - aux), 255, Imgproc.THRESH_BINARY);
+
+        return outputImage;
+    }
+
+    public static Mat ajustaBrilhoContrasteZoom(Mat inputImage) {
+        // Verificar se a imagem de entrada é vazia
+        if (inputImage.empty()) {
+            throw new IllegalArgumentException("A imagem de entrada está vazia");
+        }
+
+        // Converter a imagem para escala de cinza se ainda não estiver
+        Mat grayImage = new Mat();
+        if (inputImage.channels() > 1) {
+            Imgproc.cvtColor(inputImage, grayImage, Imgproc.COLOR_BGR2GRAY);
+        } else {
+            grayImage = inputImage.clone();
+        }
+
+        // Calcular o brilho médio da imagem dentro do maior contorno
+        double sum = 0;
+        int totalPixels = 0;
+        for (int i = 0; i < grayImage.rows(); i++) {
+            for (int j = 0; j < grayImage.cols(); j++) {
+                if (grayImage.get(i, j)[0] == 255) {
+                    sum += grayImage.get(i, j)[0];
+                    totalPixels++;
+                }
+            }
+        }
+        double averageBrightness = sum / totalPixels;
+        System.out.println("Brilho médio: " + averageBrightness);
+
+        // Calcular histograma
+        int[] histData = new int[256];
+        for (int i = 0; i < grayImage.rows(); i++) {
+            for (int j = 0; j < grayImage.cols(); j++) {
+                int h = (int) grayImage.get(i, j)[0];
+                histData[h]++;
+            }
+        }
+
+        // Algoritmo de Otsu
+        int total = grayImage.rows() * grayImage.cols();
+        float sumHist = 0;
+        for (int t = 0; t < 256; t++) sumHist += t * histData[t];
+
+        float sumB = 0;
+        int wB = 0;
+        int wF = 0;
+        float varMax = 0;
+        int threshold = 0;
+
+        for (int t = 0; t < 256; t++) {
+            wB += histData[t];
+            if (wB == 0) continue;
+
+            wF = total - wB;
+            if (wF == 0) break;
+
+            sumB += (float) (t * histData[t]);
+
+            float mB = sumB / wB;
+            float mF = (sumHist - sumB) / wF;
+
+            float varBetween = (float) wB * (float) wF * (mB - mF) * (mB - mF);
+
+            if (varBetween > varMax) {
+                varMax = varBetween;
+                threshold = t;
+            }
+        }
+
+        // Aplicar a limiarização binária com o limiar encontrado por Otsu
+
+        int aux = 30;
+
+        Mat outputImage = new Mat();
+
+        Imgproc.threshold(grayImage, outputImage, (threshold), 255, Imgproc.THRESH_BINARY);
 
         return outputImage;
     }
