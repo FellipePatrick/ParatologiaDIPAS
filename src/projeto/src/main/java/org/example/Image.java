@@ -60,6 +60,12 @@ public class Image {
             System.out.println("Erro ao carregar a imagem!");
             return;
         }
+        String outputDir = path + "\\result\\orig";
+        File dir = new File(outputDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
         Mat result;
 
         Mat orig;
@@ -79,6 +85,7 @@ public class Image {
            orig = result;
 
            // Salva a imagem
+           System.out.println("Imagem salva em: "+path + "\\result\\orig");
            Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
 
            result = ajustaBrilhoContraste(result);
@@ -157,6 +164,7 @@ public class Image {
             throw new IllegalArgumentException("A imagem de entrada está vazia");
         }
 
+        int numberDirectory = cont;
         Mat grayImage = inputImage;
 
         // Aplicar um limiar para binarizar a imagem (50 -> preto, 255 -> branco)
@@ -191,9 +199,12 @@ public class Image {
                     // Cortar a região encontrada da imagem original
                     Mat croppedImage = new Mat(imageOriginal, rect);
                     croppedImages.add(croppedImage);
-
+                    File dir = new File(outputPath +"\\parasites"+numberDirectory);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
                     // Salvar a imagem cortada (opcional)
-                    //Imgcodecs.imwrite(outputPath + "blackimgcurted" + x + cont + ".jpeg", croppedImage);
+                    Imgcodecs.imwrite(outputPath +"\\parasites"+numberDirectory+"\\"+ "blackimgcurted" + x + cont + ".jpeg", croppedImage);
 
                     cont++;
                 }
