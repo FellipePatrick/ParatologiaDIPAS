@@ -5,7 +5,7 @@ def renomear_fotos(pasta_origem):
     arquivos = os.listdir(pasta_origem)
     
     # Filtra apenas os arquivos com extensão de imagem
-    fotos = [arquivo for arquivo in arquivos if arquivo.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp'))]
+    fotos = [arquivo for arquivo in arquivos if arquivo.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.heic'))]
     
     # Renomeia para um nome padrão i1
     for i, foto in enumerate(fotos, start=1):
@@ -15,7 +15,7 @@ def renomear_fotos(pasta_origem):
     
     # Lista novamente todos os arquivos na pasta de origem após o primeiro renomeio
     arquivos = os.listdir(pasta_origem)
-    fotos = [arquivo for arquivo in arquivos if arquivo.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp'))]
+    fotos = [arquivo for arquivo in arquivos if arquivo.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.heic'))]
     
     # Renomeia para um nome padrão image1
     for i, foto in enumerate(fotos, start=1):
