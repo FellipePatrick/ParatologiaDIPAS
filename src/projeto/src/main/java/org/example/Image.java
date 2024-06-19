@@ -137,9 +137,13 @@ public class Image {
         double area;
         double perimeter;
         double circularity;
-        double maxObject = 5000;
+        double maxObject = 500;
         if(zoom.equalsIgnoreCase("sim")){
             maxObject =  imageOriginal.rows()*5;
+        }else{
+            if(imageOriginal.cols() > 1280){
+                maxObject = 2500;
+            }
         }
 
         // Processar cada contorno que atenda aos critérios de área e circularidade
@@ -225,7 +229,6 @@ public class Image {
         // Calcular o brilho médio da imagem
         Scalar meanScalar = Core.mean(grayImage);
         double averageBrightness = meanScalar.val[0];
-        System.out.println("Brilho médio: " + averageBrightness);
 
         // Calcular histograma
         int[] histData = new int[256];
