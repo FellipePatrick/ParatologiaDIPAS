@@ -6,12 +6,12 @@ package org.example;
 
 //passo 2 - ir em nos Run\Debug\Configuration ou os 3 pontinhos do lado do run, no canto superior direto, clica em edit
 // depois Modify option, add VM options e adiciona seupath\opencv\build\java
+//-Djava.library.path=C:\Users\felli\Downloads\opencv\build\java
+
 
 // passo 3 - Project Structure e adiciona o arquivo ponto jar (.jar) que ta em seupath\opencv\build\java
 
 // passo 4 - É só aproveitar o código!
-
-
 
 
 public class Main {
@@ -20,9 +20,9 @@ public class Main {
         org.example.Image.resetDiretorio("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\result");
 
         //Segmentando uma pasta de imagens
-        //org.example.Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img\\", "jpeg" , 107);
+        //org.example.Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", "jpeg" , 4, "sim");
 
         //Segmentando apenas uma imagem especifica
-        org.example.Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", 14, "não");
+        org.example.Image.segmentImage("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", 2, "não");
     }
 }
