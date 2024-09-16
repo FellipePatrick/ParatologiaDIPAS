@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commons :: head}"></head>
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/commons :: sidebar}"></div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav th:replace="~{fragments/commons :: nav}"></nav>
+                <div class="container-fluid">
+                    <div th:replace="~{fragments/commons :: headerMain (name='Processar Imagem')}"></div>
+                    <div th:if="${msg}" class="alert alert-success" role="alert">
+                        <span th:text="${msg}"></span>
+                    </div>
+                    <div class="card card-waves mb-4 mt-5">
+                        <div class="card-body">
+                            <form action="#" method="post" enctype="multipart/form-data">
+                                <div class="form-group mt-3">
+                                    <label for="imagem">Envio de Imagens</label>
+                                    <input type="file" class="form-control-file" id="imagem" name="imagem" accept="image/*" multiple required>
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-3">Analisar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>            
+            </div>
+            <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
+        </div>
+    </div>
+</body>
+</html>

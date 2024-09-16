@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{login/index :: head}"></head>
+<body>
+    <div class="container-fluid px-1 px-md-5 px-lg-1 px-xl-5 py-5 mx-auto" >
+        <div class="card card0 border-0">
+            <div class="row d-flex">
+                <div  th:replace="~{login/index :: headerimg}"> </div>
+                <div class="col-lg-6 py-3">
+                    <div class="card2 card border-0 px-4 py-5">
+                        <div  th:replace="~{login/index :: headerINF}"></div>
+                        <div th:replace="~{login/index :: headerLines}"></div>
+                        <form action="" method="">
+                            <div class="row px-3 my-4">
+                                <div class="offset-md-2 col-md-8">
+                                    <label class="mb-1"><h6 class="mb-0 text-sm">Email</h6></label>
+                                    <input type="email" name="email" placeholder="email">
+                                </div>
+                            </div>
+                            <div class="row mb-3 px-3 py-3 d-flex justify-content-center">
+                                <button type="submit" class="btn btn-blue text-center">enviar</button>
+                                <a href="" class="text-center my-4" th:href="@{/login}">voltar</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div th:replace="~{login/index :: footer}"></div>
+        </div>
+    </div>
+</body>
+</html>

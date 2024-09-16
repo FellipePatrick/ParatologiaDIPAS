@@ -313,6 +313,7 @@ public class Image {
         // Calcular o brilho médio da imagem
         Scalar meanScalar = Core.mean(grayImage);
         double averageBrightness = meanScalar.val[0];
+        System.out.println("Brilho médio: "+averageBrightness);
 
         // Calcular histograma
         int[] histData = new int[256];

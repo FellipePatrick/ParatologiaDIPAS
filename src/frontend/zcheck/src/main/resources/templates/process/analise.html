@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commons :: head}"></head>
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/commons :: sidebar}"></div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav th:replace="~{fragments/commons :: nav}"></nav>
+                <div class="container-fluid">
+                    <div th:replace="~{fragments/commons :: headerMain (name='Relatorio')}"></div>
+                    
+                    <div class="card card-waves mb-4 mt-5">
+                        <div class="card-body">
+                            <form action="#" method="post" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="titulo">Título do Relatorio</label>
+                                    <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Digite o título" required>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="descricao">Descrição</label>
+                                    <textarea class="form-control" id="descricao" name="descricao" rows="3" placeholder="Digite a descrição" required></textarea>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="imagem">Envio de Imagens</label>
+                                    <input type="file" class="form-control-file" id="imagem" name="imagem" accept="image/*" multiple required>
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-3">Analisar</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Seção para mostrar parasitas detectados -->
+                    <div class="card card-waves mt-5">
+                        <div class="card-body">
+                            <h5 class="card-title">Parasitas Detectados</h5>
+                            <div id="parasitas-gallery" class="row">
+                                <!-- Exemplo de imagem e descrição -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card">
+                                        <img src="caminho/para/parasitodetectado1.jpg" class="card-img-top" alt="Parasita Detectado 1">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Título do Parasita 1</h6>
+                                            <p class="card-text">Descrição do Parasita 1</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card">
+                                        <img src="caminho/para/parasitodetectado2.jpg" class="card-img-top" alt="Parasita Detectado 2">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Título do Parasita 2</h6>
+                                            <p class="card-text">Descrição do Parasita 2</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Adicione mais blocos conforme necessário -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção para mostrar outros -->
+                    <div class="card card-waves mt-5">
+                        <div class="card-body">
+                            <h5 class="card-title">Outros</h5>
+                            <div id="outros-gallery" class="row">
+                                <!-- Exemplo de imagem e descrição -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card">
+                                        <img src="caminho/para/outro1.jpg" class="card-img-top" alt="Outro 1">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Título do Outro 1</h6>
+                                            <p class="card-text">Descrição do Outro 1</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card">
+                                        <img src="caminho/para/outro2.jpg" class="card-img-top" alt="Outro 2">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Título do Outro 2</h6>
+                                            <p class="card-text">Descrição do Outro 2</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Adicione mais blocos conforme necessário -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>            
+            </div>
+            <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
+        </div>
+    </div>
+</body>
+</html>
