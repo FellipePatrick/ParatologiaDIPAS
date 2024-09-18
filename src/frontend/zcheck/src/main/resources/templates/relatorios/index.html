@@ -9,8 +9,152 @@
                 <nav th:replace="~{fragments/commons :: nav}"></nav>
                 <div class="container-fluid">
                     <div th:replace="~{fragments/commons :: headerMain (name='Relatorios')}"></div>
-                    <div class="card card-waves mb-4 mt-5">
-                      
+                    <div class="card-waves">
+                        <div class="p-5">
+                            <div class="row gx-4 align-items-center justify-content-between">
+                                <h5 class="mb-4 text-gray-800">Relatorios Orientandos</h5>                               
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Título</th>
+                                                <th scope="col">Orientando</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Data de Acesso</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Título do Documento</td>
+                                                <td>Nome do Orientando</td>
+                                                <td>Concluido</td>
+                                                <td>12/09/2024</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>                  
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-waves  mt-2">
+                        <div class="p-5">
+                            <div class="row gx-4 align-items-center justify-content-between">
+                                <div class="row">
+                                    <div class="col-xl-3 col-md-6 mb-4">
+                                        <div class="card border-left-primary shadow h-100 py-2">
+                                            <div class="card-body">
+                                                <div class="row no-gutters align-items-center">
+                                                    <div class="col mr-2">
+                                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                            Relatórios totais</div>
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800">40</div>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6 mb-4">
+                                        <div class="card border-left-warning shadow h-100 py-2">
+                                            <div class="card-body">
+                                                <div class="row no-gutters align-items-center">
+                                                    <div class="col mr-2">
+                                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                            Em andamento</div>
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <i class="fa fa-folder fa-2x text-gray-300"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6 mb-4">
+                                        <div class="card border-left-info shadow h-100 py-2">
+                                            <div class="card-body">
+                                                <div class="row no-gutters align-items-center">
+                                                    <div class="col mr-2">
+                                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Relatórios Em Avaliação
+                                                        </div>
+                                                        <div class="row no-gutters align-items-center">
+                                                            <div class="col-auto">
+                                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800 mx-3">50</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-md-6 mb-4">
+                                        <div class="card border-left-success shadow h-100 py-2">
+                                            <div class="card-body">
+                                                <div class="row no-gutters align-items-center">
+                                                    <div class="col mr-2">
+                                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                            Relatórios Concluídos</div>
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-waves">
+                        <div class="p-5">
+                            <div class="row gx-4 align-items-center justify-content-between">
+                                <h5 class="text-gray-800">Documentos Recentes</h5>                               
+                                <div class=" col-md-3 card shadow mb-4 my-5">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Título do Documento</h6>
+                                        <p class="card-text">Descrição breve do documento. Isso pode ser algo mais detalhado se necessário.</p>
+                                        <p class="text-muted">Orientador: Nome do Orientador</p>
+                                        <p class="text-muted">Status: Concluido</p>
+                                        <p class="text-muted">Data de Acesso: 12/09/2024</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="offset-md-1 col-md-3 card shadow mb-4 my-5">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Título do Documento</h6>
+                                        <p class="card-text">Descrição breve do documento. Isso pode ser algo mais detalhado se necessário.</p>
+                                        <p class="text-muted">Orientador: Nome do Orientador</p>
+                                        <p class="text-muted">Status: Andamento</p>
+                                        <p class="text-muted">Data de Acesso: 12/09/2024</p>
+                                    </div>
+                                </div>
+                                <div class="offset-md-1 col-md-3 card shadow mb-4 my-5">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Título do Documento</h6>
+                                        <p class="card-text">Descrição breve do documento. Isso pode ser algo mais detalhado se necessário.</p>
+                                        <p class="text-muted">Orientador: Nome do Orientador</p>
+                                        <p class="text-muted">Status: Avaliação</p>
+                                        <p class="text-muted">Data de Acesso: 12/09/2024</p>
+                                    </div>
+                                </div>
+
+                                <div class=" col-md-3 card shadow mb-4 my-5">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Título do Documento</h6>
+                                        <p class="card-text">Descrição breve do documento. Isso pode ser algo mais detalhado se necessário.</p>
+                                        <p class="text-muted">Orientador: Nome do Orientador</p>
+                                        <p class="text-muted">Status: Andamento</p>
+                                        <p class="text-muted">Data de Acesso: 12/09/2024</p>
+                                    </div>
+                                </div>                                
+                            </div>
+                        </div>
                     </div>
                 </div>            
             </div>

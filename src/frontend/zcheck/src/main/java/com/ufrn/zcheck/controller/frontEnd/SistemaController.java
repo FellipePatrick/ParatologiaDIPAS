@@ -23,7 +23,21 @@ public class SistemaController {
 
     @GetMapping("/relatorios")
     public ModelAndView indexRelatorios(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
-
         return new ModelAndView("relatorios/index");
+    }
+
+    @GetMapping("/analisar")
+    public ModelAndView analisarFotos(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("process/analise");
+    }
+
+    @GetMapping("/relatorios/unit")
+    public ModelAndView unitRelatorios(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("relatorios/unit");
+    }
+
+    @GetMapping("/notific")
+    public ModelAndView indexNotifi(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("notific/index");
     }
 }

@@ -8,7 +8,7 @@
             <div id="content">
                 <nav th:replace="~{fragments/commons :: nav}"></nav>
                 <div class="container-fluid">
-                    <div th:replace="~{fragments/commons :: headerMain (name='Novo Relatorio')}"></div>
+                    <div th:replace="~{fragments/commons :: headerMain (name='Editar Relatorio')}"></div>
                     
                     <div class="card card-waves mb-4 mt-5">
                         <div class="card-body">
@@ -27,7 +27,6 @@
                                 </div>
                         </div>
                     </div>
-
                     <div class="card card-waves mt-5">
                         <div class="card-body">
                             <h5 class="card-title">Parasitas Detectados</h5>
@@ -53,6 +52,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="card card-waves mt-5">
                         <div class="card-body">
                             <h5 class="card-title">Outros</h5>
@@ -78,7 +78,21 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3">Salvar Relatorio</button>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary mt-3">Salvar Relatório</button>
+                        
+                        <div class="dropdown mt-3">
+                          <button class="btn btn-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Status
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Andamento</a></li>
+                            <li><a class="dropdown-item" href="#">Avaliação</a></li>
+                            <li><a class="dropdown-item" href="#">Concluído</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                      
                 </form>
                 </div>            
             </div>
