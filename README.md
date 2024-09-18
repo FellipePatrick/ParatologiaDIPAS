@@ -39,12 +39,12 @@ O projeto será organizado em módulos distintos para facilitar o desenvolviment
    - Módulo que implementa a lógica fuzzy e utiliza algoritmos de aprendizado de máquina para a classificação automática.
 
 4. **Interface Gráfica:**
-   - Desenvolvimento da interface do usuário utilizando JavaFX para facilitar a interação com o sistema.
+   - Desenvolvimento da interface do usuário utilizando SpringBoot para facilitar a interação com o sistema.
 
 ## Conclusão
 Este projeto visa contribuir para o avanço na identificação e diagnóstico de parasitas em animais domésticos, proporcionando uma abordagem automatizada e eficiente. A aplicação potencial em animais de produção amplia o impacto do sistema, tornando-o uma ferramenta valiosa para profissionais de saúde animal e pesquisadores.
 
 
 ## Foto do Sistema
-![image](https://github.com/user-attachments/assets/2525d07e-78c8-49cc-9137-25897379ba9a)
+![image](https://github.com/user-attachments/assets/bbdc822b-96fb-43b2-bb33-6b4facb55987)
 
