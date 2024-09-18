@@ -22,9 +22,8 @@ Caso haja disponibilidade de tempo, o sistema desenvolvido será estendido para 
 
 ## Tecnologias Utilizadas
 - **Linguagem de Programação:** Java
-- **Bibliotecas de Processamento de Imagens:** OpenCV, Java Advanced Imaging (JAI)
-- **Framework de Inteligência Computacional:** Weka 
-- **Desenvolvimento da Interface Gráfica:** JavaFX
+- **Bibliotecas de Processamento de Imagens:** OpenCV
+- **Desenvolvimento do Sistema WEB:** SpringBoot 
 
 ## Estrutura do Projeto
 O projeto será organizado em módulos distintos para facilitar o desenvolvimento e manutenção:
@@ -33,7 +32,7 @@ O projeto será organizado em módulos distintos para facilitar o desenvolviment
    - Módulo responsável pela coleta física das amostras e implementação dos métodos de análise.
 
 2. **Processamento Digital de Imagens:**
-   - Módulo dedicado ao processamento de imagens, integrando as bibliotecas OpenCV e JAI.
+   - Módulo dedicado ao processamento de imagens, integrando as bibliotecas OpenCV.
 
 3. **Inteligência Computacional:**
    - Módulo que implementa a lógica fuzzy e utiliza algoritmos de aprendizado de máquina para a classificação automática.
