@@ -9,32 +9,40 @@
                 <nav th:replace="~{fragments/commons :: nav}"></nav>
                 <div class="container-fluid">
                     <div th:replace="~{fragments/commons :: headerMain (name='Relatorios')}"></div>
-                    <div class="card-waves">
-                        <div class="p-5">
-                            <div class="row gx-4 align-items-center justify-content-between">
-                                <h5 class="mb-4 text-gray-800">Relatorios Orientandos</h5>                               
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Título</th>
-                                                <th scope="col">Orientando</th>
-                                                <th scope="col">Status</th>
-                                                <th scope="col">Data de Acesso</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Título do Documento</td>
-                                                <td>Nome do Orientando</td>
-                                                <td>Concluido</td>
-                                                <td>12/09/2024</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>                  
-                            </div>
+                    <div class="card shadow-sm border-0 rounded-lg mb-4 mt-5">
+                        <div class="card-header bg-primary text-center">
+                            <h5 class="text-white">Relatorio dos Orientandos</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered ">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Titulo</th>
+                                        <th>Orientando</th>
+                                        <th>Status</th>
+                                        <th>Data</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Relatorio 1</td>
+                                        <td>Fellipe Patrick</td>
+                                        <td>Andamento</td>
+                                        <td>18/09/2024</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info">Visualizar</button>
+                                            <button class="btn btn-sm btn-danger">Fechar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+                    <div class="card-waves">
+                     
                     <div class="card-waves  mt-2">
                         <div class="p-5">
                             <div class="row gx-4 align-items-center justify-content-between">
@@ -112,50 +120,85 @@
                         </div>
                     </div>
                     <div class="card-waves">
-                        <div class="p-5">
+                        <div class="p-3">
+                            <h5 class="text-gray-800 mb-4">Documentos Recentes</h5>
                             <div class="row gx-4 align-items-center justify-content-between">
-                                <h5 class="text-gray-800">Documentos Recentes</h5>                               
-                                <div class=" col-md-3 card shadow mb-4 my-5">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Título do Documento</h6>
-                                        <p class="card-text">Descrição breve do documento. Isso pode ser algo mais detalhado se necessário.</p>
-                                        <p class="text-muted">Orientador: Nome do Orientador</p>
-                                        <p class="text-muted">Status: Concluido</p>
-                                        <p class="text-muted">Data de Acesso: 12/09/2024</p>
+                                <!-- Documento 1 -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card shadow-sm h-100">
+                                        <div class="card-body d-flex flex-column">
+                                            <h6 class="card-title text-primary font-weight-bold">Título do Documento</h6>
+                                            <p class="card-text text-muted mb-3">Descrição breve do documento, detalhando o conteúdo de maneira resumida e convidativa.</p>
+                                            <div class="mt-auto">
+                                                <p class="text-muted small">Orientador: Nome do Orientador</p>
+                                                <p class="text-muted small">Data de Acesso: 12/09/2024</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                
-                                <div class="offset-md-1 col-md-3 card shadow mb-4 my-5">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Título do Documento</h6>
-                                        <p class="card-text">Descrição breve do documento. Isso pode ser algo mais detalhado se necessário.</p>
-                                        <p class="text-muted">Orientador: Nome do Orientador</p>
-                                        <p class="text-muted">Status: Andamento</p>
-                                        <p class="text-muted">Data de Acesso: 12/09/2024</p>
+                    
+                                <!-- Documento 2 -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card shadow-sm h-100">
+                                        <div class="card-body d-flex flex-column">
+                                            <h6 class="card-title text-primary font-weight-bold">Título do Documento</h6>
+                                            <p class="card-text text-muted mb-3">Descrição breve do documento, detalhando o conteúdo de maneira resumida e convidativa.</p>
+                                            <div class="mt-auto">
+                                                <p class="text-muted small">Orientador: Nome do Orientador</p>
+                                                <p class="text-muted small">Data de Acesso: 12/09/2024</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="offset-md-1 col-md-3 card shadow mb-4 my-5">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Título do Documento</h6>
-                                        <p class="card-text">Descrição breve do documento. Isso pode ser algo mais detalhado se necessário.</p>
-                                        <p class="text-muted">Orientador: Nome do Orientador</p>
-                                        <p class="text-muted">Status: Avaliação</p>
-                                        <p class="text-muted">Data de Acesso: 12/09/2024</p>
+                    
+                                <!-- Documento 3 -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card shadow-sm h-100">
+                                        <div class="card-body d-flex flex-column">
+                                            <h6 class="card-title text-primary font-weight-bold">Título do Documento</h6>
+                                            <p class="card-text text-muted mb-3">Descrição breve do documento, detalhando o conteúdo de maneira resumida e convidativa.</p>
+                                            <div class="mt-auto">
+                                                <p class="text-muted small">Orientador: Nome do Orientador</p>
+                                                <p class="text-muted small">Data de Acesso: 12/09/2024</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class=" col-md-3 card shadow mb-4 my-5">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Título do Documento</h6>
-                                        <p class="card-text">Descrição breve do documento. Isso pode ser algo mais detalhado se necessário.</p>
-                                        <p class="text-muted">Orientador: Nome do Orientador</p>
-                                        <p class="text-muted">Status: Andamento</p>
-                                        <p class="text-muted">Data de Acesso: 12/09/2024</p>
+                            </div>
+                    
+                            <!-- Segunda linha de documentos -->
+                            <div class="row gx-4 align-items-center justify-content-between">
+                                <!-- Documento 4 -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card shadow-sm h-100">
+                                        <div class="card-body d-flex flex-column">
+                                            <h6 class="card-title text-primary font-weight-bold">Título do Documento</h6>
+                                            <p class="card-text text-muted mb-3">Descrição breve do documento, detalhando o conteúdo de maneira resumida e convidativa.</p>
+                                            <div class="mt-auto">
+                                                <p class="text-muted small">Orientador: Nome do Orientador</p>
+                                                <p class="text-muted small">Data de Acesso: 12/09/2024</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>                                
+                                </div>
+                    
+                                <!-- Documento 5 -->
+                                <div class="col-md-4 mb-4">
+                                    <div class="card shadow-sm h-100">
+                                        <div class="card-body d-flex flex-column">
+                                            <h6 class="card-title text-primary font-weight-bold">Título do Documento</h6>
+                                            <p class="card-text text-muted mb-3">Descrição breve do documento, detalhando o conteúdo de maneira resumida e convidativa.</p>
+                                            <div class="mt-auto">
+                                                <p class="text-muted small">Orientador: Nome do Orientador</p>
+                                                <p class="text-muted small">Data de Acesso: 12/09/2024</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    
                 </div>            
             </div>
             <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4">

@@ -36,8 +36,49 @@ public class SistemaController {
         return new ModelAndView("relatorios/unit");
     }
 
-    @GetMapping("/notific")
+    @GetMapping("/notificacao")
     public ModelAndView indexNotifi(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
         return new ModelAndView("notific/index");
+    }
+
+    @GetMapping("/suporte")
+    public ModelAndView indexSuporte(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("suporte/index");
+    }
+
+    @GetMapping("/contato")
+    public ModelAndView contato(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("suporte/contato");
+    }
+
+    @GetMapping("/politicas")
+    public ModelAndView politicas(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("suporte/politics");
+    }
+
+    @GetMapping("/chamados")
+    public ModelAndView chamados(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("chamados/index");
+    }
+
+    @GetMapping("/chamado")
+    public ModelAndView chamado(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("chamados/edit");
+    }
+
+    @GetMapping("/perfil")
+    public ModelAndView perfil(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("perfil/index");
+    }
+
+
+    @GetMapping("/usuarios")
+    public ModelAndView usuarios(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("usuario/index");
+    }
+
+    @GetMapping("/usuarios/edit")
+    public ModelAndView usuariosEdit(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("usuario/user");
     }
 }

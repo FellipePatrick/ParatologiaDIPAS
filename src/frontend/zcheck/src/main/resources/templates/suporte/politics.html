@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commons :: head}"></head>
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/commons :: sidebar}"></div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav th:replace="~{fragments/commons :: nav}"></nav>
+                <div class="container-fluid">
+                    <div th:replace="~{fragments/commons :: headerMain(name='Políticas de Privacidade')}"></div>
+                    
+                    <div class="card shadow-lg border-0 rounded-lg mb-4 mt-5">
+                        <div class="card-header bg-primary text-center">
+                            <h5 class="text-white">Políticas de Privacidade</h5>
+                        </div>
+                        <div class="card-body">
+                            <h4>1. Introdução</h4>
+                            <p class="text-justify">
+                                A sua privacidade é importante para nós. Esta política explica como coletamos, usamos e compartilhamos as informações pessoais dos usuários de nosso sistema Z-Check. Ao usar o sistema, você concorda com as práticas descritas nesta política.
+                            </p>
+
+                            <h4>2. Coleta de Informações</h4>
+                            <p class="text-justify">
+                                Coletamos informações que você nos fornece diretamente, como seu nome, endereço de email e qualquer outra informação que você enviar por meio de formulários ou comunicações. Além disso, podemos coletar dados automaticamente, como seu endereço IP, tipo de navegador e informações de navegação no site.
+                            </p>
+
+                            <h4>3. Uso de Informações</h4>
+                            <p class="text-justify">
+                                As informações coletadas são usadas para fornecer e melhorar os nossos serviços, personalizar sua experiência e comunicar-se com você. Não compartilhamos suas informações pessoais com terceiros, exceto quando exigido por lei ou para cumprir com as obrigações contratuais.
+                            </p>
+
+                            <h4>4. Segurança</h4>
+                            <p class="text-justify">
+                                Implementamos medidas de segurança para proteger suas informações pessoais contra acesso não autorizado, alteração, divulgação ou destruição. No entanto, nenhum sistema é completamente seguro, e não podemos garantir a segurança absoluta dos dados transmitidos eletronicamente.
+                            </p>
+
+                            <h4>5. Cookies</h4>
+                            <p class="text-justify">
+                                Utilizamos cookies para melhorar a funcionalidade do nosso sistema e fornecer uma experiência personalizada. Você pode configurar seu navegador para recusar cookies, mas isso pode afetar a funcionalidade de alguns serviços.
+                            </p>
+
+                            <h4>6. Alterações na Política</h4>
+                            <p class="text-justify">
+                                Podemos atualizar esta política de privacidade periodicamente para refletir mudanças em nossas práticas. Qualquer alteração será publicada nesta página, e incentivamos você a revisitar esta política regularmente.
+                            </p>
+
+                            <h4>7. Contato</h4>
+                            <p class="text-justify">
+                                Se você tiver dúvidas sobre esta Política de Privacidade, entre em contato conosco pelo email <a href="mailto:privacidade@zcheck.com.br">privacidade@zcheck.com.br</a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
+        </div>
+    </div>
+</body>
+</html>

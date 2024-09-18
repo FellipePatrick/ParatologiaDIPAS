@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commons :: head}"></head>
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/commons :: sidebar}"></div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav th:replace="~{fragments/commons :: nav}"></nav>
+                <div class="container-fluid">
+                    <div th:replace="~{fragments/commons :: headerMain(name='Visualizar Chamado')}"></div>
+                
+                    <div class="card shadow-sm border-0 rounded-lg mb-4 mt-5">
+                        <div class="card-header bg-primary text-center">
+                            <h5 class=" text-white">Detalhes do Chamado</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>ID do Chamado:</strong> 1</p>
+                                    <p><strong>Assunto:</strong> Problema de acesso</p>
+                                    <p><strong>Data de Abertura:</strong> 18/09/2024</p>
+                                    <p><strong>Status:</strong> Aberto</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Descrição:</strong> O usuário não consegue acessar o sistema. A senha parece estar incorreta e o sistema não permite redefinir.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm border-0 rounded-lg mb-4">
+                        <div class="card-header bg-warning text-center">
+                            <h5 class=" text-white">Alterar Status do Chamado</h5>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="status">Status Atual</label>
+                                    <select class="form-control" id="status">
+                                        <option value="Aberto">Aberto</option>
+                                        <option value="Em andamento">Em andamento</option>
+                                        <option value="Fechado">Fechado</option>
+                                    </select>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-warning">Atualizar Status</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
+        </div>
+    </div>
+</body>
+</html>

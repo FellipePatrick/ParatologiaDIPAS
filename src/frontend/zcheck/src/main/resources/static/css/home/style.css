@@ -10424,6 +10424,10 @@ a:focus {
     overflow: hidden
 }
 
+.fnormal{
+    font-weight: normal;
+}
+
 .topbar .dropdown-list .dropdown-header {
     background-color: #0d6efd;
     border: 1px solid #0d6efd;

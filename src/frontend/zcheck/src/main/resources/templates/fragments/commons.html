@@ -3,7 +3,7 @@
     <head th:fragment="head">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Zoonoses - Check</title>
+        <title>ZEC</title>
         <link th:href="@{../../css/home/style.css}" rel="stylesheet" type="text/css">
         <link rel="icon" th:href="@{./../imgs/login/logo.png}" type="image/png">
         <link th:href="@{../../imgs/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
@@ -92,7 +92,7 @@
                             Spending Alert: We've noticed unusually high spending for your account.
                         </div>
                     </a>
-                    <a class="dropdown-item text-center small text-gray-500" th:href="@{/notific}">Todas as notificações</a>
+                    <a class="dropdown-item text-center small text-gray-500" th:href="@{/notificacao}">Todas as notificações</a>
                 </div>
             </li>
             <div class="topbar-divider d-none d-sm-block"></div>
@@ -104,22 +104,18 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                     aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" th:href="@{/perfil}">
                         <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                        Profile
+                        Perfil
                     </a>
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" th:href="@{/usuarios}">
                         <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                        Settings
-                    </a>
-                    <a class="dropdown-item" href="#">
-                        <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                        Activity Log
+                        Usuários
                     </a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                         <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                        Logout
+                        Sair
                     </a>
                 </div>
             </li>
@@ -132,7 +128,7 @@
             <div class="sidebar-brand-icon mx-3">
                 <img th:src="@{../../imgs/login/logo.png}" width="50" alt="">
             </div>
-            <div class="sidebar-brand-text blue">Z-Check</div>
+            <div class="sidebar-brand-text blue">ZEC</div>
         </a>
         <hr class="sidebar-divider my-0">
         <li class="nav-item active">
@@ -161,9 +157,8 @@
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header blue">Tarefas: </ponentsh6>
-                    <a class="collapse-item" href="buttons.html">Abrir Chamado</a>
-                    <a class="collapse-item" href="cards.html">Relatar Error</a>
-                    <a class="collapse-item" href="cards.html">Contato</a>
+                    <a class="collapse-item fnormal"  th:href="@{/chamados}"href="buttons.html">Abrir Chamado</a>
+                    <a class="collapse-item fnormal" th:href="@{/contato}">Contato</a>
                 </div>
             </div>
         </li>
@@ -177,7 +172,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
-                    <h5 class="fw-bold">Zoonoses Check</h5>
+                    <h5 class="fw-bold">ZEC</h5>
                     <p class="text-muted">
                         Soluções inteligentes para a análise microscópica de zoonoses. Facilitando o diagnóstico de doenças para melhorar a saúde animal e humana.
                     </p>
@@ -185,16 +180,15 @@
                 <div class="col-md-4">
                     <h5 class="fw-bold">Links Úteis</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-dark">Início</a></li>
-                        <li><a href="#" class="text-dark">Sobre Nós</a></li>
-                        <li><a href="#" class="text-dark">Contato</a></li>
-                        <li><a href="#" class="text-dark">Política de Privacidade</a></li>
+                        <li><a th:href="@{/}" class="text-dark">Início</a></li>
+                        <li><a th:href="@{/contato}" class="text-dark">Contato</a></li>
+                        <li><a th:href="@{/politicas}" class="text-dark">Política de Privacidade</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
                     <h5 class="fw-bold">Contato</h5>
                     <p class="text-muted">
-                        <i class="fas fa-envelope"></i> contato@zoonosescheck.com<br>
+                        <i class="fas fa-envelope"></i> contato@zec.com<br>
                         <i class="fas fa-phone"></i> +55 84 1234-5678
                     </p>
                     <div class="mt-3">
@@ -207,7 +201,7 @@
             </div>
             <hr>
             <div class="text-center">
-                <span class="text-muted">Copyright © Zoonoses Check 2024 · Todos os direitos reservados.</span>
+                <span class="text-muted">Copyright © ZEC 2024 · Todos os direitos reservados.</span>
             </div>
         </div>
         <a class="scroll-to-top rounded" href="#page-top">

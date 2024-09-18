@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commons :: head}"></head>
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/commons :: sidebar}"></div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav th:replace="~{fragments/commons :: nav}"></nav>
+                <div class="container-fluid">
+                    <div th:replace="~{fragments/commons :: headerMain(name='Chamados')}"></div>
+                    <div class="card shadow-sm border-0 rounded-lg mb-4 mt-5">
+                        <div class="card-header bg-primary text-center">
+                            <h5 class=" text-white">Tabela de Chamados</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered ">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Assunto</th>
+                                        <th>Descrição</th>
+                                        <th>Status</th>
+                                        <th>Data de Abertura</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Problema de acesso</td>
+                                        <td>Usuário não consegue acessar o sistema.</td>
+                                        <td>Aberto</td>
+                                        <td>18/09/2024</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info">Visualizar</button>
+                                            <button class="btn btn-sm btn-danger">Fechar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm border-0 rounded-lg mb-4 mt-5">
+                        <div class="card-header bg-primary text-center">
+                            <h5 class=" text-white">Abrir um Novo Chamado</h5>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="subject">Assunto</label>
+                                    <input type="text" class="form-control" id="subject" placeholder="Assunto do chamado" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Descrição</label>
+                                    <textarea class="form-control" id="description" rows="4" placeholder="Descreva o problema" required></textarea>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary">Abrir Chamado</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
+        </div>
+    </div>
+</body>
+</html>
