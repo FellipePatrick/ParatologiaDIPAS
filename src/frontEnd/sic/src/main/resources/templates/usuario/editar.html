@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/commons :: head}"></head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/commons :: sidebar}"></div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav th:replace="~{fragments/commons :: nav}"></nav>
+                <div class="container-fluid">
+                    <div th:replace="~{fragments/commons :: headerMain(name='Editar Usuário')}"></div>
+                    <div class="card card-waves mb-4 mt-5">
+                        <div class="card-header d-flex bg-primary justify-content-between align-items-center">
+                            <h5 class="card-title text-white">Editar Usuário</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="cadastroForm" method="post" th:action="@{/usuarios/editar/{id}(id=${usuario.id})}">
+                                <div th:if="${errorMessage != null}" class="alert alert-danger">
+                                    <span th:text="${errorMessage}"></span>
+                                </div>
+                                <div th:if="${successMessage != null}" class="alert alert-success">
+                                    <span th:text="${successMessage}"></span>
+                                </div>
+                            
+                                <input type="hidden" id="userId" name="userId" th:value="${usuario.id}">
+                            
+                                <div class="form-group">
+                                    <label for="nome">Nome</label>
+                                    <input type="text" id="nome" name="nome" class="form-control"
+                                           th:value="${usuario.nome}" placeholder="Nome completo" required>
+                                    <div th:if="${nomeError != null}" class="text-danger">
+                                        <small th:text="${nomeError}"></small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="senha">Senha</label>
+                                    <input type="password" id="senha" name="senha" class="form-control"
+                                           placeholder="Nova senha">
+                                    <div th:if="${senhaError != null}" class="text-danger">
+                                        <small th:text="${senhaError}"></small>
+                                    </div>
+                                </div>
+                            
+                                <div class="form-group">
+                                    <label for="matricula">Matricula</label>
+                                    <input type="text" id="matricula" name="matricula" class="form-control"
+                                           th:value="${usuario.matricula}" placeholder="Matricula" required>
+                                    <div th:if="${matriculaError != null}" class="text-danger">
+                                        <small th:text="${matriculaError}"></small>
+                                    </div>
+                                </div>
+                            
+                                <div class="form-group">
+                                    <label for="telefone">Telefone</label>
+                                    <input type="text" id="telefone" name="telefone" class="form-control"
+                                           th:value="${usuario.telefone}" placeholder="Telefone (10 ou 11 dígitos)"
+                                           required>
+                                    <div th:if="${telefoneError != null}" class="text-danger">
+                                        <small th:text="${telefoneError}"></small>
+                                    </div>
+                                </div>
+                            
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" name="email" class="form-control"
+                                           th:value="${usuario.email}" placeholder="Email" required>
+                                    <div th:if="${emailError != null}" class="text-danger">
+                                        <small th:text="${emailError}"></small>
+                                    </div>
+                                </div>
+                            
+                                <div class="form-group">
+                                    <label for="tipoUsuario">Tipo de Usuário</label>
+                                    <select id="tipoUsuario" name="role" class="form-control" required>
+                                        <option value="ADMINISTRADOR" th:if="${usuario.role == 'ADMINISTRADOR'}" selected>Administrador</option>
+                                        <option value="ORIENTADOR" th:if="${usuario.role == 'ORIENTADOR'}">Orientador</option>
+                                        <option value="BOLSISTA" th:if="${usuario.role == 'BOLSISTA'}">Bolsista</option>
+                                    </select>
+                                    <div th:if="${roleError != null}" class="text-danger">
+                                        <small th:text="${roleError}"></small>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                                <a href="/usuarios" class="btn btn-secondary">Cancelar</a>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4">
+            </footer>
+        </div>
+    </div>
+</body>
+
+</html>

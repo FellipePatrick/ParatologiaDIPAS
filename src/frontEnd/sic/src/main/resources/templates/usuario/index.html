@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commons :: head}"></head>
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/commons :: sidebar}"></div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav th:replace="~{fragments/commons :: nav}"></nav>
+          
+                <div class="container-fluid">
+                    <div th:replace="~{fragments/commons :: headerMain(name='Usuarios')}"></div>
+                    <div class="card card-waves mb-4 mt-5">
+                        <div class="card-header bg-primary">
+                            <h5 class="card-title text-white">Cadastrar Usuário</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="cadastroForm" method="post" th:action="@{/usuarios}">
+                                <div th:if="${errorMessage != null}" class="alert alert-danger">
+                                    <span th:text="${errorMessage}"></span>
+                                </div>
+                                <div th:if="${successMessage != null}" class="alert alert-success">
+                                    <span th:text="${successMessage}"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="nome">Nome</label>
+                                    <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome completo" required>
+                                    <div th:if="${nomeError != null}" class="text-danger">
+                                        <small th:text="${nomeError}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="telefone">Telefone</label>
+                                    <input type="text" id="telefone" name="telefone" class="form-control" placeholder="Telefone (10 ou 11 dígitos)" required>
+                                    <div th:if="${telefoneError != null}" class="text-danger">
+                                        <small th:text="${telefoneError}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" name="email" class="form-control" placeholder="Email" required>
+                                    <div th:if="${emailError != null}" class="text-danger">
+                                        <small th:text="${emailError}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="tipoUsuario">Tipo de Usuário</label>
+                                    <select id="tipoUsuario" name="role" class="form-control" required>
+                                        <option value="ADMINISTRADOR">Administrador</option>
+                                        <option value="ORIENTADOR">Orientador</option>
+                                        <option value="BOLSISTA">Bolsista</option>
+                                    </select>
+                                    <div th:if="${roleError != null}" class="text-danger">
+                                        <small th:text="${roleError}"></small>
+                                    </div>
+                                </div>                    
+                                <button type="submit" class="btn btn-primary">Cadastrar</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-5">
+                        <div class="card-header d-flex bg-primary justify-content-between align-items-center">
+                            <h5 class="card-title text-white">Lista de Usuários</h5>
+                            <form class="form-inline">
+                                <input class="form-control mr-sm-2" type="search" placeholder="Pesquisar por Email" aria-label="Search" id="searchEmail">
+                                <button class="btn btn-success my-2 my-sm-0" type="submit">Buscar</button>
+                            </form>
+                        </div>
+
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Tipo de Usuário</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="usuario : ${usuarios}">
+                                        <td th:text="${usuario.nome}">Nome do Usuário</td>
+                                        <td th:text="${usuario.email}">email@email.com</td>
+                                        <td th:text="${usuario.role}">Tipo de Usuário</td>
+                                        <td>
+                                            <a th:href="@{'/usuarios/editar/' + ${usuario.id}}" class="btn btn-sm btn-warning">Editar</a>
+                                            <a class="btn btn-sm btn-danger" th:href="@{'/usuarios/delete/' + ${usuario.id}}">Excluir </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+                </div>            
+            </div>
+            <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4">
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

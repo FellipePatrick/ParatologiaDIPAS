@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commons :: head}"></head>
+<body id="page-top">
+    <div id="wrapper">
+        <div th:replace="~{fragments/commons :: sidebar}"></div>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav th:replace="~{fragments/commons :: nav}"></nav>
+                <div class="container-fluid">
+                    <div th:replace="~{fragments/commons :: headerMain(name='Perfil do Usuário')}"></div>
+                    
+                    <div class="card card-waves mb-4 mt-5">
+                        <div class="card-header bg-primary text-center">
+                            <h4 class="text-white">Informações do Usuário</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <img th:src="@{../../imgs/home/fellipe.jpg}" alt="Imagem do perfil" class="img " width="150">
+                                    <div class="mt-3">
+                                        <button class="btn btn-primary btn-sm">Alterar Imagem</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="nome">Nome</label>
+                                            <input type="text" class="form-control" id="nome" value="Nome do Usuário" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Email</label>
+                                            <input type="email" class="form-control" id="email" value="email@usuario.com" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="telefone">Telefone</label>
+                                            <input type="text" class="form-control" id="telefone" value="(00) 00000-0000" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="matricula">Matricula</label>
+                                            <input type="text" class="form-control" id="matricula" value="Matricula do Usuário" readonly>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-5">
+                        <div class="card-header ">
+                            <h4 cl>Configurações da Conta</h4>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="alterarSenha">Alterar Senha</label>
+                                    <input type="password" class="form-control" id="alterarSenha" placeholder="Digite sua nova senha">
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmarSenha">Confirmar Senha</label>
+                                    <input type="password" class="form-control" id="confirmarSenha" placeholder="Confirme sua nova senha">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>            
+            </div>
+            <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
+        </div>
+    </div>
+</body>
+</html>
