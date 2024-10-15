@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.sic.backend.domain.Usuario;
-import com.api.sic.backend.dto.UsuarioRequestDTO;
-import com.api.sic.backend.dto.UsuarioResponseDTO;
+import com.api.sic.backend.dto.Usuario.UsuarioRequestDTO;
+import com.api.sic.backend.dto.Usuario.UsuarioRequestUpdateDTO;
+import com.api.sic.backend.dto.Usuario.UsuarioResponseDTO;
 import com.api.sic.backend.service.UsuarioService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,8 +42,8 @@ public class UsuarioController {
         return usuariosPage.map(this::convertToDto);
     }
 
-   @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> create(@RequestBody UsuarioRequestDTO usuario) {
+    @PostMapping
+    public ResponseEntity<UsuarioResponseDTO> create(@Valid @RequestBody UsuarioRequestDTO usuario) {
         usuario.setRole(usuario.getRole().toUpperCase());
         Usuario created = service.create(convertToEntity(usuario));
         URI location = ServletUriComponentsBuilder
@@ -51,6 +54,8 @@ public class UsuarioController {
 
         return ResponseEntity.created(location).body(convertToDto(created));
     }
+
+    
 
 
     @GetMapping("{id}")
@@ -67,19 +72,19 @@ public class UsuarioController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UsuarioResponseDTO> update(@RequestBody UsuarioRequestDTO requestDto, @PathVariable("id") Long id) {
-
+    public ResponseEntity<UsuarioResponseDTO> update(@Valid @RequestBody UsuarioRequestUpdateDTO requestDto, @PathVariable("id") Long id) {
         try {
             @SuppressWarnings("unused")
             Usuario p = service.findById(id);
-            
         } catch (Exception e) {
-            return this.create(requestDto);
+            UsuarioRequestDTO requestDto2 = mapper.map(requestDto, UsuarioRequestDTO.class);
+            return this.create(requestDto2);
         }
-        Usuario UsuarioUpdated = service.update(mapper.map(requestDto, Usuario.class), id);
+        Usuario usuario = mapper.map(requestDto, Usuario.class);
+        Usuario UsuarioUpdated = service.update(usuario, id);
         return ResponseEntity.ok(convertToDto(UsuarioUpdated));
     }
-
+    
 
     private UsuarioResponseDTO convertToDto(Usuario created) {
         UsuarioResponseDTO UsuarioResponseDTO = mapper.map(created, UsuarioResponseDTO.class);

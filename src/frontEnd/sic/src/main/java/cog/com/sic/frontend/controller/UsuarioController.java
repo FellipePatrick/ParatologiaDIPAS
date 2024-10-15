@@ -19,9 +19,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cog.com.sic.frontend.dto.UsuarioPagedResponseDTO;
-import cog.com.sic.frontend.dto.UsuarioRequestDTO;
-import cog.com.sic.frontend.dto.UsuarioResponseDTO;
+
+import cog.com.sic.frontend.dto.Usuario.UsuarioPagedResponseDTO;
+import cog.com.sic.frontend.dto.Usuario.UsuarioRequestDTO;
+import cog.com.sic.frontend.dto.Usuario.UsuarioResponseDTO;
+import cog.com.sic.frontend.dto.Usuario.UsuarioUpdateRequestDTO;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -94,12 +96,10 @@ public class UsuarioController {
         }
         return modelAndView;
     }
-    // Está com problemas
     @PostMapping("/usuarios/editar/{id}")
     public ModelAndView editarUsuario(@PathVariable("id") Long id,
-            @ModelAttribute UsuarioRequestDTO usuarioRequestDTO,
+            @ModelAttribute UsuarioUpdateRequestDTO usuarioRequestDTO,
             RedirectAttributes redirectAttributes) {
-        // Imprime o ID do usuário e o objeto request que está chegando
         System.out.println("ID do Usuário: " + id);
         System.out.println("Request DTO: " + usuarioRequestDTO);
     
@@ -107,7 +107,6 @@ public class UsuarioController {
         ModelAndView modelAndView = new ModelAndView("redirect:/usuarios/editar/" + id);
     
         try {
-            // Envia a requisição para a API de atualização
             String url = URL + "/" + id; // Atualize a URL conforme necessário
             ResponseEntity<UsuarioResponseDTO> response = restTemplate.exchange(url, HttpMethod.PUT,
                     new HttpEntity<>(usuarioRequestDTO), UsuarioResponseDTO.class);
@@ -119,7 +118,6 @@ public class UsuarioController {
             }
     
         } catch (HttpClientErrorException ex) {
-            // Tratamento de erros do lado do cliente (400)
             if (ex.getStatusCode() == HttpStatus.BAD_REQUEST) {
                 try {
                     ObjectMapper objectMapper = new ObjectMapper();

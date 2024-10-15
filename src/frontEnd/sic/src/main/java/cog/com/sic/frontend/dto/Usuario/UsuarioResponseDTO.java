@@ -1,4 +1,4 @@
-package cog.com.sic.frontend.dto;
+package cog.com.sic.frontend.dto.Usuario;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

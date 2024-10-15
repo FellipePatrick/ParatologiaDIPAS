@@ -10,7 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 public abstract class GenericService<T, ID, REPO extends JpaRepository<T, ID>> implements IService<T, ID> {
 
-    private REPO repository;
+    protected REPO repository;
 
     public GenericService(REPO repository) {
         this.repository = repository;
