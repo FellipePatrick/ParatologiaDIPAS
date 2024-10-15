@@ -1,6 +1,7 @@
 package com.api.sic.backend.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -16,22 +17,22 @@ public class RelatorioService extends GenericService<Relatorio, Long, RelatorioR
 
     @Override
     public Relatorio create(Relatorio entity) {
-        validateGestor(entity);
+        if ( entity.getGestor() == null || !entity.getGestor().getRole().toString().equalsIgnoreCase("GESTOR")) {
+            throw new IllegalArgumentException("Somente Gestores podem orientar um relatorio");
+        }
         return this.repository.save(entity);
     }
 
     @Override
     public Relatorio update(Relatorio entity, Long id) {
-        validateGestor(entity);
         entity.setId(id); 
+        Optional<Relatorio> before = this.repository.findById(id);
+        entity.setGestor(before.get().getGestor());
+        entity.setUsuario(before.get().getUsuario());
         return this.repository.saveAndFlush(entity);
     }
 
-    private void validateGestor(Relatorio entity) {
-        if ( entity.getGestor() == null || !entity.getGestor().getRole().toString().equalsIgnoreCase("GESTOR")) {
-            throw new IllegalArgumentException("Somente Gestores podem orientar um relatorio");
-        }
-    }
+
 
     @Override
     public List<Relatorio> findAll() {
