@@ -25,6 +25,7 @@ public class Usuario extends AbstractEntity {
     private String matricula;
     private String pathImage;
     private String senha;
+    
     @PrePersist
     private void gerarMatrículaESenha() {
         this.matricula = Usuario.gerarMatricula();

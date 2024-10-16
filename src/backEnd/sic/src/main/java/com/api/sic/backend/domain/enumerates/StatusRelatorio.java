@@ -1,4 +1,4 @@
-package com.api.sic.backend.domain;
+package com.api.sic.backend.domain.enumerates;
 
 public enum StatusRelatorio {
     PENDENTE,

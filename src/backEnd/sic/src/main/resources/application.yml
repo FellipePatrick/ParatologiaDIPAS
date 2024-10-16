@@ -16,7 +16,7 @@ spring:
     hibernate:
       #ddl-auto: update
       ddl-auto: create-drop
-    show-sql: true
+    # show-sql: true
 server:
   port: 8081
 

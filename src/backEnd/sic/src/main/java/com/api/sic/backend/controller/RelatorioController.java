@@ -46,7 +46,7 @@ public class RelatorioController {
     @PostMapping
     public ResponseEntity<RelatorioResponseDTO> create(@Valid @RequestBody RelatorioRequestDTO relatorio) {
         Relatorio created = service.create(convertToEntity(relatorio));
-    
+        
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("{id}")

@@ -3,6 +3,8 @@ package com.api.sic.backend.domain;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.api.sic.backend.domain.enumerates.StatusRelatorio;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
