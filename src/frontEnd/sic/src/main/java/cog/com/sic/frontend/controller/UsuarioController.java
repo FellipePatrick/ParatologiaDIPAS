@@ -107,7 +107,7 @@ public class UsuarioController {
         ModelAndView modelAndView = new ModelAndView("redirect:/usuarios/editar/" + id);
     
         try {
-            String url = URL + "/" + id; // Atualize a URL conforme necessário
+            String url = URL + "/" + id;
             ResponseEntity<UsuarioResponseDTO> response = restTemplate.exchange(url, HttpMethod.PUT,
                     new HttpEntity<>(usuarioRequestDTO), UsuarioResponseDTO.class);
     
@@ -153,7 +153,6 @@ public class UsuarioController {
         ModelAndView modelAndView = new ModelAndView("redirect:/usuarios");
 
         try {
-            // Envia a requisição para a API
             ResponseEntity<UsuarioResponseDTO> response = restTemplate.postForEntity(URL, usuarioRequestDTO,
                     UsuarioResponseDTO.class);
 

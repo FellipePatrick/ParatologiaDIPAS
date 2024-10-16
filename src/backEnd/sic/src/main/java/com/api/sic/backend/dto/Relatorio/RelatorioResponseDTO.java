@@ -1,11 +1,12 @@
-package com.api.sic.backend.dto.Relatorio;
+package com.api.sic.backend.dto.relatorio;
 
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import com.api.sic.backend.controller.RelatorioController;
 import com.api.sic.backend.domain.Relatorio;
-import com.api.sic.backend.dto.Usuario.UsuarioResponseDTO;
+import com.api.sic.backend.dto.usuario.UsuarioDefaultResponseDTO;
+
 
 import java.time.LocalDateTime;
 
@@ -25,8 +26,8 @@ public class RelatorioResponseDTO extends RepresentationModel<RelatorioResponseD
     private String status;
     private LocalDateTime dataModificacao;
     private String pathFotos;
-    private UsuarioResponseDTO usuario;
-    private UsuarioResponseDTO gestor; 
+    private UsuarioDefaultResponseDTO usuario;
+    private UsuarioDefaultResponseDTO gestor; 
 
     public void addLinks(Relatorio relatorio) {
         this.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder

@@ -1,4 +1,4 @@
-package com.api.sic.backend.dto.Usuario;
+package com.api.sic.backend.dto.usuario;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;

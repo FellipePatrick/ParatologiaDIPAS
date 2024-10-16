@@ -1,4 +1,4 @@
-package com.api.sic.backend.dto.Usuario;
+package com.api.sic.backend.dto.usuario;
 import com.api.sic.backend.controller.UsuarioController;
 import com.api.sic.backend.domain.Usuario;
 

@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.sic.backend.domain.Relatorio;
-import com.api.sic.backend.dto.Relatorio.RelatorioRequestDTO;
-import com.api.sic.backend.dto.Relatorio.RelatorioResponseDTO;
-import com.api.sic.backend.dto.Relatorio.RelatorioUpdateRequestDTO;
+import com.api.sic.backend.dto.relatorio.RelatorioRequestDTO;
+import com.api.sic.backend.dto.relatorio.RelatorioResponseDTO;
+import com.api.sic.backend.dto.relatorio.RelatorioUpdateRequestDTO;
 import com.api.sic.backend.service.RelatorioService;
+
+import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +44,7 @@ public class RelatorioController {
     }
 
     @PostMapping
-    public ResponseEntity<RelatorioResponseDTO> create(@RequestBody RelatorioRequestDTO relatorio) {
+    public ResponseEntity<RelatorioResponseDTO> create(@Valid @RequestBody RelatorioRequestDTO relatorio) {
         Relatorio created = service.create(convertToEntity(relatorio));
     
         URI location = ServletUriComponentsBuilder
@@ -68,7 +70,7 @@ public class RelatorioController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<RelatorioResponseDTO> update(@PathVariable("id") Long id, @RequestBody RelatorioUpdateRequestDTO relatorioUpdate) {
+    public ResponseEntity<RelatorioResponseDTO> update(@Valid @PathVariable("id") Long id, @RequestBody RelatorioUpdateRequestDTO relatorioUpdate) {
         Relatorio entityToUpdate = convertToEntity(relatorioUpdate);
         Relatorio updated = service.update(entityToUpdate, id);
 

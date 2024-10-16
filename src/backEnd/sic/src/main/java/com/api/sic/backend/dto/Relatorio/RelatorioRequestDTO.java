@@ -1,4 +1,4 @@
-package com.api.sic.backend.dto.Relatorio;
+package com.api.sic.backend.dto.relatorio;
 
 import java.time.LocalDateTime;
 
