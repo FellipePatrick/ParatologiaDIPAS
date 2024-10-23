@@ -18,6 +18,6 @@ public class ChamadoRequestDTO {
     private String assunto;
     @NotBlank(message = "A descrição é obrigatório.")
     private String descricao;
-    @NotNull(message = "O dono é obrigatório.")
-    private Usuario dono;
+    // @NotNull(message = "O dono é obrigatório.")
+    // private Usuario dono;
 }

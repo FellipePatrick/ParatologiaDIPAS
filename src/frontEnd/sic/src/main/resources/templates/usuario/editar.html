@@ -71,14 +71,15 @@
                                 <div class="form-group">
                                     <label for="tipoUsuario">Tipo de Usuário</label>
                                     <select id="tipoUsuario" name="role" class="form-control" required>
-                                        <option value="ADMINISTRADOR" th:if="${usuario.role == 'ADMINISTRADOR'}" selected>Administrador</option>
-                                        <option value="ORIENTADOR" th:if="${usuario.role == 'ORIENTADOR'}">Orientador</option>
-                                        <option value="BOLSISTA" th:if="${usuario.role == 'BOLSISTA'}">Bolsista</option>
+                                        <option value="ADMINISTRADOR" th:selected="${usuario.role == 'ADMINISTRADOR'}">Administrador</option>
+                                        <option value="GESTOR" th:selected="${usuario.role == 'GESTOR'}">Gestor</option>
+                                        <option value="USUARIO" th:selected="${usuario.role == 'USUARIO'}">Usuário</option>
                                     </select>
                                     <div th:if="${roleError != null}" class="text-danger">
                                         <small th:text="${roleError}"></small>
                                     </div>
                                 </div>
+                                
                                 <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                                 <a href="/usuarios" class="btn btn-secondary">Cancelar</a>
                             </form>

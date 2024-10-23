@@ -9,15 +9,16 @@
                 <nav th:replace="~{fragments/commons :: nav}"></nav>
                 <div class="container-fluid">
                     <div th:replace="~{fragments/commons :: headerMain(name='Chamados')}"></div>
+                    <div th:replace="~{fragments/commons :: warnings}"></div>
                     <div class="card shadow-sm border-0 rounded-lg mb-4 mt-5">
                         <div class="card-header bg-primary text-center">
                             <h5 class=" text-white">Tabela de Chamados</h5>
                         </div>
                         <div class="card-body">
-                            <table class="table table-bordered ">
+                            <table class="table table-bordered">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th>ID</th>
+                                        <th>#</th>
                                         <th>Assunto</th>
                                         <th>Descrição</th>
                                         <th>Status</th>
@@ -25,35 +26,41 @@
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody th:if="${#lists.isEmpty(chamados)}">
                                     <tr>
-                                        <td>1</td>
-                                        <td>Problema de acesso</td>
-                                        <td>Usuário não consegue acessar o sistema.</td>
-                                        <td>Aberto</td>
-                                        <td>18/09/2024</td>
+                                        <td colspan="6" class="text-center">Nenhum chamado encontrado</td>
+                                    </tr>
+                                </tbody>
+                                <tbody th:each="chamado, stat : ${chamados}" th:unless="${#lists.isEmpty(chamados)}">
+                                    <tr>
+                                        <td th:text="${stat.count}"></td>
+                                        <td th:text="${chamado.assunto}"></td>
+                                        <td th:text="${chamado.descricao}"></td>
+                                        <td th:text="${chamado.status}"></td>
+                                        <td th:text="${chamado.createdAt}"></td>
                                         <td>
                                             <button class="btn btn-sm btn-info">Visualizar</button>
-                                            <button class="btn btn-sm btn-danger">Fechar</button>
+                                            <a class="btn btn-sm btn-danger" th:href="@{'/chamados/delete/' + ${chamado.id}}">Fechar</a>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    
                     <div class="card shadow-sm border-0 rounded-lg mb-4 mt-5">
                         <div class="card-header bg-primary text-center">
                             <h5 class=" text-white">Abrir um Novo Chamado</h5>
                         </div>
                         <div class="card-body">
-                            <form>
+                            <form method="post" th:action="@{/chamados}">
                                 <div class="form-group">
                                     <label for="subject">Assunto</label>
-                                    <input type="text" class="form-control" id="subject" placeholder="Assunto do chamado" required>
+                                    <input type="text" name="assunto" class="form-control" id="subject" placeholder="Assunto do chamado" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="description">Descrição</label>
-                                    <textarea class="form-control" id="description" rows="4" placeholder="Descreva o problema" required></textarea>
+                                    <textarea class="form-control"name="descricao" id="description" rows="4" placeholder="Descreva o problema" required></textarea>
                                 </div>
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-primary">Abrir Chamado</button>

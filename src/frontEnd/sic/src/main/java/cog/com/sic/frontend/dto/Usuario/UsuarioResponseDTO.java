@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
+
 import org.springframework.hateoas.RepresentationModel;
 
 @Data
@@ -18,5 +20,6 @@ public class UsuarioResponseDTO extends RepresentationModel<UsuarioResponseDTO>{
     private String email;
     private String matricula;
     private String pathImage;
+    private LocalDate deletedAt;
     private Long id;
 }

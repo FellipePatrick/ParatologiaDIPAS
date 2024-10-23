@@ -8,7 +8,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @MappedSuperclass
@@ -22,10 +22,10 @@ public abstract class AbstractEntity {
 
     @CreationTimestamp
     @Column(updatable = false)
-    private LocalDateTime createdAt;
-    private LocalDateTime deletedAt = null;
+    private LocalDate createdAt;
+    private LocalDate deletedAt = null;
     @UpdateTimestamp
-    private LocalDateTime updatedAt = null;
+    private LocalDate updatedAt = null;
 
     @Override
     public boolean equals(Object o) {

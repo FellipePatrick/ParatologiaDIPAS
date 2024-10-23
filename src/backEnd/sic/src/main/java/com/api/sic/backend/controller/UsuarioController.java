@@ -1,6 +1,7 @@
 package com.api.sic.backend.controller;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.sic.backend.domain.Usuario;
+import com.api.sic.backend.domain.Usuario.Role;
 import com.api.sic.backend.dto.usuario.UsuarioRequestDTO;
 import com.api.sic.backend.dto.usuario.UsuarioRequestUpdateDTO;
 import com.api.sic.backend.dto.usuario.UsuarioResponseDTO;
@@ -38,26 +40,44 @@ public class UsuarioController {
 
     @GetMapping
     public Page<UsuarioResponseDTO> listAll(Pageable pageable) {
-        Page<Usuario> usuariosPage = service.listAll(pageable);
+        Page<Usuario> usuariosPage = service.findAllUsers(pageable);
         return usuariosPage.map(this::convertToDto);
     }
 
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> create(@Valid @RequestBody UsuarioRequestDTO usuario) {
         usuario.setRole(usuario.getRole().toUpperCase());
-        Usuario created = service.create(convertToEntity(usuario));
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("{id}")
-                .buildAndExpand(created.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).body(convertToDto(created));
+        Optional<Usuario> u = service.findByEmail(usuario.getEmail());
+        if(u.isPresent()){
+            Usuario us = u.get();
+            switch (usuario.getRole()) {
+                case "ADMINISTRADOR":
+                    us.setRole(Role.ADMINISTRADOR);
+                    break;
+                case "GESTOR":
+                    us.setRole(Role.GESTOR);
+                    break;
+                default:
+                    us.setRole(Role.USUARIO);
+                    break;
+            }
+            us.setDeletedAt(null);
+            us.setNome(usuario.getNome());
+            us.setTelefone(usuario.getTelefone());
+            Usuario UsuarioUpdated = service.update(us, us.getId());
+            return ResponseEntity.ok(convertToDto(UsuarioUpdated));
+        }else{
+            Usuario created = service.create(convertToEntity(usuario));
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("{id}")
+                    .buildAndExpand(created.getId())
+                    .toUri();
+            return ResponseEntity.created(location).body(convertToDto(created));
+        }
     }
 
     
-
-
     @GetMapping("{id}")
     public ResponseEntity<UsuarioResponseDTO> listById(@PathVariable("id") Long id) {
         Usuario p = service.findById(id);
@@ -85,7 +105,6 @@ public class UsuarioController {
         return ResponseEntity.ok(convertToDto(UsuarioUpdated));
     }
     
-
     private UsuarioResponseDTO convertToDto(Usuario created) {
         UsuarioResponseDTO UsuarioResponseDTO = mapper.map(created, UsuarioResponseDTO.class);
         UsuarioResponseDTO.addLinks(created);

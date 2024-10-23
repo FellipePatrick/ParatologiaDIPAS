@@ -6,10 +6,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hibernate.annotations.SQLDelete;
 import java.util.Random;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "usuario")
+@SQLDelete(sql = "UPDATE usuario SET deleted_at = CURRENT_TIMESTAMP WHERE id=?")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
+import java.time.LocalDate;
+
 import org.springframework.hateoas.RepresentationModel;
 
 @Data
@@ -22,6 +25,7 @@ public class UsuarioResponseDTO extends RepresentationModel<UsuarioResponseDTO>{
     private String matricula;
     private String senha;
     private Long id;
+    private LocalDate deletedAt;
     private String pathImage;
 
     public void addLinks(Usuario usuario){

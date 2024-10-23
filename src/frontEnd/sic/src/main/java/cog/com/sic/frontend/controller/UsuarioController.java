@@ -66,7 +66,7 @@ public class UsuarioController {
     public ModelAndView doEdite(@PathVariable Long id) {
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("usuario/editar");
-
+        
         try {
             String url = URL + "/" + id;
             ResponseEntity<UsuarioResponseDTO> response = restTemplate.getForEntity(url, UsuarioResponseDTO.class);
@@ -100,9 +100,6 @@ public class UsuarioController {
     public ModelAndView editarUsuario(@PathVariable("id") Long id,
             @ModelAttribute UsuarioUpdateRequestDTO usuarioRequestDTO,
             RedirectAttributes redirectAttributes) {
-        System.out.println("ID do Usuário: " + id);
-        System.out.println("Request DTO: " + usuarioRequestDTO);
-    
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("redirect:/usuarios/editar/" + id);
     
@@ -174,7 +171,6 @@ public class UsuarioController {
                     for (Map.Entry<String, String> error : errors.entrySet()) {
                         redirectAttributes.addFlashAttribute(error.getKey() + "Error", error.getValue());
                     }
-                    System.out.println("erros" + errors);
                     redirectAttributes.addFlashAttribute("errorMessage",
                             "Ocorreram violações de restrição no cadastro.");
 
@@ -187,7 +183,7 @@ public class UsuarioController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            
             redirectAttributes.addFlashAttribute("errorMessage", "Já existe um usuário com este email.");
         }
 

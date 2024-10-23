@@ -10,19 +10,13 @@
           
                 <div class="container-fluid">
                     <div th:replace="~{fragments/commons :: headerMain(name='Usuarios')}"></div>
+                    <div th:replace="~{fragments/commons :: warnings}"></div>
                     <div class="card card-waves mb-4 mt-5">
                         <div class="card-header bg-primary">
                             <h5 class="card-title text-white">Cadastrar Usuário</h5>
                         </div>
                         <div class="card-body">
                             <form id="cadastroForm" method="post" th:action="@{/usuarios}">
-                                <div th:if="${errorMessage != null}" class="alert alert-danger">
-                                    <span th:text="${errorMessage}"></span>
-                                </div>
-                                <div th:if="${successMessage != null}" class="alert alert-success">
-                                    <span th:text="${successMessage}"></span>
-                                </div>
-
                                 <div class="form-group">
                                     <label for="nome">Nome</label>
                                     <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome completo" required>
@@ -89,12 +83,14 @@
                                         <td th:text="${usuario.role}">Tipo de Usuário</td>
                                         <td>
                                             <a th:href="@{'/usuarios/editar/' + ${usuario.id}}" class="btn btn-sm btn-warning">Editar</a>
-                                            <a class="btn btn-sm btn-danger" th:href="@{'/usuarios/delete/' + ${usuario.id}}">Excluir </a>
+                                            <a class="btn btn-sm btn-danger" th:href="@{'/usuarios/delete/' + ${usuario.id}}">Excluir</a>
                                         </td>
                                     </tr>
+                                  
                                 </tbody>
                             </table>
                         </div>
+                        
                         
                     </div>
                 </div>            

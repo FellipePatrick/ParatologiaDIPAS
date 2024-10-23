@@ -1,3 +1,5 @@
 spring:
   application:
     name: SIC
+server:
+  port: 8082

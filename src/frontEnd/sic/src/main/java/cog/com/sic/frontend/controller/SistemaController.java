@@ -56,10 +56,6 @@ public class SistemaController {
         return new ModelAndView("suporte/politics");
     }
 
-    @GetMapping("/chamados")
-    public ModelAndView chamados(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
-        return new ModelAndView("chamados/index");
-    }
 
     @GetMapping("/chamado")
     public ModelAndView chamado(@ModelAttribute String s, RedirectAttributes redirectAttributes) {

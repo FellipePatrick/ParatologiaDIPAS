@@ -11,8 +11,14 @@
             integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     </head>
 <body>
-
-
+    <div th:fragment="warnings">
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
+          </div>
+          <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <span th:text="${errorMessage}"></span>
+          </div>
+    </div>
     <div class="d-sm-flex align-items-center justify-content-between mb-4 my-5" th:fragment="headerMain (name)">
         <div class="">
             <h1 class="h3 mb-0 text-gray-800" th:text="${name}"></h1>

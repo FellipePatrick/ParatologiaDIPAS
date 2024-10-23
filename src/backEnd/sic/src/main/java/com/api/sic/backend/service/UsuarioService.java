@@ -1,7 +1,12 @@
 package com.api.sic.backend.service;
 
-import java.util.List;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.api.sic.backend.domain.Usuario;
@@ -17,14 +22,24 @@ public class UsuarioService extends GenericService<Usuario, Long, UsuarioReposit
         this.repository = repository;
     }
     
-    @Override
-    public List<Usuario> findAll() {
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+
+   public Page<Usuario> findAllUsers(Pageable pageable) {
+    Page<Usuario> usuariosPage = repository.findAll(pageable);
+    List<Usuario> usuariosFiltrados = usuariosPage.stream()
+                                                  .filter(usuario -> usuario.getDeletedAt() == null)
+                                                  .toList();
+    return new PageImpl<>(usuariosFiltrados, pageable, usuariosPage.getTotalElements());
+}
+
+    
+
+
+    public Optional<Usuario> findByEmail(String email){
+        return Optional.ofNullable(repository.findByEmail(email));
     }
 
     public Usuario update(Usuario usuario, Long id) {
         Usuario existingUsuario = repository.findById(id).get();
-        System.err.println("Usuario: " + usuario);
         if(existingUsuario == null){
             throw new RuntimeException("Usuário não encontrado");
         }
@@ -36,5 +51,12 @@ public class UsuarioService extends GenericService<Usuario, Long, UsuarioReposit
             existingUsuario.setSenha(usuario.getSenha());   
         }
         return repository.save(existingUsuario);
+    }
+
+
+    @Override
+    public List<Usuario> findAll() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 }
