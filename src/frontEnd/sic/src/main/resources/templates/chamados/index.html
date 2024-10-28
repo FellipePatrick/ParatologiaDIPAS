@@ -39,7 +39,7 @@
                                         <td th:text="${chamado.status}"></td>
                                         <td th:text="${chamado.createdAt}"></td>
                                         <td>
-                                            <button class="btn btn-sm btn-info">Visualizar</button>
+                                            <a class="btn btn-sm btn-info" th:href="@{'/chamados/editar/' + ${chamado.id}}">Visualizar</a>
                                             <a class="btn btn-sm btn-danger" th:href="@{'/chamados/delete/' + ${chamado.id}}">Fechar</a>
                                         </td>
                                     </tr>

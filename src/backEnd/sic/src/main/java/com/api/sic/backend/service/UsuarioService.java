@@ -47,9 +47,6 @@ public class UsuarioService extends GenericService<Usuario, Long, UsuarioReposit
         existingUsuario.setTelefone(usuario.getTelefone());
         existingUsuario.setRole(usuario.getRole());
         existingUsuario.setEmail(usuario.getEmail());
-        if (!usuario.getSenha().isEmpty()) {
-            existingUsuario.setSenha(usuario.getSenha());   
-        }
         return repository.save(existingUsuario);
     }
 

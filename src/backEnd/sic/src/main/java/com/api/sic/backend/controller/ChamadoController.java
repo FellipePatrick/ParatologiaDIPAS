@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.sic.backend.domain.Chamado;
+import com.api.sic.backend.domain.enumerates.StatusChamado;
 import com.api.sic.backend.dto.chamado.ChamadoRequestDTO;
 import com.api.sic.backend.dto.chamado.ChamadoResponseDTO;
 import com.api.sic.backend.dto.chamado.ChamadoUpdateRequestDTO;
@@ -74,8 +75,21 @@ public class ChamadoController {
     @PutMapping("{id}")
     public ResponseEntity<ChamadoResponseDTO> update(@Valid @PathVariable("id") Long id, @RequestBody ChamadoUpdateRequestDTO chamadoUpdate) {
         Chamado entityToUpdate = convertToEntity(chamadoUpdate);
+        switch (chamadoUpdate.getStatus()) {
+            case "ABERTO":
+                entityToUpdate.setStatus(StatusChamado.ABERTO);       
+                break;
+            case "ANDAMENTO":
+                entityToUpdate.setStatus(StatusChamado.ANDAMENTO);
+                break;
+            case "FECHADO":
+                entityToUpdate.setStatus(StatusChamado.CONCLUIDO);
+                break;
+            default:
+                entityToUpdate.setStatus(StatusChamado.ABERTO);
+                break;
+        }
         Chamado updated = service.update(entityToUpdate, id);
-
         return ResponseEntity.ok(convertToDto(updated));
     }
 

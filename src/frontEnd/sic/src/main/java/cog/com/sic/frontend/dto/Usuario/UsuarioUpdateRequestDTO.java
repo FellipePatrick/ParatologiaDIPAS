@@ -12,5 +12,5 @@ public class UsuarioUpdateRequestDTO {
         private String telefone;
         private String role; 
         private String email;
-        private String senha;
+        // private String senha;
 }
