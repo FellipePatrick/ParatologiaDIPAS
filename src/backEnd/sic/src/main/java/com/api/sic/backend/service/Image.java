@@ -23,30 +23,33 @@ public class Image {
      * @version 1.0
      * */
 
-    /**
-     * O método segmentImages é usado para ler várias imagens e processá-las.
-     *
-     * @param path      O caminho para o diretório que contém os arquivos de imagem.
-     * @param extension A extensão dos arquivos de imagem.
-     * @param qtdImages A quantidade de imagens a serem processadas.
-     * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
-     *
-     */
+    // /**
+    //  * O método segmentImages é usado para ler várias imagens e processá-las.
+    //  *
+    //  * @param path      O caminho para o diretório que contém os arquivos de imagem.
+    //  * @param extension A extensão dos arquivos de imagem.
+    //  * @param qtdImages A quantidade de imagens a serem processadas.
+    //  * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
+    //  *
+    //  */
 
 
-    public static void segmentImages(String path, String extension, int qtdImages, String zoom){
+
+    //Depois estudar a impplementação desse método
+
+    // public static void segmentImages(String path, String extension, int qtdImages, String zoom){
       
-        for (int cont = 1; cont <= qtdImages; cont++) {
-            // Carrega a imagem da vez
-            Mat image = Imgcodecs.imread(path +"\\image" +cont +"."+ extension);
-            // Verifica se a imagem foi carregada corretamente
-            if (image.empty()) {
-                System.out.println("Erro ao carregar a imagem!");
-                return;
-            }
-            segmentImage(path, cont, zoom);
-        }
-    }
+    //     for (int cont = 1; cont <= qtdImages; cont++) {
+    //         // Carrega a imagem da vez
+    //         Mat image = Imgcodecs.imread(path +"\\image" +cont +"."+ extension);
+    //         // Verifica se a imagem foi carregada corretamente
+    //         if (image.empty()) {
+    //             System.out.println("Erro ao carregar a imagem!");
+    //             return;
+    //         }
+    //         segmentImage(path, cont, zoom);
+    //     }
+    // }
 
 
     /**
@@ -56,57 +59,49 @@ public class Image {
      * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
      *
      */
-    public static void segmentImage(String path, int cont, String zoom){
+    public static void segmentImage(String path, String im, String zoom){
         // Carrega a biblioteca nativa do OpenCV
   
+        int cont = 1;
         // Carrega a imagem
-        Mat image = Imgcodecs.imread("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img\\image2.jpeg");
+        Mat image = Imgcodecs.imread(im);
 
-        System.out.println("Passou no mat");
         if (image.empty()) {
             System.out.println("Erro ao carregar a imagem!");
             return;
         }
-        System.out.println("Imagem carregada com sucesso!");
-
         Mat result;
         Mat orig;
 
         // Caso o zoom seja ativado
         if (zoom.equalsIgnoreCase("sim")) {
-            System.out.println("Aplicando zoom...");
             result = ajustaBrilhoContrasteZoom(image);
             String resultPath = path + File.separator + "result" + File.separator + "orig" + cont + ".jpeg";
 
             // Salva a imagem ajustada
             Imgcodecs.imwrite(resultPath, result);
-            System.out.println("Imagem com zoom salva em: " + resultPath);
 
             // Encontra e processa a região preta na imagem
             List<Mat> outputImage = findBlackRegion(image, result, path + File.separator + "result" + File.separator, cont, zoom);
-            System.out.println("Região preta encontrada e processada.");
+
         } else {
             // Caso o zoom não seja ativado
-            System.out.println("Processando imagem sem zoom...");
             result = processImagePhone(image);
             orig = result;
 
             // Salva a imagem original processada
-            String origPath = path + File.separator + "result" + File.separator + "orig" + cont + ".jpeg";
+            String origPath = path + "orig" + cont + ".jpeg";
             Imgcodecs.imwrite(origPath, result);
-            System.out.println("Imagem original salva em: " + origPath);
 
             // Ajusta brilho e contraste
             result = ajustaBrilhoContraste(result);
 
             // Salva a imagem com ajuste de brilho e contraste
-            String adjustedPath = path + File.separator + "result" + File.separator + "alar" + cont + ".jpeg";
+            String adjustedPath = path +"alar" + cont + ".jpeg";
             Imgcodecs.imwrite(adjustedPath, result);
-            System.out.println("Imagem ajustada salva em: " + adjustedPath);
 
             // Encontra e processa a região preta na imagem
             List<Mat> outputImage = findBlackRegion(orig, result, path + File.separator + "result" + File.separator, cont, zoom);
-            System.out.println("Região preta encontrada e processada.");
         }
     }
 

@@ -23,13 +23,13 @@ public class SicApplication implements WebMvcConfigurer {
         SpringApplication.run(SicApplication.class, args);
         OpenCV.loadShared();
 	
-		Image.resetDiretorio("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img\\result");
+		// Image.resetDiretorio("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img\\result");
 
-        //Segmentando uma pasta de imagens
-        //org.example.Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", "jpeg" , 4, "sim");
+        // //Segmentando uma pasta de imagens
+        // //org.example.Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", "jpeg" , 4, "sim");
 
-        //Segmentando apenas uma imagem especifica
-        Image.segmentImage("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img", 2 , "não");
+        // //Segmentando apenas uma imagem especifica
+        // Image.segmentImage("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img", 2 , "não");
     }
 
 
