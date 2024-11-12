@@ -14,12 +14,21 @@
                     </div>
                     <div class="card card-waves mb-4 mt-5">
                         <div class="card-body">
-                            <form action="#" method="post" enctype="multipart/form-data">
+                            <form th:action="@{/images}" method="post" enctype="multipart/form-data">
+                                <div class="form-group mt-3">
+                                    <label for="zoom">Imagens com zoom</label>
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" id="zoom" name="zoom" value="com_zoom">
+                                        <label class="custom-control-label" for="zoom">
+                                    
+                                        </label>
+                                    </div>
+                                </div>     
                                 <div class="form-group mt-3">
                                     <label for="imagem">Envio de Imagens</label>
-                                    <input type="file" class="form-control-file" id="imagem" name="imagem" accept="image/*" multiple required>
-                                </div>
-                                <a th:href="@{/analisar}" type="submit" class="btn btn-primary mt-3">Analisar</a>
+                                    <input type="file" class="form-control-file" id="imagens" name="imagens" accept="image/*" multiple required>
+                                </div>                           
+                                <button type="submit" class="btn btn-primary mt-3">Analisar</button>
                             </form>
                         </div>
                     </div>

@@ -1,7 +1,14 @@
 spring:
   application:
-    name: SIC
+    admin:
+      enabled: false
+  jmx:
+    enabled: false
   # Database connection settings
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   datasource:
     url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?serverTimezone=UTC
     username: postgres
@@ -19,4 +26,3 @@ spring:
     # show-sql: true
 server:
   port: 8081
-

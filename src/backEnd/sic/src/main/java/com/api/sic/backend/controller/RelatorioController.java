@@ -56,6 +56,8 @@ public class RelatorioController {
         return ResponseEntity.created(location).body(convertToDto(created));
     }
 
+
+
     @GetMapping("{id}")
     public ResponseEntity<RelatorioResponseDTO> listById(@PathVariable("id") Long id) {
         Relatorio relatorio = service.findById(id);
