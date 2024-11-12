@@ -1,5 +1,6 @@
 package com.api.sic.backend.controller;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,14 +16,20 @@ import lombok.AllArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/file/")
-@AllArgsConstructor
-public class FileController {
 
+public class FileController {
     private final FileStorageService fileStorageService;
     private final ImageProcessService imageProcessService;
+
+    public FileController(FileStorageService fileStorageService, ImageProcessService imageProcessService) {
+        this.fileStorageService = fileStorageService;
+        this.imageProcessService = imageProcessService;
+    }
+
     @PostMapping
     public ResponseEntity<String> uploadImages(@RequestParam("files") List<MultipartFile> files) {
         if (files.isEmpty()) {

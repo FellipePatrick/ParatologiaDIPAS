@@ -1,4 +1,4 @@
-package org.example;
+package main.java.org.example;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;

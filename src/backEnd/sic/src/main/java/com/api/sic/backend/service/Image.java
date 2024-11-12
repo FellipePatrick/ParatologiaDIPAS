@@ -4,12 +4,17 @@ package com.api.sic.backend.service;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.springframework.stereotype.Service;
+
+import nu.pattern.OpenCV;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Service
 public class Image {
     /**
      * Classe Image, que fornece métodos para análise de imagens.
@@ -30,6 +35,7 @@ public class Image {
 
 
     public static void segmentImages(String path, String extension, int qtdImages, String zoom){
+      
         for (int cont = 1; cont <= qtdImages; cont++) {
             // Carrega a imagem da vez
             Mat image = Imgcodecs.imread(path +"\\image" +cont +"."+ extension);
@@ -38,7 +44,7 @@ public class Image {
                 System.out.println("Erro ao carregar a imagem!");
                 return;
             }
-            segmentImage(path, zoom, path +"\\image" +cont +"."+ extension);
+            segmentImage(path, cont, zoom);
         }
     }
 
@@ -47,55 +53,62 @@ public class Image {
      * O método segmentImage é usado para ler uma imagem e processá-la.
      *
      * @param path O caminho para o diretório que contém os arquivos de imagem.
-     * @param cont É a numeração da imagem da vez.
      * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
      *
      */
-    public static void segmentImage(String path, String zoom, String imageName){
+    public static void segmentImage(String path, int cont, String zoom){
+        // Carrega a biblioteca nativa do OpenCV
+  
         // Carrega a imagem
-        Mat image = Imgcodecs.imread(path + "\\" + imageName);
-        // Obter e imprimir as dimensões da imagem
+        Mat image = Imgcodecs.imread("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img\\image2.jpeg");
 
-        // Verifica se a imagem foi carregada corretamente
+        System.out.println("Passou no mat");
         if (image.empty()) {
             System.out.println("Erro ao carregar a imagem!");
             return;
         }
-        // Penser em uma logica para esse cont depois
-        int cont = 1;
+        System.out.println("Imagem carregada com sucesso!");
+
         Mat result;
         Mat orig;
-       if(zoom.equalsIgnoreCase("sim")){
-           result = ajustaBrilhoContrasteZoom(image);
-           //Salva a imagem
-           Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
-           String outputPath = path+"\\result\\";
 
-           List<Mat> outputImage = findBlackRegion(image, result, outputPath, cont, zoom);
+        // Caso o zoom seja ativado
+        if (zoom.equalsIgnoreCase("sim")) {
+            System.out.println("Aplicando zoom...");
+            result = ajustaBrilhoContrasteZoom(image);
+            String resultPath = path + File.separator + "result" + File.separator + "orig" + cont + ".jpeg";
 
-       }
-       else{
-           //Recebe o resultado da imagem tratada da classe processImagePhone
-           result =  processImagePhone(image);
+            // Salva a imagem ajustada
+            Imgcodecs.imwrite(resultPath, result);
+            System.out.println("Imagem com zoom salva em: " + resultPath);
 
-           orig = result;
+            // Encontra e processa a região preta na imagem
+            List<Mat> outputImage = findBlackRegion(image, result, path + File.separator + "result" + File.separator, cont, zoom);
+            System.out.println("Região preta encontrada e processada.");
+        } else {
+            // Caso o zoom não seja ativado
+            System.out.println("Processando imagem sem zoom...");
+            result = processImagePhone(image);
+            orig = result;
 
-           // Salva a imagem
-           Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
+            // Salva a imagem original processada
+            String origPath = path + File.separator + "result" + File.separator + "orig" + cont + ".jpeg";
+            Imgcodecs.imwrite(origPath, result);
+            System.out.println("Imagem original salva em: " + origPath);
 
-           result = ajustaBrilhoContraste(result);
+            // Ajusta brilho e contraste
+            result = ajustaBrilhoContraste(result);
 
-           //Salva a imagem
-           Imgcodecs.imwrite(path + "\\result\\alar"+ cont + ".jpeg" ,result);
+            // Salva a imagem com ajuste de brilho e contraste
+            String adjustedPath = path + File.separator + "result" + File.separator + "alar" + cont + ".jpeg";
+            Imgcodecs.imwrite(adjustedPath, result);
+            System.out.println("Imagem ajustada salva em: " + adjustedPath);
 
-           String outputPath = path+"\\result\\";
-
-           List<Mat> outputImage = findBlackRegion(orig, result, outputPath, cont, zoom);
-       }
-
+            // Encontra e processa a região preta na imagem
+            List<Mat> outputImage = findBlackRegion(orig, result, path + File.separator + "result" + File.separator, cont, zoom);
+            System.out.println("Região preta encontrada e processada.");
+        }
     }
-    
-
 
     /**
      * O método findBlackRegion é usado para encontrar na imagem as regiões pretas, que possivelmente são os foregrounds procurados,

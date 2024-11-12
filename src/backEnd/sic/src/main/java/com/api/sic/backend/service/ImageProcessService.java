@@ -12,10 +12,8 @@ public class ImageProcessService{
 
     
     public void processarImagem(String imageName){
-        String x = "C:\\Users\\felli\\Desktop\\ParatologiaDIPAS\\src\\backEnd\\sic\\src\\main\\webapp\\WEB-INF\\images";
-        System.err.println("Path: " + x);
         System.out.println("OpenCV version: " + Core.VERSION);
 
-        Image.segmentImage(x, "não", imageName);
+        Image.segmentImage("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img", 2 , "não");
     }
 }
