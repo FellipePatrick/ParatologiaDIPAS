@@ -59,7 +59,7 @@ public class Image {
      * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
      *
      */
-    public static void segmentImage(String path, String im, String zoom){
+    public static void segmentImage(String path, String im, String imName, String zoom){
         // Carrega a biblioteca nativa do OpenCV
   
         int cont = 1;
@@ -76,13 +76,13 @@ public class Image {
         // Caso o zoom seja ativado
         if (zoom.equalsIgnoreCase("sim")) {
             result = ajustaBrilhoContrasteZoom(image);
-            String resultPath = path + File.separator + "result" + File.separator + "orig" + cont + ".jpeg";
+            String resultPath = path + File.separator + "result" + File.separator + "orig" + imName;
 
             // Salva a imagem ajustada
             Imgcodecs.imwrite(resultPath, result);
 
             // Encontra e processa a região preta na imagem
-            List<Mat> outputImage = findBlackRegion(image, result, path + File.separator + "result" + File.separator, cont, zoom);
+            List<Mat> outputImage = findBlackRegion(image, result, path + File.separator + "result" + File.separator, imName, zoom);
 
         } else {
             // Caso o zoom não seja ativado
@@ -90,18 +90,17 @@ public class Image {
             orig = result;
 
             // Salva a imagem original processada
-            String origPath = path + "orig" + cont + ".jpeg";
-            Imgcodecs.imwrite(origPath, result);
+            String origPath = path + File.separator +"result"+ File.separator+ "orig" + imName;
+            // Imgcodecs.imwrite(origPath, result);
 
             // Ajusta brilho e contraste
             result = ajustaBrilhoContraste(result);
-
             // Salva a imagem com ajuste de brilho e contraste
-            String adjustedPath = path +"alar" + cont + ".jpeg";
-            Imgcodecs.imwrite(adjustedPath, result);
+            String adjustedPath = path + File.separator +"result"+ File.separator+ "alar" + imName;
+            // Imgcodecs.imwrite(adjustedPath, result);
 
             // Encontra e processa a região preta na imagem
-            List<Mat> outputImage = findBlackRegion(orig, result, path + File.separator + "result" + File.separator, cont, zoom);
+            List<Mat> outputImage = findBlackRegion(orig, result, path + File.separator + "result" + File.separator, imName, zoom);
         }
     }
 
@@ -117,7 +116,7 @@ public class Image {
      * @return Retorna uma lista de objetos encontrados na imagem.
      *
      */
-    public static List<Mat> findBlackRegion(Mat imageOriginal, Mat inputImage, String outputPath, int cont, String zoom) {
+    public static List<Mat> findBlackRegion(Mat imageOriginal, Mat inputImage, String outputPath, String imName, String zoom) {
         // Verificar se a imagem de entrada é vazia
         if (inputImage.empty()) {
             throw new IllegalArgumentException("A imagem de entrada está vazia");
@@ -141,6 +140,7 @@ public class Image {
         double perimeter;
         double circularity;
         double maxObject = 500;
+        int cont = 1;
         if(zoom.equalsIgnoreCase("sim")){
             maxObject =  imageOriginal.rows()*5;
         }else{
@@ -150,32 +150,60 @@ public class Image {
         }
 
         // Processar cada contorno que atenda aos critérios de área e circularidade
+        // for (MatOfPoint contour : contours) {
+        //     Rect rect = Imgproc.boundingRect(contour);
+        //     area = rect.area();
+        //     if (area >= maxObject) {
+        //         // Calcular a circularidade
+        //         perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
+        //         circularity = 4 * Math.PI * area / (perimeter * perimeter);
+        //         if(circularity > 0.2){
+        //             // Criar uma imagem de saída destacando a região com alta concentração de preto
+        //             Mat outputImage = inputImage.clone();
+        //             Imgproc.rectangle(outputImage, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
+
+        //             // Salvar a imagem de saída com a região destacada
+        //             Imgcodecs.imwrite(outputPath + "blackimg" + cont + imName, outputImage);
+
+        //             // Cortar a região encontrada da imagem original
+        //             Mat croppedImage = new Mat(imageOriginal, rect);
+        //             croppedImages.add(croppedImage);
+
+        //             // Salvar a imagem cortada (opcional)
+        //             //Imgcodecs.imwrite(outputPath + "blackimgcurted" + cont + imName, croppedImage);
+
+        //             cont++;
+        //         }
+        //     }
+        // }
+
+
+        Mat outputImage = inputImage.clone();
+
         for (MatOfPoint contour : contours) {
             Rect rect = Imgproc.boundingRect(contour);
             area = rect.area();
+
             if (area >= maxObject) {
                 // Calcular a circularidade
                 perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
                 circularity = 4 * Math.PI * area / (perimeter * perimeter);
-                if(circularity > 0.2){
-                    // Criar uma imagem de saída destacando a região com alta concentração de preto
-                    Mat outputImage = inputImage.clone();
+
+                if (circularity > 0.2) {
+                    // Desenhar o retângulo diretamente na imagem de saída
                     Imgproc.rectangle(outputImage, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
 
-                    // Salvar a imagem de saída com a região destacada
-                    //Imgcodecs.imwrite(outputPath + "blackimg" + x + cont + ".jpeg", outputImage);
-
-                    // Cortar a região encontrada da imagem original
+                    // Cortar a região encontrada da imagem original (opcional)
                     Mat croppedImage = new Mat(imageOriginal, rect);
                     croppedImages.add(croppedImage);
-
-                    // Salvar a imagem cortada (opcional)
-                    Imgcodecs.imwrite(outputPath + "blackimgcurted" + x + cont + ".jpeg", croppedImage);
 
                     cont++;
                 }
             }
         }
+
+        // Salvar a imagem de saída com todas as regiões destacadas
+        Imgcodecs.imwrite(outputPath + "blackimg_all_regions" + imName, outputImage);
 
         return croppedImages;
     }

@@ -13,8 +13,9 @@ public class ImageProcessService{
 
     
     public void processarImagem(String imageName){
-        System.out.println("OpenCV version: " + Core.VERSION);
 
-        Image.segmentImage(root, root+"\\"+imageName , "não");
+        Image.resetDiretorio(root+"\\result");
+
+        Image.segmentImage(root, root+"\\"+imageName,imageName, "não");
     }
 }
