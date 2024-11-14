@@ -25,10 +25,7 @@ public class RelatorioController {
                                       RedirectAttributes redirectAttributes) {
 
         RestTemplate restTemplate = new RestTemplate();
-        ModelAndView modelAndView = new ModelAndView("redirect:/processar");
-
-
-        System.err.println("Chegou aqui");
+        ModelAndView modelAndView = new ModelAndView("redirect:/analisar");
         try {
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 

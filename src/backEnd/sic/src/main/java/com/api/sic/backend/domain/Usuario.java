@@ -44,7 +44,7 @@ public class Usuario extends AbstractEntity {
         return RandomStringUtils.random(comprimento, true, true);
     }
 
-    public enum Role {
+    public static enum Role {
         ADMINISTRADOR, GESTOR, USUARIO;
     }
 }

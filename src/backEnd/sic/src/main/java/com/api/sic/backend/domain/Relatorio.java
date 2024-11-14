@@ -32,8 +32,7 @@ public class Relatorio extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private StatusRelatorio status;
     private LocalDateTime dataModificacao;
-    private String pathFotos;
-
+    
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     private Usuario usuario;

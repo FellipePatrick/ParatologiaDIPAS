@@ -23,9 +23,6 @@ public class RelatorioUpdateRequestDTO {
     @NotBlank(message = "O status é obrigatório.")
     private String status;
 
-    @NotBlank(message = "O caminho das fotos é obrigatório.")
-    private String pathFotos;
-
     private LocalDateTime dataModificacao = LocalDateTime.now();
 
 }

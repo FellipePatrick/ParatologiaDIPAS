@@ -25,7 +25,6 @@ public class RelatorioResponseDTO extends RepresentationModel<RelatorioResponseD
     private String descricao;
     private String status;
     private LocalDateTime dataModificacao;
-    private String pathFotos;
     private UsuarioDefaultResponseDTO usuario;
     private UsuarioDefaultResponseDTO gestor; 
 

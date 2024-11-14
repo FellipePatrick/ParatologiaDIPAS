@@ -26,9 +26,6 @@ public class RelatorioRequestDTO {
     @NotBlank(message = "O status é obrigatório.")
     private String status;
 
-    @NotBlank(message = "O caminho das fotos é obrigatório.")
-    private String pathFotos;
-
     @NotNull(message = "O usuário é obrigatório.")
     private Usuario usuario;
 

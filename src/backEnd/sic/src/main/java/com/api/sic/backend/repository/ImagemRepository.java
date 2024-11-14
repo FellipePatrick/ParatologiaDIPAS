@@ -1,9 +1,10 @@
 package com.api.sic.backend.repository;
-import com.api.sic.backend.domain.Relatorio;
+
+import com.api.sic.backend.domain.Imagem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RelatorioRepository extends JpaRepository<Relatorio, Long>{
+public interface ImagemRepository extends JpaRepository<Imagem, Long>{
     
 }

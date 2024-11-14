@@ -66,6 +66,7 @@ public class Image {
         // Carrega a imagem
         Mat image = Imgcodecs.imread(im);
 
+        Mat ims = image.clone();
         if (image.empty()) {
             System.out.println("Erro ao carregar a imagem!");
             return;
@@ -82,7 +83,7 @@ public class Image {
             Imgcodecs.imwrite(resultPath, result);
 
             // Encontra e processa a região preta na imagem
-            List<Mat> outputImage = findBlackRegion(image, result, path + File.separator + "result" + File.separator, imName, zoom);
+            List<Mat> outputImage = findBlackRegion(image,image, result, path + File.separator + "result" + File.separator, imName, zoom);
 
         } else {
             // Caso o zoom não seja ativado
@@ -100,7 +101,7 @@ public class Image {
             // Imgcodecs.imwrite(adjustedPath, result);
 
             // Encontra e processa a região preta na imagem
-            List<Mat> outputImage = findBlackRegion(orig, result, path + File.separator + "result" + File.separator, imName, zoom);
+            List<Mat> outputImage = findBlackRegion(orig,image, result, path + File.separator, imName, zoom);
         }
     }
 
@@ -116,7 +117,7 @@ public class Image {
      * @return Retorna uma lista de objetos encontrados na imagem.
      *
      */
-    public static List<Mat> findBlackRegion(Mat imageOriginal, Mat inputImage, String outputPath, String imName, String zoom) {
+    public static List<Mat> findBlackRegion(Mat imageOriginal, Mat imOrig, Mat inputImage, String outputPath, String imName, String zoom) {
         // Verificar se a imagem de entrada é vazia
         if (inputImage.empty()) {
             throw new IllegalArgumentException("A imagem de entrada está vazia");
@@ -178,7 +179,7 @@ public class Image {
         // }
 
 
-        Mat outputImage = inputImage.clone();
+        Mat outputImage = imOrig.clone();
 
         for (MatOfPoint contour : contours) {
             Rect rect = Imgproc.boundingRect(contour);
@@ -203,7 +204,7 @@ public class Image {
         }
 
         // Salvar a imagem de saída com todas as regiões destacadas
-        Imgcodecs.imwrite(outputPath + "blackimg_all_regions" + imName, outputImage);
+        Imgcodecs.imwrite(outputPath + "Circulada" + imName, outputImage);
 
         return croppedImages;
     }
