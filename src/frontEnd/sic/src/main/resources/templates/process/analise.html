@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/commons :: head}"></head>
+<head th:replace="~{fragments/commons :: head}">
+    <style>
+        /* Definir tamanho pequeno para as imagens */
+        .img-thumbnail-small {
+            max-width: 120px; /* Ajuste o tamanho conforme necessário */
+            height: 100p´x;
+        }
+    </style>
+</head>
 <body id="page-top">
     <div id="wrapper">
         <div th:replace="~{fragments/commons :: sidebar}"></div>
@@ -14,7 +22,7 @@
                         <div class="card-body">
                             <form action="#" method="post" enctype="multipart/form-data">
                                 <div class="form-group">
-                                    <label for="titulo">Título do Relatorio</label>
+                                    <label for="titulo">Título do Relatório</label>
                                     <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Digite o título" required>
                                 </div>
                                 <div class="form-group mt-3">
@@ -26,60 +34,66 @@
 
                     <div class="card card-waves mt-5">
                         <div class="card-body">
-                            <h5 class="card-title">Parasitas Detectados</h5>
+                            <h5 class="card-title">Imagens</h5>
                             <div id="parasitas-gallery" class="row">
-                                <div class="col-md-4 mb-4">
+                                <!-- Exibindo imagens originais -->
+                                <div class="col-md-6 mb-4" th:each="imagem : ${imagensOriginal}">
                                     <div class="card">
-                                        <img src="caminho/para/parasitodetectado1.jpg" class="card-img-top" alt="Parasita Detectado 1">
+                                        <img th:src="${baseImageUrl} + ${imagem.path}" style="height: 300px; width: 250px;" class="card-img-top img-thumbnail-small" alt="Imagem Original" data-bs-toggle="modal" data-bs-target="#imageModal" th:data-image-src="${baseImageUrl} + ${imagem.path}">
                                         <div class="card-body">
-                                            <h6 class="card-title">Título do Parasita 1</h6>
-                                            <p class="card-text">Descrição do Parasita 1</p>
+                                            <h6 class="card-title" th:text="${imagem.nome}"></h6>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4 mb-4">
+                                <!-- Exibindo imagens processadas -->
+                                <div class="col-md-6 mb-4" th:each="imagem : ${imagensProcessada}">
                                     <div class="card">
-                                        <img src="caminho/para/parasitodetectado2.jpg" class="card-img-top" alt="Parasita Detectado 2">
+                                        <img th:src="${baseImageUrl} + ${imagem.path}"  style="height: 300px; width: 250px;" class="card-img-top img-thumbnail-small" alt="Imagem Processada" data-bs-toggle="modal" data-bs-target="#imageModal" th:data-image-src="${baseImageUrl} + ${imagem.path}">
                                         <div class="card-body">
-                                            <h6 class="card-title">Título do Parasita 2</h6>
-                                            <p class="card-text">Descrição do Parasita 2</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card card-waves mt-5">
-                        <div class="card-body">
-                            <h5 class="card-title">Outros</h5>
-                            <div id="outros-gallery" class="row">
-                                <div class="col-md-4 mb-4">
-                                    <div class="card">
-                                        <img src="caminho/para/outro1.jpg" class="card-img-top" alt="Outro 1">
-                                        <div class="card-body">
-                                            <h6 class="card-title">Título do Outro 1</h6>
-                                            <p class="card-text">Descrição do Outro 1</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-4">
-                                    <div class="card">
-                                        <img src="caminho/para/outro2.jpg" class="card-img-top" alt="Outro 2">
-                                        <div class="card-body">
-                                            <h6 class="card-title">Título do Outro 2</h6>
-                                            <p class="card-text">Descrição do Outro 2</p>
+                                            <h6 class="card-title" th:text="${imagem.nome}"></h6>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-3">Salvar Relatorio</button>
+                    </div>  
+
+                    <button type="submit" class="btn btn-primary mt-3">Salvar Relatório</button>
                 </form>
                 </div>            
             </div>
             <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
         </div>
     </div>
+
+    <!-- Modal para exibir a imagem em tamanho maior -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Imagem</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImage" class="img-fluid" alt="Imagem no Modal">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para atualizar a imagem do modal ao clicar na miniatura -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modalImage = document.getElementById('modalImage');
+            var imageElements = document.querySelectorAll('[data-bs-target="#imageModal"]');
+
+            imageElements.forEach(function (imageElement) {
+                imageElement.addEventListener('click', function () {
+                    var imageSrc = imageElement.getAttribute('data-image-src');
+                    modalImage.src = imageSrc;
+                });
+            });
+        });
+    </script>
 </body>
 </html>

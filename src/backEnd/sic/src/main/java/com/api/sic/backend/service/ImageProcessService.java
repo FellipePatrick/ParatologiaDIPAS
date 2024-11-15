@@ -26,14 +26,14 @@ public class ImageProcessService{
         Imagem imagemOriginal = new Imagem();
         imagemOriginal.setNome("Original");
         imagemOriginal.setCodigoIm(codigoIm);
-        imagemOriginal.setPath(root);
+        imagemOriginal.setPath(pathImage);
         imagemOriginal.setRelatorio(relatorioService.findById(idRelatorio));
         imagemService.create(imagemOriginal);
 
         Imagem imagemCirculada = new Imagem();
         imagemCirculada.setNome("Circulada");
         imagemCirculada.setCodigoIm(codigoIm);
-        imagemCirculada.setPath(root);
+        imagemCirculada.setPath("Circulada" + pathImage);
         imagemCirculada.setRelatorio(relatorioService.findById(idRelatorio));
         imagemService.create(imagemCirculada);
 

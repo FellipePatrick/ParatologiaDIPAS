@@ -19,6 +19,10 @@ public class ImagemService extends GenericService<Imagem, Long, ImagemRepository
         this.repository = repository;
     }
 
+    public List<Imagem> findByRelatorioId(Long id){
+        return repository.findByRelatorioId(id);
+    }
+
     @Override
     public List<Imagem> findAll() {
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");

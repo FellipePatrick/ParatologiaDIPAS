@@ -26,11 +26,7 @@ public class SistemaController {
         return new ModelAndView("relatorios/index");
     }
 
-    @GetMapping("/analisar")
-    public ModelAndView analisarFotos(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
-        return new ModelAndView("process/analise");
-    }
-
+    
     @GetMapping("/relatorios/unit")
     public ModelAndView unitRelatorios(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
         return new ModelAndView("relatorios/unit");
