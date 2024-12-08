@@ -21,8 +21,15 @@ public class ImageProcessService{
         this.relatorioService = relatorioService;
     }
     
-    public void processarImagem(String pathImage, long idRelatorio, String codigoIm){ {
+    public void processarImagem(String pathImage, long idRelatorio, String codigoIm, boolean zoom){ {
 
+
+        if (zoom) {
+           System.out.println("Zoom ativado");
+            
+        }else{
+            System.out.println("Zoom desativado");
+        }
         Imagem imagemOriginal = new Imagem();
         imagemOriginal.setNome("Original");
         imagemOriginal.setCodigoIm(codigoIm);
@@ -37,9 +44,7 @@ public class ImageProcessService{
         imagemCirculada.setRelatorio(relatorioService.findById(idRelatorio));
         imagemService.create(imagemCirculada);
 
-        // Image.resetDiretorio(root);
-
-        Image.segmentImage(root, root+"\\"+pathImage,pathImage, "não");
+        Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
     }
 } 
 }

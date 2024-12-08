@@ -30,5 +30,5 @@ public class Imagem extends AbstractEntity{
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_relatorio", referencedColumnName = "id")
-    private Relatorio relatorio;
+    private Relatorio relatorio;    
 }

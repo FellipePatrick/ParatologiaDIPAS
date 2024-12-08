@@ -23,6 +23,6 @@ public class Main {
         //org.example.Image.segmentImages("C:\\Users\\felli\\Repositorio GitHub\\ParatologiaDIPAS\\img", "jpeg" , 4, "sim");
 
         //Segmentando apenas uma imagem especifica
-        main.java.org.example.Image.segmentImage("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img", 2 , "não");
+        main.java.org.example.Image.segmentImage("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img", 61 , "não");
     }
 }

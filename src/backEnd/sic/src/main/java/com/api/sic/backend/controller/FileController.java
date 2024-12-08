@@ -13,6 +13,7 @@ import com.api.sic.backend.domain.Imagem;
 import com.api.sic.backend.domain.Relatorio;
 import com.api.sic.backend.domain.Usuario;
 import com.api.sic.backend.domain.enumerates.StatusRelatorio;
+import com.api.sic.backend.dto.file.UploadResponseDTO;
 import com.api.sic.backend.dto.imagem.ImagemResponseDTO;
 import com.api.sic.backend.service.FileStorageService;
 import com.api.sic.backend.service.ImageProcessService;
@@ -55,10 +56,14 @@ public class FileController {
     
 
     @PostMapping
-    public ResponseEntity<String> uploadImages(@RequestParam("files") List<MultipartFile> files) {
+    public ResponseEntity<UploadResponseDTO> uploadImages(@RequestParam("files") List<MultipartFile> files, @RequestParam("zoom") boolean zoom) {
         if (files.isEmpty()) {
-            return ResponseEntity.badRequest().body("A lista de arquivos não pode estar vazia.");
+            return ResponseEntity.badRequest().body(new UploadResponseDTO("A lista de arquivos não pode estar vazia.", null));
         }
+
+        // !!!ATENÇÃO!!!
+        // Lembrar de pegar o usuario da sessão quando estivar com o spring security no projeto
+        // !!!ATENÇÃO!!!
 
         Relatorio r = new Relatorio();
         
@@ -83,11 +88,11 @@ public class FileController {
                 String uniqueFileName = cdd + getFileExtension(file.getOriginalFilename());
                 fileStorageService.save(file, uniqueFileName);
                 savedFileNames.add(uniqueFileName);
-                imageProcessService.processarImagem(uniqueFileName, r.getId(), cdd);
+                imageProcessService.processarImagem(uniqueFileName, r.getId(), cdd, zoom);
             }
         }
 
-        return ResponseEntity.ok("Imagens salvas com sucesso: " + String.join(", ", savedFileNames));
+        return ResponseEntity.ok(new UploadResponseDTO("Imagens salvas com sucesso: " + String.join(", ", savedFileNames), r.getId()));
     }
 
     private String getFileExtension(String fileName) {

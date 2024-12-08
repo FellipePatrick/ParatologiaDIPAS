@@ -59,11 +59,10 @@ public class Image {
      * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
      *
      */
-    public static void segmentImage(String path, String im, String imName, String zoom){
-        // Carrega a biblioteca nativa do OpenCV
+    public static void segmentImage(String path, String im, String imName, boolean zoom){
   
         int cont = 1;
-        // Carrega a imagem
+
         Mat image = Imgcodecs.imread(im);
 
         Mat ims = image.clone();
@@ -74,33 +73,16 @@ public class Image {
         Mat result;
         Mat orig;
 
-        // Caso o zoom seja ativado
-        if (zoom.equalsIgnoreCase("sim")) {
+        if (zoom) {
             result = ajustaBrilhoContrasteZoom(image);
             String resultPath = path + File.separator + "result" + File.separator + "orig" + imName;
-
-            // Salva a imagem ajustada
             Imgcodecs.imwrite(resultPath, result);
-
-            // Encontra e processa a região preta na imagem
-            List<Mat> outputImage = findBlackRegion(image,image, result, path + File.separator + "result" + File.separator, imName, zoom);
+            List<Mat> outputImage = findBlackRegion(image, image, result,path + File.separator, imName, zoom);
 
         } else {
-            // Caso o zoom não seja ativado
             result = processImagePhone(image);
             orig = result;
-
-            // Salva a imagem original processada
-            String origPath = path + File.separator +"result"+ File.separator+ "orig" + imName;
-            // Imgcodecs.imwrite(origPath, result);
-
-            // Ajusta brilho e contraste
             result = ajustaBrilhoContraste(result);
-            // Salva a imagem com ajuste de brilho e contraste
-            String adjustedPath = path + File.separator +"result"+ File.separator+ "alar" + imName;
-            // Imgcodecs.imwrite(adjustedPath, result);
-
-            // Encontra e processa a região preta na imagem
             List<Mat> outputImage = findBlackRegion(orig,image, result, path + File.separator, imName, zoom);
         }
     }
@@ -117,7 +99,7 @@ public class Image {
      * @return Retorna uma lista de objetos encontrados na imagem.
      *
      */
-    public static List<Mat> findBlackRegion(Mat imageOriginal, Mat imOrig, Mat inputImage, String outputPath, String imName, String zoom) {
+    public static List<Mat> findBlackRegion(Mat imageOriginal, Mat imOrig, Mat inputImage, String outputPath, String imName, boolean zoom) {
         // Verificar se a imagem de entrada é vazia
         if (inputImage.empty()) {
             throw new IllegalArgumentException("A imagem de entrada está vazia");
@@ -125,16 +107,13 @@ public class Image {
 
         Mat grayImage = inputImage;
 
-        // Aplicar um limiar para binarizar a imagem (50 -> preto, 255 -> branco)
         Mat binaryImage = new Mat();
         Imgproc.threshold(grayImage, binaryImage, 50, 255, Imgproc.THRESH_BINARY_INV);
 
-        // Encontrar contornos na imagem binarizada
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(binaryImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // Lista para armazenar as regiões cortadas
         List<Mat> croppedImages = new ArrayList<>();
         int x = 5;
         double area;
@@ -142,7 +121,7 @@ public class Image {
         double circularity;
         double maxObject = 500;
         int cont = 1;
-        if(zoom.equalsIgnoreCase("sim")){
+        if(zoom){
             maxObject =  imageOriginal.rows()*5;
         }else{
             if(imageOriginal.cols() > 1280){
@@ -345,7 +324,6 @@ public class Image {
         // Calcular o brilho médio da imagem
         Scalar meanScalar = Core.mean(grayImage);
         double averageBrightness = meanScalar.val[0];
-        System.out.println("Brilho médio: "+averageBrightness);
 
         // Calcular histograma
         int[] histData = new int[256];
