@@ -1,18 +1,15 @@
-package com.api.sic.backend.dto.relatorio;
-
-import java.time.LocalDateTime;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+package cog.com.sic.frontend.dto.relatorio;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RelatorioUpdateRequestDTO {
-
+public class RelatorioRequestDTO {
     @NotBlank(message = "O título é obrigatório.")
     @Size(max = 255, message = "O título deve ter no máximo 255 caracteres.")
     private String titulo;
@@ -20,11 +17,6 @@ public class RelatorioUpdateRequestDTO {
     @NotBlank(message = "A descrição é obrigatória.")
     private String descricao;
 
-    // @NotBlank(message = "O status é obrigatório.")
-    private String status;
-
-    private long id;
-
-    private LocalDateTime dataModificacao = LocalDateTime.now();
+    private Long id;
 
 }

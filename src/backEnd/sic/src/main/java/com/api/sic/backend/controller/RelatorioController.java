@@ -73,8 +73,12 @@ public class RelatorioController {
 
     @PutMapping("{id}")
     public ResponseEntity<RelatorioResponseDTO> update(@Valid @PathVariable("id") Long id, @RequestBody RelatorioUpdateRequestDTO relatorioUpdate) {
-        Relatorio entityToUpdate = convertToEntity(relatorioUpdate);
-        Relatorio updated = service.update(entityToUpdate, id);
+        Relatorio r = service.findById(id);
+
+        r.setDescricao(relatorioUpdate.getDescricao());
+        r.setTitulo(relatorioUpdate.getTitulo());
+
+        Relatorio updated = service.update(r, id);
 
         return ResponseEntity.ok(convertToDto(updated));
     }

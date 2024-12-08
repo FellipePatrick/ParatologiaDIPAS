@@ -19,12 +19,6 @@ public class SistemaController {
         modelAndView.addObject("msg", "Adicione suas imagens para o processamento!");
         return modelAndView;
     }
-    
-
-    @GetMapping("/relatorios")
-    public ModelAndView indexRelatorios(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
-        return new ModelAndView("relatorios/index");
-    }
 
     
     @GetMapping("/relatorios/unit")

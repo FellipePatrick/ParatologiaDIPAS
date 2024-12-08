@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/commons :: head}">
     <style>
         /* Definir tamanho pequeno para as imagens */
         .img-thumbnail-small {
-            max-width: 120px; /* Ajuste o tamanho conforme necessário */
+            max-width: 120px;
+            /* Ajuste o tamanho conforme necessário */
             height: 100p´x;
         }
     </style>
 </head>
+
 <body id="page-top">
     <div id="wrapper">
         <div th:replace="~{fragments/commons :: sidebar}"></div>
@@ -17,50 +20,60 @@
                 <nav th:replace="~{fragments/commons :: nav}"></nav>
                 <div class="container-fluid">
                     <div th:replace="~{fragments/commons :: headerMain (name='Novo Relatorio')}"></div>
-                    
-                    <div class="card card-waves mb-4 mt-5">
-                        <div class="card-body">
-                            <form action="#" method="post" enctype="multipart/form-data">
+                    <form th:action="@{/relatorio}" method="post" enctype="multipart/form-data">
+                        <div class="card card-waves mb-4 mt-5">
+                            <div class="card-body">
+                                <input type="number" hidden th:value="${idRelatorio}" id="id" name="id">
                                 <div class="form-group">
                                     <label for="titulo">Título do Relatório</label>
-                                    <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Digite o título" required>
+                                    <input type="text" class="form-control" id="titulo" name="titulo"
+                                        placeholder="Digite o título" required>
                                 </div>
                                 <div class="form-group mt-3">
                                     <label for="descricao">Descrição</label>
-                                    <textarea class="form-control" id="descricao" name="descricao" rows="3" placeholder="Digite a descrição" required></textarea>
+                                    <textarea class="form-control" id="descricao" name="descricao" rows="3"
+                                        placeholder="Digite a descrição" required></textarea>
                                 </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="card card-waves mt-5">
-                        <div class="card-body">
-                            <h5 class="card-title">Imagens</h5>
-                            <div id="parasitas-gallery" class="row">
-                                <!-- Exibindo imagens originais -->
-                                <div class="col-md-6 mb-4" th:each="imagem : ${imagensOriginal}">
-                                    <div class="card">
-                                        <img th:src="${baseImageUrl} + ${imagem.path}" style="height: 300px; width: 250px;" class="card-img-top img-thumbnail-small" alt="Imagem Original" data-bs-toggle="modal" data-bs-target="#imageModal" th:data-image-src="${baseImageUrl} + ${imagem.path}">
-                                        <div class="card-body">
-                                            <h6 class="card-title" th:text="${imagem.nome}"></h6>
+                        <div class="card card-waves mt-5">
+                            <div class="card-body">
+                                <h5 class="card-title">Imagens</h5>
+                                <div id="parasitas-gallery" class="row">
+                                    <!-- Exibindo imagens originais -->
+                                    <div class="col-md-6 mb-4" th:each="imagem : ${imagensOriginal}">
+                                        <div class="card">
+                                            <img th:src="${baseImageUrl} + ${imagem.path}"
+                                                style="height: 300px; width: 250px;"
+                                                class="card-img-top img-thumbnail-small" alt="Imagem Original"
+                                                data-bs-toggle="modal" data-bs-target="#imageModal"
+                                                th:data-image-src="${baseImageUrl} + ${imagem.path}">
+                                            <div class="card-body">
+                                                <h6 class="card-title" th:text="${imagem.nome}"></h6>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- Exibindo imagens processadas -->
-                                <div class="col-md-6 mb-4" th:each="imagem : ${imagensProcessada}">
-                                    <div class="card">
-                                        <img th:src="${baseImageUrl} + ${imagem.path}"  style="height: 300px; width: 250px;" class="card-img-top img-thumbnail-small" alt="Imagem Processada" data-bs-toggle="modal" data-bs-target="#imageModal" th:data-image-src="${baseImageUrl} + ${imagem.path}">
-                                        <div class="card-body">
-                                            <h6 class="card-title" th:text="${imagem.nome}"></h6>
+                                    <!-- Exibindo imagens processadas -->
+                                    <div class="col-md-6 mb-4" th:each="imagem : ${imagensProcessada}">
+                                        <div class="card">
+                                            <img th:src="${baseImageUrl} + ${imagem.path}"
+                                                style="height: 300px; width: 250px;"
+                                                class="card-img-top img-thumbnail-small" alt="Imagem Processada"
+                                                data-bs-toggle="modal" data-bs-target="#imageModal"
+                                                th:data-image-src="${baseImageUrl} + ${imagem.path}">
+                                            <div class="card-body">
+                                                <h6 class="card-title" th:text="${imagem.nome}"></h6>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>  
 
-                    <button type="submit" class="btn btn-primary mt-3">Salvar Relatório</button>
-                </form>
-                </div>            
+                        <button type="submit" class="btn btn-primary mt-3">Salvar Relatório</button>
+                    </form>
+                </div>
             </div>
             <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
         </div>
@@ -95,4 +108,5 @@
         });
     </script>
 </body>
+
 </html>

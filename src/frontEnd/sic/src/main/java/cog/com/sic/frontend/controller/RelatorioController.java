@@ -10,6 +10,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,6 +20,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cog.com.sic.frontend.dto.imagem.ImagemRequestDTO;
+import cog.com.sic.frontend.dto.relatorio.RelatorioRequestDTO;
+import jakarta.validation.Valid;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -30,6 +33,8 @@ import java.util.stream.Collectors;
 @Controller
 public class RelatorioController {
     private static final String URL = "http://localhost:8081/file/";
+
+    private static final String RELATORIO_URL = "http://localhost:8081/relatorios/";
 
     @GetMapping("/analisar")
     public ModelAndView analisarFotos(@ModelAttribute("id_relatorio") Long idRelatorio) {
@@ -58,6 +63,7 @@ public class RelatorioController {
                 modelAndView.addObject("baseImageUrl", "http://localhost:8081/images/");
                 modelAndView.addObject("imagensOriginal", imagensOriginal);
                 modelAndView.addObject("imagensProcessada", imagensProcessada);
+                modelAndView.addObject("idRelatorio", idRelatorio);
             } else {
                 modelAndView.addObject("errorMessage", "Nenhuma imagem encontrada.");
             }
@@ -69,6 +75,39 @@ public class RelatorioController {
 
         return modelAndView;
     }
+    
+    @GetMapping("/relatorios")
+    public ModelAndView indexRelatorios(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        return new ModelAndView("relatorios/index");
+    }
+
+    @PostMapping("/relatorio")
+    public ModelAndView updateRelatorio(@ModelAttribute @Valid RelatorioRequestDTO relatorioRequestDTO,                               
+                                         RedirectAttributes redirectAttributes) {
+                                            
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+    
+        HttpEntity<RelatorioRequestDTO> entity = new HttpEntity<>(relatorioRequestDTO, headers);
+    
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+
+            ResponseEntity<String> response = restTemplate.exchange(RELATORIO_URL+"/" + relatorioRequestDTO.getId(), HttpMethod.PUT, entity, String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) { 
+                redirectAttributes.addFlashAttribute("msg", "Relatório atualizado com sucesso!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Falha ao atualizar o relatório.");
+            }
+    
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao se comunicar com o servidor externo.");
+        }
+
+        return new ModelAndView("redirect:/relatorios");
+    }
+    
 
     @PostMapping("/images")
     public ModelAndView enviarImagens(@RequestParam("imagens") List<MultipartFile> arquivos,
