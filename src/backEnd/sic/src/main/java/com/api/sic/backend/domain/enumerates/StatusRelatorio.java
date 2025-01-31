@@ -1,8 +1,8 @@
 package com.api.sic.backend.domain.enumerates;
 
 public enum StatusRelatorio {
+    RASCUNHO,
     PENDENTE,
-    APROVADO,
-    FINALIZADO,
-    REJEITADO
+    AVALIANDO,
+    FINALIZADO
 }

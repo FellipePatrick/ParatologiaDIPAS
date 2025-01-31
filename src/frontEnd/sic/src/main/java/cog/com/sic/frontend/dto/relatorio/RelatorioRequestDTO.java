@@ -2,6 +2,7 @@ package cog.com.sic.frontend.dto.relatorio;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -18,5 +19,13 @@ public class RelatorioRequestDTO {
     private String descricao;
 
     private Long id;
+
+    private String status;
+
+    private String dono;
+
+    private String gestor;
+
+    private String data;
 
 }

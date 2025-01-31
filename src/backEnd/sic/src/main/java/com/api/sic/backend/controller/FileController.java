@@ -67,14 +67,19 @@ public class FileController {
 
         Relatorio r = new Relatorio();
         
-        r.setTitulo("");
+        r.setTitulo("Rascunho");
         r.setDescricao("");
-        r.setStatus(StatusRelatorio.PENDENTE);
+        r.setStatus(StatusRelatorio.RASCUNHO);
         r.setDataModificacao(LocalDateTime.now());
-        r.setUsuario(null);
+        Usuario usuario = new Usuario();
+        usuario.setNome("Fellipe");
+        usuario.setRole(Usuario.Role.USUARIO);
+        r.setUsuario(usuario);
 
         Usuario gestor = new Usuario();
         
+        gestor.setNome("Gestor");
+
         gestor.setRole(Usuario.Role.GESTOR);
 
         r.setGestor(gestor);

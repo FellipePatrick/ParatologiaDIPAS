@@ -39,7 +39,7 @@
                                                     <div class="col mr-2">
                                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                             Relatórios totais</div>
-                                                        <div class="h5 mb-0 font-weight-bold text-gray-800">40</div>
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totais}"></div>
                                                     </div>
                                                     <div class="col-auto">
                                                         <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -54,8 +54,8 @@
                                                 <div class="row no-gutters align-items-center">
                                                     <div class="col mr-2">
                                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                            Em andamento</div>
-                                                        <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
+                                                            Andamento | Rascunho</div>
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${andamento}"></div>
                                                     </div>
                                                     <div class="col-auto">
                                                         <i class="fa fa-folder fa-2x text-gray-300"></i>
@@ -73,7 +73,7 @@
                                                         </div>
                                                         <div class="row no-gutters align-items-center">
                                                             <div class="col-auto">
-                                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800 mx-3">50</div>
+                                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800 mx-3" th:text="${avaliandos}"></div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -91,7 +91,7 @@
                                                     <div class="col mr-2">
                                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                             Relatórios Concluídos</div>
-                                                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${finalizados}"></div>
                                                     </div>
                                                     <div class="col-auto">
                                                         <i class="fas fa-check fa-2x text-gray-300"></i>
@@ -105,79 +105,30 @@
                         </div>
                     </div>
                     <div class="card-waves">
-                        <div class="p-3">
-                            <h5 class="text-gray-800 mb-4">Documentos Recentes</h5>
-                            <div class="row gx-4 align-items-center justify-content-between">
-                                <!-- Documento 1 -->
-                                <div class="col-md-4 mb-4">
-                                    <div class="card shadow-sm h-100">
-                                        <div class="card-body d-flex flex-column">
-                                            <h6 class="card-title text-primary font-weight-bold">Título do Documento</h6>
-                                            <p class="card-text text-muted mb-3">Descrição breve do documento, detalhando o conteúdo de maneira resumida e convidativa.</p>
-                                            <div class="mt-auto">
-                                                <p class="text-muted small">Orientador: Nome do Orientador</p>
-                                                <p class="text-muted small">Data de Acesso: 12/09/2024</p>
+                        <div class="card-waves">
+                            <div class="p-3">
+                                <h5 class="text-gray-800 mb-4">Documentos Recentes</h5>
+                                <div class="row gx-4">
+                                    <div class="col-md-4 mb-4" th:each="relatorio : ${relatorios}">
+                                        <a class="card shadow-sm h-100" style="text-decoration: none;" th:href="@{'/relatorios/' + ${relatorio.id}}">
+                                            <div class="card-body ">
+                                                <h6 class="card-title text-primary font-weight-bold" th:text="${relatorio.titulo}">T</h6>
+                                                
+                                                <p class="text-muted small">
+                                                   Descrição: <span th:text="${relatorio.descricao}"></span>
+                                                </p>
+                                                
+                                                <div class="mt-auto">
+                                                    <p class="text-muted small">
+                                                        Gestor: <span th:text="${relatorio.dono}"></span>
+                                                    </p>
+                                                    
+                                                    <p class="text-muted small">
+                                                        Data de Acesso: <span th:text="${relatorio.data}"></span>
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                    
-                                <!-- Documento 2 -->
-                                <div class="col-md-4 mb-4">
-                                    <div class="card shadow-sm h-100">
-                                        <div class="card-body d-flex flex-column">
-                                            <h6 class="card-title text-primary font-weight-bold">Título do Documento</h6>
-                                            <p class="card-text text-muted mb-3">Descrição breve do documento, detalhando o conteúdo de maneira resumida e convidativa.</p>
-                                            <div class="mt-auto">
-                                                <p class="text-muted small">Orientador: Nome do Orientador</p>
-                                                <p class="text-muted small">Data de Acesso: 12/09/2024</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                    
-                                <!-- Documento 3 -->
-                                <div class="col-md-4 mb-4">
-                                    <div class="card shadow-sm h-100">
-                                        <div class="card-body d-flex flex-column">
-                                            <h6 class="card-title text-primary font-weight-bold">Título do Documento</h6>
-                                            <p class="card-text text-muted mb-3">Descrição breve do documento, detalhando o conteúdo de maneira resumida e convidativa.</p>
-                                            <div class="mt-auto">
-                                                <p class="text-muted small">Orientador: Nome do Orientador</p>
-                                                <p class="text-muted small">Data de Acesso: 12/09/2024</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    
-                            <!-- Segunda linha de documentos -->
-                            <div class="row gx-4 align-items-center justify-content-between">
-                                <!-- Documento 4 -->
-                                <div class="col-md-4 mb-4">
-                                    <div class="card shadow-sm h-100">
-                                        <div class="card-body d-flex flex-column">
-                                            <h6 class="card-title text-primary font-weight-bold">Título do Documento</h6>
-                                            <p class="card-text text-muted mb-3">Descrição breve do documento, detalhando o conteúdo de maneira resumida e convidativa.</p>
-                                            <div class="mt-auto">
-                                                <p class="text-muted small">Orientador: Nome do Orientador</p>
-                                                <p class="text-muted small">Data de Acesso: 12/09/2024</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                    
-                                <!-- Documento 5 -->
-                                <div class="col-md-4 mb-4">
-                                    <div class="card shadow-sm h-100">
-                                        <div class="card-body d-flex flex-column">
-                                            <h6 class="card-title text-primary font-weight-bold">Título do Documento</h6>
-                                            <p class="card-text text-muted mb-3">Descrição breve do documento, detalhando o conteúdo de maneira resumida e convidativa.</p>
-                                            <div class="mt-auto">
-                                                <p class="text-muted small">Orientador: Nome do Orientador</p>
-                                                <p class="text-muted small">Data de Acesso: 12/09/2024</p>
-                                            </div>
-                                        </div>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

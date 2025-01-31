@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.sic.backend.domain.Relatorio;
+import com.api.sic.backend.domain.enumerates.StatusRelatorio;
 import com.api.sic.backend.dto.relatorio.RelatorioRequestDTO;
 import com.api.sic.backend.dto.relatorio.RelatorioResponseDTO;
 import com.api.sic.backend.dto.relatorio.RelatorioUpdateRequestDTO;
@@ -77,7 +78,9 @@ public class RelatorioController {
 
         r.setDescricao(relatorioUpdate.getDescricao());
         r.setTitulo(relatorioUpdate.getTitulo());
-
+        if(r.getStatus() == StatusRelatorio.RASCUNHO) {
+            r.setStatus(StatusRelatorio.PENDENTE);
+        }
         Relatorio updated = service.update(r, id);
 
         return ResponseEntity.ok(convertToDto(updated));
