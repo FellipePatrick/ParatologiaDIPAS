@@ -21,21 +21,40 @@ public class ImageProcessService{
         this.relatorioService = relatorioService;
     }
     
-    public void processarImagem(String pathImage, long idRelatorio, String codigoIm, boolean zoom){ {
+        public void processarImagem(String pathImage, long idRelatorio, String codigoIm, boolean zoom){ {
 
- 
+    
+            Imagem imagemOriginal = new Imagem();
+            imagemOriginal.setNome("Original");
+            imagemOriginal.setCodigoIm(codigoIm);
+            imagemOriginal.setPath(pathImage);
+            imagemOriginal.setRelatorio(relatorioService.findById(idRelatorio));
+            imagemService.create(imagemOriginal);
+
+            Imagem imagemCirculada = new Imagem();
+            imagemCirculada.setNome("Circulada");
+            imagemCirculada.setCodigoIm(codigoIm);
+            imagemCirculada.setPath("Circulada" + pathImage);
+            imagemCirculada.setRelatorio(relatorioService.findById(idRelatorio));
+            imagemService.create(imagemCirculada);
+
+            Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
+        }
+    } 
+
+    public void processarImagem(String pathImage, String codigoIm, boolean zoom){ {
+
+    
         Imagem imagemOriginal = new Imagem();
         imagemOriginal.setNome("Original");
         imagemOriginal.setCodigoIm(codigoIm);
         imagemOriginal.setPath(pathImage);
-        imagemOriginal.setRelatorio(relatorioService.findById(idRelatorio));
         imagemService.create(imagemOriginal);
 
         Imagem imagemCirculada = new Imagem();
         imagemCirculada.setNome("Circulada");
         imagemCirculada.setCodigoIm(codigoIm);
         imagemCirculada.setPath("Circulada" + pathImage);
-        imagemCirculada.setRelatorio(relatorioService.findById(idRelatorio));
         imagemService.create(imagemCirculada);
 
         Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
