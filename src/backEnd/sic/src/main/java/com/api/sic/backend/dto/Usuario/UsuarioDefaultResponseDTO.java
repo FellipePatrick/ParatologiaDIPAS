@@ -1,4 +1,4 @@
-package com.api.sic.backend.dto.usuario;
+package com.api.sic.backend.dto.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

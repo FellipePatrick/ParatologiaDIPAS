@@ -16,9 +16,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.sic.backend.domain.Relatorio;
 import com.api.sic.backend.domain.enumerates.StatusRelatorio;
-import com.api.sic.backend.dto.relatorio.RelatorioRequestDTO;
-import com.api.sic.backend.dto.relatorio.RelatorioResponseDTO;
-import com.api.sic.backend.dto.relatorio.RelatorioUpdateRequestDTO;
+import com.api.sic.backend.dto.Relatorio.RelatorioRequestDTO;
+import com.api.sic.backend.dto.Relatorio.RelatorioResponseDTO;
+import com.api.sic.backend.dto.Relatorio.RelatorioUpdateRequestDTO;
 import com.api.sic.backend.service.RelatorioService;
 
 import jakarta.validation.Valid;

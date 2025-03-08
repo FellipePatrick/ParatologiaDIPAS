@@ -1,4 +1,4 @@
-package com.api.sic.backend.dto.usuario;
+package com.api.sic.backend.dto.Usuario;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

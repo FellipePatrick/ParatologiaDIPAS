@@ -1,11 +1,11 @@
-package com.api.sic.backend.dto.relatorio;
+package com.api.sic.backend.dto.Relatorio;
 
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 import com.api.sic.backend.controller.RelatorioController;
 import com.api.sic.backend.domain.Relatorio;
-import com.api.sic.backend.dto.usuario.UsuarioDefaultResponseDTO;
+import com.api.sic.backend.dto.Usuario.UsuarioDefaultResponseDTO;
 
 
 import java.time.LocalDateTime;

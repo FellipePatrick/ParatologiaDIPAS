@@ -17,9 +17,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.sic.backend.domain.Usuario;
 import com.api.sic.backend.domain.Usuario.Role;
-import com.api.sic.backend.dto.usuario.UsuarioRequestDTO;
-import com.api.sic.backend.dto.usuario.UsuarioRequestUpdateDTO;
-import com.api.sic.backend.dto.usuario.UsuarioResponseDTO;
+import com.api.sic.backend.dto.Usuario.UsuarioRequestDTO;
+import com.api.sic.backend.dto.Usuario.UsuarioRequestUpdateDTO;
+import com.api.sic.backend.dto.Usuario.UsuarioResponseDTO;
 import com.api.sic.backend.service.UsuarioService;
 
 import jakarta.validation.Valid;
