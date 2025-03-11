@@ -24,12 +24,11 @@ public class MobileFileController {
 
     private final FileStorageService fileStorageService;
     private final ImageProcessService imageProcessService;
-    private final ImagemService imagemService;
+    public final String servidor = "http://192.168.0.105:8081/images/Circulada";
 
-    public MobileFileController(ImagemService imagemService, FileStorageService fileStorageService, ImageProcessService imageProcessService) {
+    public MobileFileController( FileStorageService fileStorageService, ImageProcessService imageProcessService) {
         this.fileStorageService = fileStorageService;
         this.imageProcessService = imageProcessService;
-        this.imagemService = imagemService;
     }
 
     @PostMapping
@@ -47,7 +46,7 @@ public class MobileFileController {
                 fileStorageService.save(file, uniqueFileName);
                 savedFileNames.add(uniqueFileName);
 
-                String imageUrl = "http://192.168.0.108:8081/images/Circulada" + uniqueFileName;
+                String imageUrl = servidor + uniqueFileName;
                 imageUrls.add(imageUrl);
 
                 imageProcessService.processarImagem(uniqueFileName, cdd, zoom);

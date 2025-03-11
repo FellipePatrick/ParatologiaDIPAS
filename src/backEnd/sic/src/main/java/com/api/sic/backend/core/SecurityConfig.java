@@ -38,7 +38,7 @@ public class SecurityConfig {
             "/api/public/authenticate",
             "/actuator/*",
             "/swagger-ui/**",
-            "/token/**",
+            "/login/",
             "/",
             "/credenciais"
     };
