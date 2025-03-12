@@ -28,19 +28,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
     private static final String[] AUTH_WHITELIST = {
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/webjars/**",
-            "/v3/api-docs/**",
-            "/api/public/authenticate",
-            "/actuator/*",
-            "/swagger-ui/**",
-            "/login/",
-            "/",
-            "/credenciais"
+            "/login/"
     };
 
     private final RsaKeyProperties rsaKeys;

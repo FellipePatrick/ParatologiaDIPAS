@@ -24,7 +24,7 @@ public class MobileFileController {
 
     private final FileStorageService fileStorageService;
     private final ImageProcessService imageProcessService;
-    public final String servidor = "http://192.168.0.105:8081/images/Circulada";
+    public final String servidor = "http://192.168.0.101:8081/images/Circulada";
 
     public MobileFileController( FileStorageService fileStorageService, ImageProcessService imageProcessService) {
         this.fileStorageService = fileStorageService;
