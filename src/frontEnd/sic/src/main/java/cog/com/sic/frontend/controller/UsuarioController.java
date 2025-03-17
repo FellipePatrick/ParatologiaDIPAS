@@ -24,6 +24,8 @@ import cog.com.sic.frontend.dto.Usuario.UsuarioPagedResponseDTO;
 import cog.com.sic.frontend.dto.Usuario.UsuarioRequestDTO;
 import cog.com.sic.frontend.dto.Usuario.UsuarioResponseDTO;
 import cog.com.sic.frontend.dto.Usuario.UsuarioUpdateRequestDTO;
+import cog.com.sic.service.AuthService;
+import jakarta.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -33,12 +35,24 @@ public class UsuarioController {
     //URL da API
     private static final String URL = "http://localhost:8081/usuarios/";
 
+     private final AuthService authService;
+
+    public UsuarioController(AuthService authService) {
+        this.authService = authService;
+    }
+
     
 
     @GetMapping("/perfil")
-    public ModelAndView perfil(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+    public ModelAndView perfil(HttpSession session, RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
+
         return new ModelAndView("perfil/index");
     }
+
 
     @GetMapping("/usuarios")
     public ModelAndView usuarios() {
