@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,68 +17,101 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import cog.com.sic.frontend.dto.relatorio.RelatorioRequestDTO;
+import cog.com.sic.service.AuthService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpHeaders;
 
 @Controller
 public class SistemaController {
     private static final String RELATORIO_URL = "http://localhost:8081/relatorios/";
 
+    private final AuthService authService;
+
+    private final HttpSession session;
+
+    public SistemaController(AuthService authService, HttpSession session) {
+        this.authService = authService;
+        this.session = session;
+    }
+
+    
 
     @GetMapping("/")
     public ModelAndView indexHome(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
-        RestTemplate restTemplate = new RestTemplate();
-        ModelAndView modelAndView = new ModelAndView("home/index");
+       
+        if (authService.verificarTokenValido(session)) {
+            ModelAndView modelAndView = new ModelAndView("home/index");
+            RestTemplate restTemplate = new RestTemplate();
+           // Criando o cabeçalho com o token no formato Authorization
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
 
-        int totais = 0;
-        int andamento = 0;
-        int finalizados = 0;
-        int avaliandos = 0;
-        try {
+            // Criando a requisição com o cabeçalho
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            // Realizando a requisição GET com o cabeçalho
+            ResponseEntity<Map> responseEntity = restTemplate.exchange(
+                RELATORIO_URL, 
+                HttpMethod.GET, 
+                entity, 
+                Map.class
+            );
+
+            // Processando a resposta
+            Map<String, Object> response = responseEntity.getBody();
             @SuppressWarnings("unchecked")
-            Map<String, Object> response = restTemplate.getForObject(RELATORIO_URL, Map.class);
-
-            @SuppressWarnings({ "unchecked", "null" })
             List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
 
-            List<RelatorioRequestDTO> relatorios = content.stream()
-                    .map(this::mapToRelatorioRequestDTO)
-                    .collect(Collectors.toList());
+            // Agora você pode processar os dados como antes
+            int totais = 0;
+            int andamento = 0;
+            int finalizados = 0;
+            int avaliandos = 0;
+            try {
+                List<RelatorioRequestDTO> relatorios = content.stream()
+                        .map(this::mapToRelatorioRequestDTO)
+                        .collect(Collectors.toList());
 
 
-            for (RelatorioRequestDTO relatorio : relatorios) {
-                switch (relatorio.getStatus()) {
-                    case "PENDENTE":
-                        andamento++;
-                        break;
-                    case "APROVADO":
-                        finalizados++;
-                        break;
-                    case "RASCUNHO":
-                        andamento++;
-                        break;
-                    case "AVALIANDO":
-                        avaliandos++;
-                        break;
-                    default:
-                        break;
+                for (RelatorioRequestDTO relatorio : relatorios) {
+                    switch (relatorio.getStatus()) {
+                        case "PENDENTE":
+                            andamento++;
+                            break;
+                        case "APROVADO":
+                            finalizados++;
+                            break;
+                        case "RASCUNHO":
+                            andamento++;
+                            break;
+                        case "AVALIANDO":
+                            avaliandos++;
+                            break;
+                        default:
+                            break;
+                    }
                 }
+                totais = andamento + finalizados + avaliandos;
+
+                modelAndView.addObject("totais", totais);
+                modelAndView.addObject("andamento", andamento);
+                modelAndView.addObject("finalizados", finalizados);
+                modelAndView.addObject("avaliandos", avaliandos);
+
+                modelAndView.addObject("relatorios", relatorios);
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Erro ao carregar relatórios: " + e.getMessage());
+                modelAndView.setViewName("redirect:/");
             }
-            totais = andamento + finalizados + avaliandos;
 
-            modelAndView.addObject("totais", totais);
-            modelAndView.addObject("andamento", andamento);
-            modelAndView.addObject("finalizados", finalizados);
-            modelAndView.addObject("avaliandos", avaliandos);
-
-            modelAndView.addObject("relatorios", relatorios);
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao carregar relatórios: " + e.getMessage());
-            modelAndView.setViewName("redirect:/");
-        }
-
-        return modelAndView;
+            return modelAndView;
+        } 
+        redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+        return new ModelAndView("redirect:/login");
+    
     }
 
-      private RelatorioRequestDTO mapToRelatorioRequestDTO(Map<String, Object> dados) {
+    private RelatorioRequestDTO mapToRelatorioRequestDTO(Map<String, Object> dados) {
         Long id = Long.valueOf(dados.get("id").toString());
         String titulo = dados.get("titulo").toString();
         String descricao = dados.get("descricao").toString();

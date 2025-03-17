@@ -43,10 +43,9 @@ public class AuthService {
                 session.setAttribute("email", email);
                 session.setAttribute("role", role);
 
-                ModelAndView mv = new ModelAndView("home/index");
-                mv.addObject("successMessage", "Login realizado com sucesso");
-                mv.addObject("nome", nome);
-                return mv;
+                // Redirecionando para a página inicial
+                return new ModelAndView("redirect:/");
+
             } else {
                 return new ModelAndView("login/index").addObject("errorMessage", "Falha no login!");
             }
@@ -83,7 +82,7 @@ public class AuthService {
         }
     }
 
-    return false; // Token inválido ou erro na verificação
+    return false; 
 }
 }
 

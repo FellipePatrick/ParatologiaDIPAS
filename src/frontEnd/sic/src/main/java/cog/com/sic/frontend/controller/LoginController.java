@@ -17,24 +17,36 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LoginController {
 
     private AuthService service;
+    
     public LoginController(AuthService authService){
         this.service = authService;
     }
 
     @PostMapping("/login")
-    public ModelAndView login(@RequestParam String matricula, @RequestParam String senha, HttpSession session) {
-        return service.realizarLogin(matricula, senha, session);
+    public ModelAndView login(@RequestParam String matricula, @RequestParam String senha, HttpSession session) {  
+            if (session.getAttribute("token") != null) {
+                return new ModelAndView("home/index");
+            } else {
+                return service.realizarLogin(matricula, senha, session);
+        }
     }
+    
     @GetMapping("/login")
-    public ModelAndView indexLogin(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
-        
-        return new ModelAndView("login/index");
+    public ModelAndView indexLogin(@ModelAttribute String s, RedirectAttributes redirectAttributes, HttpSession session) {
+        if (session.getAttribute("token") != null) {
+            return new ModelAndView("home/index");
+        } else {
+            return new ModelAndView("login/index");
+        }   
     }
 
     @GetMapping("/password")
-    public ModelAndView edit(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
-        
-        return new ModelAndView("login/edit");
+    public ModelAndView edit(@ModelAttribute String s, RedirectAttributes redirectAttributes, HttpSession session) {
+        if (session.getAttribute("token") != null) {
+            return new ModelAndView("home/index");
+        } else {
+            return new ModelAndView("login/edit");
+        }   
     }
 
     @GetMapping("/logout")
