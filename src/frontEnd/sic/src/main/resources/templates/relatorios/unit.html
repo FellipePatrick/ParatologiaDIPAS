@@ -12,7 +12,8 @@
                     
                     <div class="card card-waves mb-4 mt-5">
                         <div class="card-body">
-                            <form action="#" method="post" enctype="multipart/form-data">
+                            <form th:action="@{/relatorio}" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="id" id="id" th:value="${relatorio.id}">
                                 <div class="form-group">
                                     <label for="titulo">Título do Relatorio</label>
                                     <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Digite o título" th:value="${relatorio.titulo}" required>
@@ -65,17 +66,17 @@
                             <button class="btn btn-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span th:text="${relatorio.status}">Status</span>
                             </button>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu" >
                                 <li><a class="dropdown-item" href="#" th:onclick="'setStatusValue(`PENDENTE`)'">PENDENTE</a></li>
-                                <li><a class="dropdown-item" href="#" th:onclick="'setStatusValue(`APROVADO`)'">APROVADO</a></li>
+                                <li><a class="dropdown-item" href="#" th:onclick="'setStatusValue(`AVALIANDO`)'">AVALIANDO</a></li>
                                 <li><a class="dropdown-item" href="#" th:onclick="'setStatusValue(`FINALIZADO`)'">FINALIZADO</a></li>
                                 <li><a class="dropdown-item" href="#" th:onclick="'setStatusValue(`REJEITADO`)'">REJEITADO</a></li>
                             </ul>
                         </div>
                         <input type="hidden" name="status" id="statusInput" th:value="${relatorio.status}">
                     
-                        <div class="mt-3">
-                            <a class="btn btn-sm btn-danger"  th:href="@{'/relatorios/delete/' + ${relatorio.id}}">Fechar</a>
+                        <div class="mt-3 btn btn-danger">
+                            <a  th:href="@{'/relatorios/delete/' + ${relatorio.id}}" style="color: white; text-decoration: none;">Fechar</a>
                         </div>
 
                     </div>

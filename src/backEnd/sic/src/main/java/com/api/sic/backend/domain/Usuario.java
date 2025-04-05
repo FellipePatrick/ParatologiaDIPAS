@@ -43,6 +43,10 @@ public class Usuario extends AbstractEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "id_gestor")
+    private Usuario gestor;
+
     @Column(unique = true)
     private String matricula;
 
@@ -112,5 +116,10 @@ public class Usuario extends AbstractEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Usuario orElse(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'orElse'");
     }
 }

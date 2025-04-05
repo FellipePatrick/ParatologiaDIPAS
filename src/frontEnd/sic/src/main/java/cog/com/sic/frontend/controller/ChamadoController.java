@@ -17,13 +17,28 @@ import cog.com.sic.frontend.dto.chamado.ChamadoPagedResponseDTO;
 import cog.com.sic.frontend.dto.chamado.ChamadoRequestDTO;
 import cog.com.sic.frontend.dto.chamado.ChamadoRequestUpdateStatus;
 import cog.com.sic.frontend.dto.chamado.ChamadoResponseDTO;
+import cog.com.sic.service.AuthService;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ChamadoController {
     private static final String URL = "http://localhost:8081/chamados/";
+    /**
+     *
+     */
+    private final AuthService authService;
+    private final HttpSession session;
+    public ChamadoController(AuthService authService, HttpSession session){
+        this.session = session;
+        this.authService = authService;
+    }
 
     @GetMapping("/chamados")
-    public ModelAndView chamados() {
+    public ModelAndView chamados(RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("chamados/index");
 
@@ -46,6 +61,10 @@ public class ChamadoController {
     @PostMapping("/chamados")
     public ModelAndView criarChamado(@ModelAttribute ChamadoRequestDTO chamadoRequestDTO,
             RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("redirect:/chamados");
         ResponseEntity<ChamadoResponseDTO> response = restTemplate.postForEntity(URL, chamadoRequestDTO,
@@ -63,6 +82,10 @@ public class ChamadoController {
     public ModelAndView doUpdate(@RequestParam Long id, @ModelAttribute ChamadoRequestUpdateStatus chamadoRequestDTO,
             RedirectAttributes redirectAttributes) {
 
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("redirect:/chamados");
 
@@ -77,7 +100,11 @@ public class ChamadoController {
     }
 
     @GetMapping("/chamados/editar/{id}")
-    public ModelAndView doEditar(@PathVariable Long id) {
+    public ModelAndView doEditar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("chamados/update");
 
@@ -95,6 +122,10 @@ public class ChamadoController {
 
     @GetMapping("/chamados/delete/{id}")
     public ModelAndView doDelete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("redirect:/chamados");
 

@@ -28,7 +28,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
     private static final String[] AUTH_WHITELIST = {
-            "/login/"
+            "/login/",
+            "/images/**"
     };
 
     private final RsaKeyProperties rsaKeys;

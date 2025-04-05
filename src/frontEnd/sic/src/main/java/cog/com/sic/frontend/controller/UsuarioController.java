@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,13 +36,15 @@ public class UsuarioController {
 
     //URL da API
     private static final String URL = "http://localhost:8081/usuarios/";
+    
+    private final HttpSession session;
 
      private final AuthService authService;
 
-    public UsuarioController(AuthService authService) {
+    public UsuarioController(AuthService authService, HttpSession session) {
         this.authService = authService;
+        this.session = session;
     }
-
     
 
     @GetMapping("/perfil")
@@ -55,13 +59,28 @@ public class UsuarioController {
 
 
     @GetMapping("/usuarios")
-    public ModelAndView usuarios() {
+    public ModelAndView usuarios(RedirectAttributes redirectAttributes){ 
+
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
+
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("usuario/index");
 
         try {
-            ResponseEntity<UsuarioPagedResponseDTO> response = restTemplate.getForEntity(URL,
-                    UsuarioPagedResponseDTO.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<UsuarioPagedResponseDTO> response = restTemplate.exchange(
+                URL, 
+                HttpMethod.GET, 
+                entity, 
+                UsuarioPagedResponseDTO.class
+            );
             UsuarioPagedResponseDTO pagedResponse = response.getBody();
 
             @SuppressWarnings("null")
@@ -77,13 +96,28 @@ public class UsuarioController {
     }
 
     @GetMapping("/usuarios/editar/{id}")
-    public ModelAndView doEdite(@PathVariable Long id) {
+    public ModelAndView doEdite(@PathVariable Long id, RedirectAttributes redirectAttributes){ 
+
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
+
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("usuario/editar");
-        
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
             String url = URL + "/" + id;
-            ResponseEntity<UsuarioResponseDTO> response = restTemplate.getForEntity(url, UsuarioResponseDTO.class);
+            ResponseEntity<UsuarioResponseDTO> response = restTemplate.exchange(
+                url, 
+                HttpMethod.GET, 
+                entity, 
+                UsuarioResponseDTO.class
+            );
             UsuarioResponseDTO usuario = response.getBody();
             modelAndView.addObject("usuario", usuario);
 
@@ -97,30 +131,56 @@ public class UsuarioController {
 
     @GetMapping("/usuarios/delete/{id}")
     public ModelAndView doDelete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("redirect:/usuarios");
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         try {
-            restTemplate.delete(URL + "/" + id);
+            restTemplate.exchange(
+        URL + "/" + id,
+        HttpMethod.DELETE,
+        entity,
+        Void.class
+    );
             redirectAttributes.addFlashAttribute("successMessage", "Usuário deletado com sucesso!");
 
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao carregar os usuários.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao deletar o usuário.");
         }
         return modelAndView;
     }
+
     @PostMapping("/usuarios/editar/{id}")
     public ModelAndView editarUsuario(@PathVariable("id") Long id,
             @ModelAttribute UsuarioUpdateRequestDTO usuarioRequestDTO,
             RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("redirect:/usuarios/editar/" + id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
     
         try {
             String url = URL + "/" + id;
-            ResponseEntity<UsuarioResponseDTO> response = restTemplate.exchange(url, HttpMethod.PUT,
-                    new HttpEntity<>(usuarioRequestDTO), UsuarioResponseDTO.class);
+            ResponseEntity<UsuarioResponseDTO> response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                entity,
+                UsuarioResponseDTO.class
+            );
     
             if (response.getStatusCode().is2xxSuccessful()) {
                 redirectAttributes.addFlashAttribute("successMessage", "Usuário atualizado com sucesso!");
@@ -160,13 +220,28 @@ public class UsuarioController {
     @PostMapping("/usuarios")
     public ModelAndView criarUsuario(@ModelAttribute UsuarioRequestDTO usuarioRequestDTO,
             RedirectAttributes redirectAttributes) {
+
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("redirect:/usuarios");
 
-        try {
-            ResponseEntity<UsuarioResponseDTO> response = restTemplate.postForEntity(URL, usuarioRequestDTO,
-                    UsuarioResponseDTO.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
+        headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
+    
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<UsuarioResponseDTO> response = restTemplate.exchange(
+                URL,
+                HttpMethod.POST,
+                entity,
+                UsuarioResponseDTO.class
+            );
             if (response.getStatusCode().is2xxSuccessful()) {
                 redirectAttributes.addFlashAttribute("successMessage", "Usuário criado com sucesso!");
             } else {

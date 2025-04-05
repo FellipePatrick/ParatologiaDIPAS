@@ -20,7 +20,7 @@ public class RelatorioUpdateRequestDTO {
     @NotBlank(message = "A descrição é obrigatória.")
     private String descricao;
 
-    // @NotBlank(message = "O status é obrigatório.")
+    @NotBlank(message = "O status é obrigatório.")
     private String status;
 
     private long id;

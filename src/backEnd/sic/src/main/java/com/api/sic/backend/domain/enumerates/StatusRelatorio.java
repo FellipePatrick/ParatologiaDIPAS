@@ -4,5 +4,6 @@ public enum StatusRelatorio {
     RASCUNHO,
     PENDENTE,
     AVALIANDO,
-    FINALIZADO
+    FINALIZADO,
+    REJEITADO
 }

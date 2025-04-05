@@ -24,9 +24,7 @@ import org.springframework.http.HttpHeaders;
 @Controller
 public class SistemaController {
     private static final String RELATORIO_URL = "http://localhost:8081/relatorios/";
-
     private final AuthService authService;
-
     private final HttpSession session;
 
     public SistemaController(AuthService authService, HttpSession session) {
@@ -39,75 +37,71 @@ public class SistemaController {
     @GetMapping("/")
     public ModelAndView indexHome(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
        
-        if (authService.verificarTokenValido(session)) {
-            ModelAndView modelAndView = new ModelAndView("home/index");
-            RestTemplate restTemplate = new RestTemplate();
-           // Criando o cabeçalho com o token no formato Authorization
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
 
-            // Criando a requisição com o cabeçalho
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+        ModelAndView modelAndView = new ModelAndView("home/index");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
 
-            // Realizando a requisição GET com o cabeçalho
-            ResponseEntity<Map> responseEntity = restTemplate.exchange(
-                RELATORIO_URL, 
-                HttpMethod.GET, 
-                entity, 
-                Map.class
-            );
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            // Processando a resposta
-            Map<String, Object> response = responseEntity.getBody();
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
+        ResponseEntity<Map> responseEntity = restTemplate.exchange(
+            RELATORIO_URL, 
+            HttpMethod.GET, 
+            entity, 
+            Map.class
+        );
 
-            // Agora você pode processar os dados como antes
-            int totais = 0;
-            int andamento = 0;
-            int finalizados = 0;
-            int avaliandos = 0;
-            try {
-                List<RelatorioRequestDTO> relatorios = content.stream()
-                        .map(this::mapToRelatorioRequestDTO)
-                        .collect(Collectors.toList());
+        Map<String, Object> response = responseEntity.getBody();
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
+
+        int totais = 0;
+        int andamento = 0;
+        int finalizados = 0;
+        int avaliandos = 0;
+        try {
+            List<RelatorioRequestDTO> relatorios = content.stream()
+                    .map(this::mapToRelatorioRequestDTO)
+                    .collect(Collectors.toList());
 
 
-                for (RelatorioRequestDTO relatorio : relatorios) {
-                    switch (relatorio.getStatus()) {
-                        case "PENDENTE":
-                            andamento++;
-                            break;
-                        case "APROVADO":
-                            finalizados++;
-                            break;
-                        case "RASCUNHO":
-                            andamento++;
-                            break;
-                        case "AVALIANDO":
-                            avaliandos++;
-                            break;
-                        default:
-                            break;
-                    }
+            for (RelatorioRequestDTO relatorio : relatorios) {
+                switch (relatorio.getStatus()) {
+                    case "PENDENTE":
+                        andamento++;
+                        break;
+                    case "FINALIZADO":
+                        finalizados++;
+                        break;
+                    case "RASCUNHO":
+                        andamento++;
+                        break;
+                    case "AVALIANDO":
+                        avaliandos++;
+                        break;                  
+                    default:
+                        break;
                 }
-                totais = andamento + finalizados + avaliandos;
-
-                modelAndView.addObject("totais", totais);
-                modelAndView.addObject("andamento", andamento);
-                modelAndView.addObject("finalizados", finalizados);
-                modelAndView.addObject("avaliandos", avaliandos);
-
-                modelAndView.addObject("relatorios", relatorios);
-            } catch (Exception e) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Erro ao carregar relatórios: " + e.getMessage());
-                modelAndView.setViewName("redirect:/");
             }
+            totais = andamento + finalizados + avaliandos;
 
-            return modelAndView;
-        } 
-        redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
-        return new ModelAndView("redirect:/login");
+            modelAndView.addObject("totais", totais);
+            modelAndView.addObject("andamento", andamento);
+            modelAndView.addObject("finalizados", finalizados);
+            modelAndView.addObject("avaliandos", avaliandos);
+
+            modelAndView.addObject("relatorios", relatorios);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao carregar relatórios: " + e.getMessage());
+            modelAndView.setViewName("redirect:/");
+        }
+
+        return modelAndView;
     
     }
 
@@ -138,7 +132,11 @@ public class SistemaController {
     }
 
     @GetMapping("/processar")
-    public ModelAndView indexProcess(@ModelAttribute String s) {
+    public ModelAndView indexProcess(@ModelAttribute String s,  RedirectAttributes redirectAttributes) { 
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         ModelAndView modelAndView = new ModelAndView("process/index");
         modelAndView.addObject("msg", "Adicione suas imagens para o processamento!");
         return modelAndView;
@@ -147,32 +145,48 @@ public class SistemaController {
     
     @GetMapping("/relatorios/unit")
     public ModelAndView unitRelatorios(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         return new ModelAndView("relatorios/unit");
     }
 
-    @GetMapping("/notificacao")
-    public ModelAndView indexNotifi(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
-        return new ModelAndView("notific/index");
-    }
 
     @GetMapping("/suporte")
     public ModelAndView indexSuporte(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         return new ModelAndView("suporte/index");
     }
 
     @GetMapping("/contato")
     public ModelAndView contato(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         return new ModelAndView("suporte/contato");
     }
 
     @GetMapping("/politicas")
     public ModelAndView politicas(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         return new ModelAndView("suporte/politics");
     }
 
 
     @GetMapping("/chamado")
     public ModelAndView chamado(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
         return new ModelAndView("chamados/edit");
     }
 }

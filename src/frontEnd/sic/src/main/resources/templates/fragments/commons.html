@@ -12,12 +12,14 @@
     </head>
 <body>
     <div th:fragment="warnings">
-        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
             <span th:text="${successMessage}"></span>
-          </div>
-          <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
             <span th:text="${errorMessage}"></span>
-          </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     </div>
     <div class="d-sm-flex align-items-center justify-content-between mb-4 my-5" th:fragment="headerMain (name)">
         <div class="">

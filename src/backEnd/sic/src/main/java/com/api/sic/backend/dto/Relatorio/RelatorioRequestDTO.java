@@ -3,6 +3,7 @@ package com.api.sic.backend.dto.Relatorio;
 import java.time.LocalDateTime;
 
 import com.api.sic.backend.domain.Usuario;
+import com.api.sic.backend.domain.enumerates.StatusRelatorio;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +25,7 @@ public class RelatorioRequestDTO {
     private String descricao;
 
     @NotBlank(message = "O status é obrigatório.")
-    private String status;
+    private StatusRelatorio status;
 
     @NotNull(message = "O usuário é obrigatório.")
     private Usuario usuario;
