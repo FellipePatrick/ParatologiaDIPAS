@@ -1,9 +1,6 @@
 package com.api.sic.backend.dto.chamado;
 
-import com.api.sic.backend.domain.Usuario;
-
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;

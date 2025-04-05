@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.api.sic.backend.dto.file.UploadResponseMobileDTO;
 import com.api.sic.backend.service.FileStorageService;
 import com.api.sic.backend.service.ImageProcessService;
-import com.api.sic.backend.service.ImagemService;
 
 
 import java.util.ArrayList;
