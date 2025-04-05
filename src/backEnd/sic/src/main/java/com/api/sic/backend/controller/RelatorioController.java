@@ -74,19 +74,19 @@ public class RelatorioController {
 
     
     @GetMapping("{id}")
-    public ResponseEntity<String> listById(@PathVariable("id") Long id) {
+    public ResponseEntity<RelatorioResponseDTO> listById(@PathVariable("id") Long id) {
     
  
         if (id == null || id <= 0) 
-            return ResponseEntity.badRequest().body("Sem autorização");
+            return null;
 
         Relatorio relatorio = service.findById(id);
 
         if(relatorio== null || !isDonoAdminGestor(relatorio))
-            return ResponseEntity.badRequest().body("Sem autorização");
+            return null;
             
         RelatorioResponseDTO dto = mapper.map(relatorio, RelatorioResponseDTO.class);
-        return ResponseEntity.ok(dto.toString());
+        return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping("{id}")
@@ -103,15 +103,15 @@ public class RelatorioController {
     
 
     @PutMapping("{id}")
-    public ResponseEntity<String> update(@Valid @PathVariable("id") Long id, @RequestBody RelatorioUpdateRequestDTO relatorioUpdate) {
+    public ResponseEntity<RelatorioResponseDTO> update(@Valid @PathVariable("id") Long id, @RequestBody RelatorioUpdateRequestDTO relatorioUpdate) {
         
         if (id == null || id <= 0) 
-            return ResponseEntity.badRequest().body("Sem autorização");
+            return null;
 
         Relatorio r = service.findById(id);
 
         if(r == null || !isDonoAdminGestor(r))
-            return ResponseEntity.badRequest().body("Sem autorização");
+            return null;
 
         r.setDescricao(relatorioUpdate.getDescricao());
         r.setTitulo(relatorioUpdate.getTitulo());
@@ -130,7 +130,7 @@ public class RelatorioController {
 
         Relatorio updated = service.update(r, id);
 
-        return ResponseEntity.ok(convertToDto(updated).toString());
+        return ResponseEntity.ok(convertToDto(updated));
     }
 
     private RelatorioResponseDTO convertToDto(Relatorio relatorio) {

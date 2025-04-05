@@ -12,7 +12,9 @@
                     <div th:replace="~{fragments/commons :: warnings}"></div>
                     <div class="card shadow-sm border-0 rounded-lg mb-4 mt-5">
                         <div class="card-header bg-primary text-center">
-                            <h5 class=" text-white">Tabela de Chamados</h5>
+                            
+                            <h5 class=" text-white" th:if="${adm}">Tabela de Chamados</h5>
+                            <h5 class=" text-white" th:if="${!adm}">Meus Chamados</h5>
                         </div>
                         <div class="card-body">
                             <table class="table table-bordered">
@@ -21,6 +23,7 @@
                                         <th>#</th>
                                         <th>Assunto</th>
                                         <th>Descrição</th>
+                                        <th th:if="${adm}">Dono</th>
                                         <th>Status</th>
                                         <th>Data de Abertura</th>
                                         <th>Ações</th>
@@ -36,6 +39,7 @@
                                         <td th:text="${stat.count}"></td>
                                         <td th:text="${chamado.assunto}"></td>
                                         <td th:text="${chamado.descricao}"></td>
+                                        <td th:if="${adm}" th:text="${chamado.dono.nome}"></td>
                                         <td th:text="${chamado.status}"></td>
                                         <td th:text="${chamado.createdAt}"></td>
                                         <td>

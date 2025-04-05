@@ -24,14 +24,15 @@
                                 </div>
                                 <div class="col-md-6">
                                     <p><strong>Descrição:</strong> <a th:text="${chamado.descricao}"></a></p>
+                                    <p th:if="${adm}"><strong>Dono:</strong> <aa th:text="${chamado.dono.nome}"></a></p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card shadow-sm border-0 rounded-lg mb-4">
+                    <div class="card shadow-sm border-0 rounded-lg mb-4" th:if="${adm}">
                         <div class="card-header bg-warning text-center">
-                            <h5 class=" text-white">Alterar Status do Chamado</h5>
+                            <h5 class="text-white">Alterar Status do Chamado</h5>
                         </div>
                         <div class="card-body">
                             <form th:action="@{/chamados/status}" th:method="post">
@@ -50,6 +51,7 @@
                             </form>
                         </div>
                     </div>
+                    
                     
                 </div>
             </div>

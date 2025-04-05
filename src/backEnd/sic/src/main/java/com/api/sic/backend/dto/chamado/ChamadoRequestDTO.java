@@ -1,5 +1,7 @@
 package com.api.sic.backend.dto.chamado;
 
+import com.api.sic.backend.domain.Usuario;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,6 @@ public class ChamadoRequestDTO {
     private String assunto;
     @NotBlank(message = "A descrição é obrigatório.")
     private String descricao;
-    // @NotNull(message = "O dono é obrigatório.")
-    // private Usuario dono;
+
+    private Usuario dono;
 }
