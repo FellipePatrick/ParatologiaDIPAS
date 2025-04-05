@@ -28,6 +28,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import lombok.AllArgsConstructor;
 
@@ -67,6 +69,12 @@ public class UsuarioController {
             Usuario UsuarioUpdated = service.update(us, us.getId());
             return ResponseEntity.ok(convertToDto(UsuarioUpdated));
         }else{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            Usuario gestor = service.findByEmail(username).get();
+
+            usuario.setGestor(gestor);
+
             Usuario created = service.create(convertToEntity(usuario));
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()

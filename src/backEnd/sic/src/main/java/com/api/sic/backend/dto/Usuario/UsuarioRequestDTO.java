@@ -1,4 +1,6 @@
 package com.api.sic.backend.dto.Usuario;
+import com.api.sic.backend.domain.Usuario;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,4 +25,6 @@ public class UsuarioRequestDTO {
     @NotBlank(message = "O email não pode estar em branco.")
     @Email(message = "O email deve ser válido.")
     private String email;
+
+    private Usuario gestor;
 }

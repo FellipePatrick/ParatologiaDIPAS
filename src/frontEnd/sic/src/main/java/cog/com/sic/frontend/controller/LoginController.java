@@ -25,7 +25,7 @@ public class LoginController {
     @PostMapping("/login")
     public ModelAndView login(@RequestParam String matricula, @RequestParam String senha, HttpSession session) {  
             if (session.getAttribute("token") != null) {
-                return new ModelAndView("home/index");
+                return new ModelAndView("redirect:/");
             } else {
                 return service.realizarLogin(matricula, senha, session);
         }
@@ -34,7 +34,7 @@ public class LoginController {
     @GetMapping("/login")
     public ModelAndView indexLogin(@ModelAttribute String s, RedirectAttributes redirectAttributes, HttpSession session) {
         if (session.getAttribute("token") != null) {
-            return new ModelAndView("home/index");
+            return new ModelAndView("redirect:/");
         } else {
             return new ModelAndView("login/index");
         }   

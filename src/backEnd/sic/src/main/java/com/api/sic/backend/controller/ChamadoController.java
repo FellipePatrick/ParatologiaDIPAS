@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.sic.backend.domain.Chamado;
-import com.api.sic.backend.domain.Relatorio;
 import com.api.sic.backend.domain.Usuario;
 import com.api.sic.backend.domain.enumerates.StatusChamado;
 import com.api.sic.backend.dto.chamado.ChamadoRequestDTO;

@@ -86,11 +86,11 @@ public class ChamadoController {
         ModelAndView modelAndView = new ModelAndView("redirect:/chamados");
         
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + session.getAttribute("token"));
-        headers.setContentType(MediaType.APPLICATION_JSON); 
-        
-        HttpEntity<ChamadoRequestDTO> entity = new HttpEntity<>(chamadoRequestDTO, headers);
-        
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
+    
+        HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<ChamadoResponseDTO> response = restTemplate.exchange(
             URL,
             HttpMethod.POST,

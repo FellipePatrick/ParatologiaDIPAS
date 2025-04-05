@@ -106,6 +106,10 @@ public class UsuarioController {
             return new ModelAndView("redirect:/login");
         }
 
+        if(!session.getAttribute("userId").equals(id.toString())){
+            return new ModelAndView("redirect:/usuarios");
+        }
+
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("usuario/editar");
 
@@ -138,27 +142,31 @@ public class UsuarioController {
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
         }
-        RestTemplate restTemplate = new RestTemplate();
-        ModelAndView modelAndView = new ModelAndView("redirect:/usuarios");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        try {
-            restTemplate.exchange(
-        URL + "/" + id,
-        HttpMethod.DELETE,
-        entity,
-        Void.class
-    );
-            redirectAttributes.addFlashAttribute("successMessage", "Usuário deletado com sucesso!");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao deletar o usuário.");
+        if(session.getAttribute("userId").equals(id.toString())){
+            RestTemplate restTemplate = new RestTemplate();
+            ModelAndView modelAndView = new ModelAndView("redirect:/usuarios");
+    
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
+    
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            try {
+                restTemplate.exchange(
+            URL + "/" + id,
+            HttpMethod.DELETE,
+            entity,
+            Void.class
+        );
+                redirectAttributes.addFlashAttribute("successMessage", "Usuário deletado com sucesso!");
+    
+            } catch (Exception e) {
+                e.printStackTrace();
+                redirectAttributes.addFlashAttribute("errorMessage", "Erro ao deletar o usuário.");
+            }
+            return modelAndView;
         }
-        return modelAndView;
+        return new ModelAndView("redirect:/usuarios");
+        
     }
 
     @PostMapping("/usuarios/editar/{id}")
@@ -169,6 +177,11 @@ public class UsuarioController {
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
         }
+        
+        if(!session.getAttribute("userId").equals(id.toString())){
+            return new ModelAndView("redirect:/usuarios");
+        }
+        
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("redirect:/usuarios/editar/" + id);
         HttpHeaders headers = new HttpHeaders();
@@ -223,63 +236,61 @@ public class UsuarioController {
     @PostMapping("/usuarios")
     public ModelAndView criarUsuario(@ModelAttribute UsuarioRequestDTO usuarioRequestDTO,
             RedirectAttributes redirectAttributes) {
-
+    
         if (!authService.verificarTokenValido(session)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
         }
+    
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("redirect:/usuarios");
-
+    
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
         headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
     
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
         try {
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonBody = mapper.writeValueAsString(usuarioRequestDTO);
+    
+            HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers); 
+    
             ResponseEntity<UsuarioResponseDTO> response = restTemplate.exchange(
                 URL,
                 HttpMethod.POST,
                 entity,
                 UsuarioResponseDTO.class
             );
+    
             if (response.getStatusCode().is2xxSuccessful()) {
                 redirectAttributes.addFlashAttribute("successMessage", "Usuário criado com sucesso!");
             } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar o usuário.");
             }
-
+    
         } catch (HttpClientErrorException ex) {
-            // Tratamento de erros do lado do cliente (400)
             if (ex.getStatusCode() == HttpStatus.BAD_REQUEST) {
                 try {
                     ObjectMapper objectMapper = new ObjectMapper();
                     Map<String, String> errors = objectMapper.readValue(ex.getResponseBodyAsString(),
-                            new TypeReference<Map<String, String>>() {
-                            });
-
+                            new TypeReference<Map<String, String>>() {});
                     for (Map.Entry<String, String> error : errors.entrySet()) {
                         redirectAttributes.addFlashAttribute(error.getKey() + "Error", error.getValue());
                     }
-                    redirectAttributes.addFlashAttribute("errorMessage",
-                            "Ocorreram violações de restrição no cadastro.");
-
+                    redirectAttributes.addFlashAttribute("errorMessage", "Ocorreram violações de restrição no cadastro.");
                 } catch (Exception parseException) {
-                    redirectAttributes.addFlashAttribute("errorMessage",
-                            "Erro inesperado ao processar a resposta da API.");
+                    redirectAttributes.addFlashAttribute("errorMessage", "Erro inesperado ao processar a resposta da API.");
                 }
             } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar o usuário.");
             }
-
+    
         } catch (Exception e) {
-            
             redirectAttributes.addFlashAttribute("errorMessage", "Já existe um usuário com este email.");
         }
-
+    
         return modelAndView;
     }
+    
 
 }

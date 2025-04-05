@@ -12,7 +12,10 @@ import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Year;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
@@ -52,16 +55,20 @@ public class Usuario extends AbstractEntity implements UserDetails {
 
     private String pathImage;
 
-    // @PrePersist
-    // private void gerarMatrículaESenha() {
-    //     this.matricula = Usuario.gerarMatricula();
-    //     this.password = Usuario.gerarSenha(8) + "@Sic";
-    // }
+     @PrePersist
+     private void gerarMatrículaESenha() {
+        this.matricula = Usuario.gerarMatricula();
+        //this.password = Usuario.gerarSenha(8) + "@Sic";
+        System.out.println(Usuario.gerarSenha(8) + "@Sic");
+        PasswordEncoder e = new BCryptPasswordEncoder();
+        this.password = e.encode("admin123");
+   }
 
-    public static String gerarMatricula() {
+   public static String gerarMatricula() {
         Random random = new Random();
-        String numeros = String.format("%04d", random.nextInt(10000)); // Gera um número de 4 dígitos
-        return "Sic" + 2024 + "@" + numeros;
+        String numeros = String.format("%04d", random.nextInt(10000));
+        int anoAtual = Year.now().getValue(); 
+        return "Sic" + anoAtual + "@" + numeros;
     }
 
     public static String gerarSenha(int comprimento) {

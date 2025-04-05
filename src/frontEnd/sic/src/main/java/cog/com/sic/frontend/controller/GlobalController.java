@@ -47,32 +47,35 @@ public class GlobalController {
     public List<RelatorioRequestDTO> getChamadosSearch(HttpSession session) {
         final String RELATORIO_URL = "http://localhost:8081/relatorios/";
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
+        if (session.getAttribute("token") != null) {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        try {
-            ResponseEntity<Map> responseEntity = restTemplate.exchange(
-                RELATORIO_URL,
-                HttpMethod.GET,
-                entity,
-                Map.class
-            );
+            try {
+                ResponseEntity<Map> responseEntity = restTemplate.exchange(
+                    RELATORIO_URL,
+                    HttpMethod.GET,
+                    entity,
+                    Map.class
+                );
 
-            Map<String, Object> response = responseEntity.getBody();
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
+                Map<String, Object> response = responseEntity.getBody();
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
 
-            return content.stream()
-                    .map(this::mapToRelatorioRequestDTO)
-                    .collect(Collectors.toList());
+                return content.stream()
+                        .map(this::mapToRelatorioRequestDTO)
+                        .collect(Collectors.toList());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return List.of();
+            } 
         }
+        return null;
     }
 
     private RelatorioRequestDTO mapToRelatorioRequestDTO(Map<String, Object> dados) {
