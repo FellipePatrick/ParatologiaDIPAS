@@ -69,6 +69,8 @@ public class UsuarioController {
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("usuario/index");
 
+        String email = (String) session.getAttribute("email");
+
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
@@ -86,6 +88,7 @@ public class UsuarioController {
             @SuppressWarnings("null")
             List<UsuarioResponseDTO> usuarios = pagedResponse.getContent();
             modelAndView.addObject("usuarios", usuarios);
+            modelAndView.addObject("email", email);
 
         } catch (Exception e) {
             e.printStackTrace();

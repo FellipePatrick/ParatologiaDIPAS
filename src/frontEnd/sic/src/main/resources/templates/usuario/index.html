@@ -62,7 +62,6 @@
                             <h5 class="card-title text-white">Lista de Usuários</h5>
                             <form class="form-inline">
                                 <input class="form-control mr-sm-2" type="search" placeholder="Pesquisar por Email" aria-label="Search" id="searchEmail">
-                                <button class="btn btn-success my-2 my-sm-0" type="submit">Buscar</button>
                             </form>
                         </div>
 
@@ -83,8 +82,9 @@
                                         <td th:text="${usuario.role}">Tipo de Usuário</td>
                                         <td>
                                             <a th:href="@{'/usuarios/editar/' + ${usuario.id}}" class="btn btn-sm btn-warning">Editar</a>
-                                            <a class="btn btn-sm btn-danger" th:href="@{'/usuarios/delete/' + ${usuario.id}}">Excluir</a>
-                                        </td>
+                                            <a th:if="${usuario.email != email}" class="btn btn-sm btn-danger" th:href="@{'/usuarios/delete/' + ${usuario.id}}">Excluir</a>
+                                            <a th:if="${usuario.email == email}" class="btn btn-sm btn-danger" readonly>Excluir</a>
+                                            </td>
                                     </tr>
                                   
                                 </tbody>
@@ -99,5 +99,27 @@
             </footer>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputBusca = document.getElementById("searchEmail");
+            const linhasTabela = document.querySelectorAll("tbody tr");
+        
+            inputBusca.addEventListener("keyup", function () {
+                const termo = inputBusca.value.toLowerCase(); 
+        
+                linhasTabela.forEach(function (linha) {
+                    const nome = linha.querySelector("td:nth-child(1)").textContent.toLowerCase();
+                    const email = linha.querySelector("td:nth-child(2)").textContent.toLowerCase();
+                    const tipo = linha.querySelector("td:nth-child(3)").textContent.toLowerCase();
+        
+                    const corresponde = nome.includes(termo) || email.includes(termo) || tipo.includes(termo);
+        
+                    linha.style.display = corresponde ? "" : "none";
+                });
+            });
+        });
+        </script>
+        
+        
 </body>
 </html>

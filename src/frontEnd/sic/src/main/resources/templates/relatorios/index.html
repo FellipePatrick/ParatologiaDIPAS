@@ -16,7 +16,25 @@
                             <h5 class="text-white">Relatórios</h5>
                         </div>
                         <div class="card-body">
-                            <table class="table table-bordered ">
+
+                            <!-- Filtros -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <select id="filtroStatus" class="form-control">
+                                        <option value="">Filtrar por status...</option>
+                                        <option value="RASCUNHO">RASCUNHO</option>
+                                        <option value="PENDENTE">PENDENTE</option>
+                                        <option value="AVALIANDO">AVALIANDO</option>
+                                        <option value="FINALIZADO">FINALIZADO</option>
+                                        <option value="REJEITADO">REJEITADO</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="date" id="filtroData" class="form-control" placeholder="Filtrar por data...">
+                                </div>
+                            </div>
+                        
+                            <table class="table table-bordered">
                                 <thead class="thead-dark">
                                     <tr>
                                         <th>ID</th>
@@ -41,13 +59,13 @@
                                         <td th:text="${relatorio.data}"></td>
                                         <td>
                                             <a class="btn btn-sm btn-info" th:href="@{'/relatorios/' + ${relatorio.id}}">Visualizar</a>
-                                            <a class="btn btn-sm btn-danger"  th:href="@{'/relatorios/delete/' + ${relatorio.id}}">Fechar</a>
+                                            <a class="btn btn-sm btn-danger" th:href="@{'/relatorios/delete/' + ${relatorio.id}}">Fechar</a>
                                         </td>
                                     </tr>
                                 </tbody>
-                                
                             </table>
                         </div>
+                        
                     </div>
                     <div class="card-waves">
                      
@@ -161,6 +179,40 @@
             <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4">
             </footer>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const inputStatus = document.getElementById("filtroStatus");
+                const inputData = document.getElementById("filtroData");
+                const linhas = document.querySelectorAll("tbody tr");
+            
+                function formatarDataParaComparacao(dataTexto) {
+                    const partes = dataTexto.split("/");
+                    if (partes.length !== 3) return ""; 
+                    const [dia, mes, ano] = partes;
+                    return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+                }
+            
+                function aplicarFiltros() {
+                    const termoStatus = inputStatus.value.toLowerCase();
+                    const termoData = inputData.value;
+            
+                    linhas.forEach(function (linha) {
+                        const status = linha.querySelector("td:nth-child(4)")?.textContent.toLowerCase().trim();
+                        const dataTexto = linha.querySelector("td:nth-child(5)")?.textContent.trim();
+                        const dataConvertida = formatarDataParaComparacao(dataTexto);
+            
+                        const correspondeStatus = !termoStatus || status.includes(termoStatus);
+                        const correspondeData = !termoData || dataConvertida === termoData;
+            
+                        linha.style.display = (correspondeStatus && correspondeData) ? "" : "none";
+                    });
+                }
+            
+                inputStatus.addEventListener("change", aplicarFiltros);
+                inputData.addEventListener("change", aplicarFiltros);
+            });
+            </script>
+            
     </div>
 </body>
 </html>

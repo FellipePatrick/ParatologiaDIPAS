@@ -24,8 +24,11 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4 my-5" th:fragment="headerMain (name)">
         <div class="">
             <h1 class="h3 mb-0 text-gray-800" th:text="${name}"></h1>
-            <span  class="fw-500 text-primary fw-semibold"><span th:text="${DataHoraAtual}"></span> 
+            <span id="relogio" class="fw-500 text-primary fw-semibold"
+                  th:attr="data-inicial=${DataHoraAtual}" th:text="${DataHoraAtual}">
+            </span>
         </div>
+         
         <a th:if="${name} == 'Dashboard'" th:href="@{/processar}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                 class="fas fa-download fa-sm text-white-50"></i> Enviar Imagem
         </a>
@@ -36,44 +39,57 @@
             <i class="fa fa-bars"></i>
         </button>
 
-        <form
-            class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search position-relative">
             <div class="input-group">
-                <input type="text" class="form-control bg-light border-0 small" placeholder="Pesquisar Relatório"
-                    aria-label="Search" aria-describedby="basic-addon2">
+                <input id="searchInputDesktop" type="text" class="form-control bg-light border-0 small"
+                       placeholder="Pesquisar Relatório" aria-label="Search" aria-describedby="basic-addon2">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="button">
                         <i class="fas fa-search fa-sm"></i>
                     </button>
                 </div>
+        
+                <!-- Agora aqui dentro -->
+                <div id="searchResultsDesktop"
+                     class="dropdown-menu show p-3 shadow animated--grow-in position-absolute w-100 mt-2"
+                     style="max-height: 200px; overflow-y: auto; display: none; z-index: 999;">
+                </div>
             </div>
         </form>
+        
+<!-- Ícone de busca - MOBILE -->
+<ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown no-arrow d-sm-none">
+        <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-search fa-fw"></i>
+        </a>
 
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown no-arrow d-sm-none">
-                <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-search fa-fw"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                    aria-labelledby="searchDropdown">
-                    <form class="form-inline mr-auto w-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small"
-                                placeholder="Pesquisar Relatorio" aria-label="Search"
-                                aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+        <!-- Dropdown de busca - MOBILE -->
+        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+             aria-labelledby="searchDropdown">
+
+            <form class="form-inline mr-auto w-100 navbar-search">
+                <div class="input-group">
+                    <input id="searchInput" type="text" class="form-control bg-light border-0 small"
+                           placeholder="Pesquisar Relatório" aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search fa-sm"></i>
+                        </button>
+                    </div>
                 </div>
+            </form>
+
+            <div id="searchResults" class="mt-2" style="max-height: 200px; overflow-y: auto;"></div>
+        </div>
+    </li>
+</ul>
+
             </li>
         
             <div class="topbar-divider d-none d-sm-block"></div>
-            <li class="nav-item dropdown no-arrow">
+            <li class="nav-item dropdown no-arrow" style="list-style: none;">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="mr-2 d-none d-lg-inline text-gray-600 small">Fellipe Patrick</span>
@@ -202,11 +218,58 @@
                 </div>
             </div>
         </div>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var chamadosSearch = [[${ChamadosSearch}]];
+            /*]]>*/
+        </script>
+
+<script>
+   
+    function handleSearch(inputId, resultsId) {
+        const input = document.getElementById(inputId);
+        const resultsContainer = document.getElementById(resultsId);
+
+        if (!input || !resultsContainer) return;
+
+        input.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            resultsContainer.innerHTML = '';
+
+            if (query.length > 2) {
+                const filtered = chamadosSearch.filter(item => item.toLowerCase().includes(query));
+
+                if (filtered.length === 0) {
+                    resultsContainer.innerHTML = '<div class="p-2 text-muted">Nenhum resultado encontrado</div>';
+                } else {
+                    filtered.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'p-2 border-bottom';
+                        div.textContent = item;
+                        resultsContainer.appendChild(div);
+                    });
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        handleSearch('searchInputDesktop', 'searchResultsDesktop');
+        handleSearch('searchInput', 'searchResults');
+    });
+</script>
+
+
+
+        
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <script th:src="@{../../imgs/vendor/jquery/jquery.min.js}"></script>
         <script th:src="@{../../imgs/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
         <script th:src="@{../../imgs/vendor/jquery-easing/jquery.easing.min.js}"></script>
         <script th:src="@{../../js/home/sb-admin-2.min.js}"></script>
+        <script th:src="@{../../js/home/main.js}"></script>
     </footer>
+
+    
 </body>
 </html>

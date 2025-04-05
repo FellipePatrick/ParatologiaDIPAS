@@ -43,7 +43,6 @@ public class AuthService {
                 session.setAttribute("email", email);
                 session.setAttribute("role", role);
 
-                // Redirecionando para a página inicial
                 return new ModelAndView("redirect:/");
 
             } else {
@@ -58,24 +57,19 @@ public class AuthService {
    public boolean verificarTokenValido(HttpSession session) {
     String token = (String) session.getAttribute("token");
 
-    // URL do servidor externo para verificar o token
     String url = "http://localhost:8081/validarToken/";
 
     if (token != null) {
-        // Criando o cabeçalho com o token no formato Authorization
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
 
-        // Criando a requisição com o cabeçalho
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
-            // Enviando requisição GET para a API com o token no cabeçalho
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
 
-            // Verificando se a resposta foi bem-sucedida
             if (response.getStatusCode().is2xxSuccessful()) {
-                return true; // Token válido
+                return true;
             }
         } catch (Exception e) {
             e.printStackTrace();
