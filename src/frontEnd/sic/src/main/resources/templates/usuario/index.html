@@ -44,8 +44,8 @@
                                 <div class="form-group">
                                     <label for="tipoUsuario">Tipo de Usuário</label>
                                     <select id="tipoUsuario" name="role" class="form-control" required>
-                                        <option value="ADMINISTRADOR">Administrador</option>
-                                        <option value="GESTOR">Gestor</option>
+                                        <option value="ADMINISTRADOR" th:if="${session.role == 'ADMINISTRADOR'}">Administrador</option>
+                                        <option value="GESTOR" th:if="${session.role == 'ADMINISTRADOR'}">Gestor</option>
                                         <option value="USUARIO">Usuario</option>
                                     </select>
                                     <div th:if="${roleError != null}" class="text-danger">

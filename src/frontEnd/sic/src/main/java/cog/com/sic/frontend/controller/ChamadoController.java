@@ -77,34 +77,42 @@ public class ChamadoController {
 
     @PostMapping("/chamados")
     public ModelAndView criarChamado(@ModelAttribute ChamadoRequestDTO chamadoRequestDTO,
-            RedirectAttributes redirectAttributes) {
+                                     RedirectAttributes redirectAttributes) {
         if (!authService.verificarTokenValido(session)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
         }
+    
         RestTemplate restTemplate = new RestTemplate();
         ModelAndView modelAndView = new ModelAndView("redirect:/chamados");
-        
+    
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
         headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
     
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<ChamadoResponseDTO> response = restTemplate.exchange(
-            URL,
-            HttpMethod.POST,
-            entity,
-            ChamadoResponseDTO.class
-        );
-        if (response.getStatusCode().is2xxSuccessful()) {
-            redirectAttributes.addFlashAttribute("successMessage", "Chamado criado com sucesso!");
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar o chamado.");
+        // Aqui vai o corpo da requisição
+        HttpEntity<ChamadoRequestDTO> entity = new HttpEntity<>(chamadoRequestDTO, headers);
+    
+        try {
+            ResponseEntity<ChamadoResponseDTO> response = restTemplate.exchange(
+                URL,
+                HttpMethod.POST,
+                entity,
+                ChamadoResponseDTO.class
+            );
+    
+            if (response.getStatusCode().is2xxSuccessful()) {
+                redirectAttributes.addFlashAttribute("successMessage", "Chamado criado com sucesso!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Erro ao criar o chamado.");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro inesperado: " + e.getMessage());
         }
+    
         return modelAndView;
     }
-
+    
     @PostMapping("/chamados/status")
     public ModelAndView doUpdate(@RequestParam Long id, @ModelAttribute ChamadoRequestUpdateStatus chamadoRequestDTO,
             RedirectAttributes redirectAttributes) {

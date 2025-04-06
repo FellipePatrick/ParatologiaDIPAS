@@ -34,7 +34,6 @@ public class TokenService {
             .map(GrantedAuthority::getAuthority)
             .collect(Collectors.joining(" "));
 
-    // Buscar usuário autenticado pelo email
     Optional<Usuario> usuario = service.findByEmail(authentication.getName());
     
     if (usuario.isEmpty()) {

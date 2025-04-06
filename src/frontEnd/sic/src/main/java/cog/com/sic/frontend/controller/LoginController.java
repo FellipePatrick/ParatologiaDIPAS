@@ -41,15 +41,6 @@ public class LoginController {
         }   
     }
 
-    @GetMapping("/password")
-    public ModelAndView edit(@ModelAttribute String s, RedirectAttributes redirectAttributes, HttpSession session) {
-        if (session.getAttribute("token") != null) {
-            return new ModelAndView("home/index");
-        } else {
-            return new ModelAndView("login/edit");
-        }   
-    }
-
     @GetMapping("/logout")
     public ModelAndView logout(HttpSession session, RedirectAttributes redirectAttributes) {
         if (session.getAttribute("token") != null) {

@@ -18,7 +18,6 @@ public class UsuarioRequestDTO {
     @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres.")
     private String nome;
     @NotBlank(message = "O telefone não pode estar em branco.")
-    @Pattern(regexp = "\\d{10,11}", message = "O telefone deve ter 10 ou 11 dígitos.")
     private String telefone;
     @NotNull(message = "A role não pode ser nula.")
     private String role; 

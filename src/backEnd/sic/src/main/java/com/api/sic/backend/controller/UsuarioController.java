@@ -46,6 +46,10 @@ public class UsuarioController {
         return retornaUser().getRole().equals(Usuario.Role.ADMINISTRADOR);
     }
 
+    private boolean isGestor(){
+        return retornaUser().getRole().equals(Usuario.Role.GESTOR);
+    }
+
     private Usuario retornaUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -55,33 +59,44 @@ public class UsuarioController {
 
     @GetMapping
     public Page<UsuarioResponseDTO> listAll(Pageable pageable) {
-        if(!isAdmin()){
+        if(!isAdmin() && !isGestor()){
             return null;
         }
-        Page<Usuario> usuariosPage = service.findAllUsers(pageable);
-        return usuariosPage.map(this::convertToDto);
+        Page<Usuario> usuariosPage = null;
+        if(isAdmin())
+            usuariosPage = service.findAllUsers(pageable);
+        
+        if(isGestor())
+            usuariosPage = service.findAllUsersGestor(pageable, retornaUser());
+        
+
+        return  usuariosPage.map(this::convertToDto) ;
     }
 
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> create(@Valid @RequestBody UsuarioRequestDTO usuario) {
-        if(!isAdmin()){
+        if(!isAdmin() && !isGestor()){
             return null;
         }
         usuario.setRole(usuario.getRole().toUpperCase());
         Optional<Usuario> u = service.findByEmail(usuario.getEmail());
         if(u.isPresent()){
             Usuario us = u.get();
-            switch (usuario.getRole()) {
-                case "ADMINISTRADOR":
-                    us.setRole(Role.ADMINISTRADOR);
-                    break;
-                case "GESTOR":
-                    us.setRole(Role.GESTOR);
-                    break;
-                default:
-                    us.setRole(Role.USUARIO);
-                    break;
+            if(isAdmin()){
+                switch (usuario.getRole()) {
+                    case "ADMINISTRADOR":
+                        us.setRole(Role.ADMINISTRADOR);
+                        break;
+                    case "GESTOR":
+                        us.setRole(Role.GESTOR);
+                        break;
+                    default:
+                        us.setRole(Role.USUARIO);
+                        break;
+                }
             }
+            if(isGestor())
+                us.setRole(Role.USUARIO);
             us.setDeletedAt(null);
             us.setNome(usuario.getNome());
             us.setTelefone(usuario.getTelefone());
@@ -93,6 +108,8 @@ public class UsuarioController {
             Usuario gestor = service.findByEmail(username).get();
 
             usuario.setGestor(gestor);
+            if(isGestor())
+                usuario.setRole("USUARIO");
 
             Usuario created = service.create(convertToEntity(usuario));
             URI location = ServletUriComponentsBuilder
@@ -107,7 +124,12 @@ public class UsuarioController {
     
     @GetMapping("{id}")
     public ResponseEntity<UsuarioResponseDTO> listById(@PathVariable("id") Long id) {
-        if(isAdmin() || retornaUser().getId().equals(id)){
+        if(isAdmin() || retornaUser().getId().equals(id) || isGestor()){
+            if(isGestor() && !retornaUser().getId().equals(id)){
+                Usuario p = service.findByIdGestor(id, retornaUser());
+                UsuarioResponseDTO dto = mapper.map(p, UsuarioResponseDTO.class);
+                return ResponseEntity.ok(dto);
+            }
             Usuario p = service.findById(id);
             UsuarioResponseDTO dto = mapper.map(p, UsuarioResponseDTO.class);
             return ResponseEntity.ok(dto);
@@ -118,12 +140,17 @@ public class UsuarioController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable("id") Long id) {
-        if (!isAdmin()) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas administradores podem deletar usuários.");
+        if (!isAdmin() && !isGestor()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas pessoas autorizadas podem deletar usuários.");
         }
-
         if (!retornaUser().getId().equals(id)) {
-            service.deleteById(id);
+            if(isGestor()){
+                Usuario p = service.findByIdGestor(id, retornaUser());
+                if(p == null || p.getEmail() != null)
+                    service.deleteById(id);
+            }
+            if(isAdmin())
+                service.deleteById(id);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Você não pode deletar a si mesmo.");
         }
@@ -132,11 +159,17 @@ public class UsuarioController {
 
     @PutMapping("{id}")
     public ResponseEntity<UsuarioResponseDTO> update(@Valid @RequestBody UsuarioRequestUpdateDTO requestDto, @PathVariable("id") Long id) {
-        if(!isAdmin())
+        if(!isAdmin() && !isGestor())
             return null;
 
         if((retornaUser().getId().equals(id)))
             return null;
+
+       if(isGestor()){
+        Usuario p = service.findByIdGestor(id, retornaUser());
+            if(p == null || p.getEmail() == null)
+                return null;
+       }
         try {
             @SuppressWarnings("unused")
             Usuario p = service.findById(id);

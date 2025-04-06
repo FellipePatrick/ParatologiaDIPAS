@@ -132,7 +132,7 @@ public ModelAndView redefineSenha(HttpSession session,
             return new ModelAndView("redirect:/login");
         }
 
-        if(!session.getAttribute("role").toString().equals("ADMINISTRADOR")){
+        if(!session.getAttribute("role").toString().equals("ADMINISTRADOR") && !session.getAttribute("role").toString().equals("GESTOR")){
             return new ModelAndView("redirect:/");
         }
 
@@ -176,7 +176,7 @@ public ModelAndView redefineSenha(HttpSession session,
             return new ModelAndView("redirect:/login");
         }
 
-        if(!session.getAttribute("role").toString().equals("ADMINISTRADOR")){
+        if(!session.getAttribute("role").toString().equals("ADMINISTRADOR") && !session.getAttribute("role").toString().equals("GESTOR")){
             return new ModelAndView("redirect:/");
         }
        
@@ -216,7 +216,7 @@ public ModelAndView redefineSenha(HttpSession session,
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
         }
-        if(!session.getAttribute("role").toString().equals("ADMINISTRADOR")){
+        if(!session.getAttribute("role").toString().equals("ADMINISTRADOR") && !session.getAttribute("role").toString().equals("GESTOR")){
             return new ModelAndView("redirect:/");
         }
         
@@ -321,6 +321,10 @@ public ModelAndView redefineSenha(HttpSession session,
         if (!authService.verificarTokenValido(session)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
+        }
+        
+        if(!session.getAttribute("role").toString().equals("ADMINISTRADOR") && !session.getAttribute("role").toString().equals("GESTOR")){
+            return new ModelAndView("redirect:/");
         }
     
         RestTemplate restTemplate = new RestTemplate();

@@ -65,30 +65,38 @@ public class SicApplication implements WebMvcConfigurer {
             if (usuarioRepository.count() == 0) {
 
                 Usuario user = new Usuario();
-                user.setNome("Normal User");
-                user.setEmail("user@sic.com");
-                user.setPassword(e.encode("user123"));
+                user.setNome("Fellipe Gestor");
+                user.setEmail("gestor@sic.com");
+                user.setPassword(e.encode("admin123"));
                 user.setRole(Role.GESTOR);
                 user.setAdmin(false);
                 usuarioRepository.save(user);
+
+                Usuario g2 = new Usuario();
+                g2.setNome("Fellipe Gestor");
+                g2.setEmail("gestor2@sic.com");
+                g2.setPassword(e.encode("admin123"));
+                g2.setRole(Role.GESTOR);
+                g2.setAdmin(false);
+                usuarioRepository.save(g2);
                 
 
                 Usuario admin = new Usuario();
-                admin.setNome("Admin User");
+                admin.setNome("Fellipe Admin");
                 admin.setEmail("admin@sic.com");
                 admin.setPassword(e.encode("admin123"));
                 admin.setRole(Role.ADMINISTRADOR);
                 admin.setAdmin(true);
-                admin.setGestor(uService.findByEmail("user@sic.com").get());
+                admin.setGestor(uService.findByEmail("gestor@sic.com").get());
                 usuarioRepository.save(admin);
 
                 Usuario comum = new Usuario();
-                comum.setNome("User");
-                comum.setEmail("comum@sic.com");
+                comum.setNome("Fellipe User");
+                comum.setEmail("user@sic.com");
                 comum.setPassword(e.encode("admin123"));
                 comum.setRole(Role.USUARIO);
                 comum.setAdmin(true);
-                comum.setGestor(uService.findByEmail("user@sic.com").get());
+                comum.setGestor(uService.findByEmail("gestor2@sic.com").get());
                 usuarioRepository.save(comum);
 
                 System.out.println("Usuários criados com sucesso!");

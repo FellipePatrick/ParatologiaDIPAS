@@ -29,13 +29,27 @@ public class UsuarioService extends GenericService<Usuario, Long, UsuarioReposit
                                                   .filter(usuario -> usuario.getDeletedAt() == null)
                                                   .toList();
     return new PageImpl<>(usuariosFiltrados, pageable, usuariosPage.getTotalElements());
-}
+    }
 
+    public Page<Usuario> findAllUsersGestor(Pageable pageable, Usuario gestor) {
+        Page<Usuario> usuariosPage = repository.findAllGestor(pageable, gestor);
+        List<Usuario> usuariosFiltrados = usuariosPage.stream()
+                                                    .filter(usuario -> usuario.getDeletedAt() == null)
+                                                    .toList();
+        return new PageImpl<>(usuariosFiltrados, pageable, usuariosPage.getTotalElements());
+    }
     
-
+    public Usuario findByIdGestor( Long id, Usuario gestor) {
+        Usuario usuario = repository.findByIdGestor(id, gestor);
+        return usuario;
+    }
 
     public Optional<Usuario> findByEmail(String email){
         return Optional.ofNullable(repository.findByEmail(email));
+    }
+
+    public Optional<Usuario> findByMatricula(String matricula){
+        return  Optional.ofNullable(repository.findByMatricula(matricula));
     }
 
     public Usuario update(Usuario usuario, Long id) {
