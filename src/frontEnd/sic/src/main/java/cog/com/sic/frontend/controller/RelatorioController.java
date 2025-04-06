@@ -286,6 +286,9 @@ public class RelatorioController {
         }
     
         try {
+            if(relatorioRequestDTO.getStatus() == null)
+                relatorioRequestDTO.setStatus("RASCUNHO");
+
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", "Bearer " + session.getAttribute("token"));
