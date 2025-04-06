@@ -84,6 +84,33 @@
             </footer>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const telefoneInput = document.getElementById("telefone");
+
+            telefoneInput.addEventListener("input", function (e) {
+                let valor = e.target.value.replace(/\D/g, "");
+
+                if (valor.length > 11) valor = valor.slice(0, 11);
+
+                let formatado = valor;
+
+                if (valor.length >= 11) {
+                    formatado = valor.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+                } else if (valor.length >= 10) {
+                    formatado = valor.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+                } else if (valor.length >= 6) {
+                    formatado = valor.replace(/(\d{2})(\d{4})/, "($1) $2");
+                } else if (valor.length >= 3) {
+                    formatado = valor.replace(/(\d{2})(\d{1,4})/, "($1) $2");
+                } else if (valor.length >= 1) {
+                    formatado = valor.replace(/(\d{1,2})/, "($1");
+                }
+
+                e.target.value = formatado;
+            });
+        });
+    </script>
 </body>
 
 </html>

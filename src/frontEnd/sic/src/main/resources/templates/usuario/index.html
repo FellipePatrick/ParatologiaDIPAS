@@ -75,7 +75,12 @@
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody th:if="${#lists.isEmpty(usuarios)}">
+                                    <tr>
+                                        <td colspan="7" class="text-center">Nenhum usuario encontrado</td>
+                                    </tr>
+                                </tbody>
+                                <tbody th:each="chamado, stat : ${usuarios}" th:unless="${#lists.isEmpty(usuarios)}"></tbody>
                                     <tr th:each="usuario : ${usuarios}">
                                         <td th:text="${usuario.nome}">Nome do Usuário</td>
                                         <td th:text="${usuario.email}">email@email.com</td>

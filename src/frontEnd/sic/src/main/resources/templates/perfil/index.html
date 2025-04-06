@@ -35,7 +35,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="telefone">Telefone</label>
-                                            <input type="text" class="form-control" id="telefone" th:value="${telefone}" readonly>
+                                            <input type="text" class="form-control" id="telefone" th:value="${session.telefone}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="matricula">Matricula</label>
@@ -71,27 +71,26 @@
         </div>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const telefoneInput = document.getElementById("telefone");
-        
-            let telefone = telefoneInput.value || ""; 
-        
-            if (!telefone || telefone.trim() === "" || telefone.length < 10) {
-                telefone = "00000000000";
-            }
-        
-            telefone = telefone.replace(/\D/g, "");
-        
-            let telefoneFormatado = telefone;
-        
-            if (telefone.length === 11) {
-                telefoneFormatado = telefone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
-            } else if (telefone.length === 10) {
-                telefoneFormatado = telefone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
-            }
-        
-            telefoneInput.value = telefoneFormatado;
-        });
-        </script>
+        const telefoneInput = document.getElementById("telefone");
+    
+        let telefone = telefoneInput.value || ""; 
+        console.log("Telefone antes do tratamento:", telefone);
+    
+        if (!telefone || telefone.trim() === "" || telefone.length < 10) {
+            telefone = "00000000000";
+        }
+    
+        telefone = telefone.replace(/\D/g, "");
+    
+        let telefoneFormatado = telefone;
+    
+        if (telefone.length === 11) {
+            telefoneFormatado = telefone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+        } else if (telefone.length === 10) {
+            telefoneFormatado = telefone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+        }
+    
+        telefoneInput.value = telefoneFormatado;
+    </script>
 </body>
 </html>
