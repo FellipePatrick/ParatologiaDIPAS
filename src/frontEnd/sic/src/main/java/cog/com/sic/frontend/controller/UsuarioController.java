@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,10 +31,7 @@ import cog.com.sic.frontend.dto.Usuario.UsuarioResponseDTO;
 import cog.com.sic.frontend.dto.Usuario.UsuarioUpdateRequestDTO;
 import cog.com.sic.service.AuthService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
-
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
