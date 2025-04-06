@@ -1,7 +1,5 @@
 package com.api.sic.backend.dto.Usuario;
 
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -19,8 +17,4 @@ public class UsuarioRequestUpdateDTO {
     private String telefone;
     @NotNull(message = "A role não pode ser nula.")
     private String role; 
-    @NotBlank(message = "O email não pode estar em branco.")
-    @Email(message = "O email deve ser válido.")
-    @Column(unique = true)
-    private String email;
 }
