@@ -87,6 +87,7 @@ public class Usuario extends AbstractEntity implements UserDetails {
         this.admin = admin;
     }
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (Boolean.TRUE.equals(this.admin)) {

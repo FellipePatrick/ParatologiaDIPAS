@@ -22,7 +22,7 @@ public class UsuarioService extends GenericService<Usuario, Long, UsuarioReposit
         this.repository = repository;
     }
     
-
+    
    public Page<Usuario> findAllUsers(Pageable pageable) {
     Page<Usuario> usuariosPage = repository.findAll(pageable);
     List<Usuario> usuariosFiltrados = usuariosPage.stream()

@@ -35,7 +35,7 @@ public class TokenService {
             .collect(Collectors.joining(" "));
 
     Optional<Usuario> usuario = service.findByEmail(authentication.getName());
-    
+        
     if (usuario.isEmpty()) {
         throw new UsernameNotFoundException("Usuário não encontrado");
     }

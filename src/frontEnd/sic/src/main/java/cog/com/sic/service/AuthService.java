@@ -23,8 +23,8 @@ public class AuthService {
     public ModelAndView realizarLogin(String credencialMatricula, String senha, HttpSession session) {
         String url = "http://localhost:8081/login/";
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("email", "admin@sic.com");
-        requestBody.put("password", "admin123");
+        requestBody.put("matricula", credencialMatricula);
+        requestBody.put("password", senha);
 
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(url, requestBody, Map.class);
