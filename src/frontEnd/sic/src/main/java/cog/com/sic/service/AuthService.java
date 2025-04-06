@@ -53,8 +53,7 @@ public class AuthService {
                 return new ModelAndView("login/index").addObject("errorMessage", "Falha no login!");
             }
         } catch (Exception e) {
-            System.err.println(e);
-            return new ModelAndView("login/index").addObject("errorMessage", "Erro ao conectar ao servidor.");
+            return new ModelAndView("login/index").addObject("errorMessage", "Usuário inexistente ou senha inválida.");
         }
     }
 
