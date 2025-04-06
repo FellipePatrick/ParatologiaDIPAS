@@ -20,11 +20,11 @@ public class AuthService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public ModelAndView realizarLogin(String matricula, String senha, HttpSession session) {
+    public ModelAndView realizarLogin(String credencialEmail, String senha, HttpSession session) {
         String url = "http://localhost:8081/login/";
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("email", "admin@sic.com");
-        requestBody.put("password", "admin123");
+        requestBody.put("email", "comum@sic.com");
+        requestBody.put("password", "12321@");
 
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(url, requestBody, Map.class);
@@ -36,12 +36,16 @@ public class AuthService {
                 String nome = (String) responseBody.get("nome");
                 String email = (String) responseBody.get("email");
                 String role = (String) responseBody.get("role");
+                String telefone = (String) responseBody.get("telefone");
+                String matricula = (String) responseBody.get("matricula");
 
                 session.setAttribute("token", token);
                 session.setAttribute("userId", userId);
                 session.setAttribute("nome", nome);
                 session.setAttribute("email", email);
                 session.setAttribute("role", role);
+                session.setAttribute("matricula", matricula);
+                session.setAttribute("telefone", telefone);
 
                 return new ModelAndView("redirect:/");
 

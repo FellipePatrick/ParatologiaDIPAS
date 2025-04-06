@@ -17,6 +17,8 @@ public class TokenResponseDTO {
     private Long id;
     private String nome;
     private String email;
+    private String matricula;
+    private String telefone;
     private Role role;
     
     public TokenResponseDTO(String token, Usuario usuario) {
@@ -24,7 +26,9 @@ public class TokenResponseDTO {
         this.id = usuario.getId();
         this.nome = usuario.getNome();
         this.email = usuario.getEmail();
+        this.matricula = usuario.getMatricula();
         this.role = usuario.getRole();
+        this.telefone = usuario.getTelefone();
     }
 
 }

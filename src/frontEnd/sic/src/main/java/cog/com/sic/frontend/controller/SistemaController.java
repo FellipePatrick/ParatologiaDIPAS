@@ -143,15 +143,6 @@ public class SistemaController {
     }
 
     
-    @GetMapping("/relatorios/unit")
-    public ModelAndView unitRelatorios(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
-        if (!authService.verificarTokenValido(session)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
-            return new ModelAndView("redirect:/login");
-        }
-        return new ModelAndView("relatorios/unit");
-    }
-
 
     @GetMapping("/suporte")
     public ModelAndView indexSuporte(@ModelAttribute String s, RedirectAttributes redirectAttributes) {

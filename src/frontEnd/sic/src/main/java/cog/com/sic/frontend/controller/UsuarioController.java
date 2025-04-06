@@ -1,5 +1,6 @@
 package cog.com.sic.frontend.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import java.util.Map;
@@ -11,10 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,20 +25,26 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cog.com.sic.frontend.dto.Usuario.ResetPasswordDTO;
 import cog.com.sic.frontend.dto.Usuario.UsuarioPagedResponseDTO;
 import cog.com.sic.frontend.dto.Usuario.UsuarioRequestDTO;
 import cog.com.sic.frontend.dto.Usuario.UsuarioResponseDTO;
 import cog.com.sic.frontend.dto.Usuario.UsuarioUpdateRequestDTO;
 import cog.com.sic.service.AuthService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 public class UsuarioController {
 
     //URL da API
     private static final String URL = "http://localhost:8081/usuarios/";
+    
+    private static final String URL_Senha = "http://localhost:8081/resetpassword/";
     
     private final HttpSession session;
 
@@ -49,13 +58,74 @@ public class UsuarioController {
 
     @GetMapping("/perfil")
     public ModelAndView perfil(HttpSession session, RedirectAttributes redirectAttributes) {
+
+
         if (!authService.verificarTokenValido(session)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
         }
 
-        return new ModelAndView("perfil/index");
+        ModelAndView modelAndView = new ModelAndView("perfil/index");
+
+        modelAndView.addObject("nome", (String) session.getAttribute("nome"));
+        modelAndView.addObject("email", (String) session.getAttribute("email"));
+        modelAndView.addObject("matricula", (String) session.getAttribute("matricula"));
+
+        return modelAndView;
     }
+
+ @PostMapping("/password")
+public ModelAndView redefineSenha(HttpSession session,
+                                   ResetPasswordDTO dto,
+                                   BindingResult result,
+                                   RedirectAttributes redirectAttributes) {
+    if (!authService.verificarTokenValido(session)) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+        return new ModelAndView("redirect:/login");
+    }
+
+    if (!dto.getNovaSenha().equals(dto.getConfirmarSenha())) {
+        redirectAttributes.addFlashAttribute("errorMessage", "As senhas não coincidem.");
+        return new ModelAndView("redirect:/perfil");
+    }
+
+    String senha = dto.getNovaSenha();
+    if (senha.length() < 8 || senha.length() > 100) {
+        redirectAttributes.addFlashAttribute("errorMessage", "A nova senha deve ter entre 8 e 100 caracteres.");
+        return new ModelAndView("redirect:/perfil");
+    }
+
+    if (!senha.matches(".*[a-z].*") || !senha.matches(".*[A-Z].*")) {
+        redirectAttributes.addFlashAttribute("errorMessage", "A nova senha deve conter pelo menos uma letra maiúscula e uma letra minúscula.");
+        return new ModelAndView("redirect:/perfil");
+    }
+
+    String token = (String) session.getAttribute("token");
+    RestTemplate restTemplate = new RestTemplate();
+    ModelAndView modelAndView = new ModelAndView("redirect:/perfil");
+
+    try {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + token);
+
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("novaSenha", dto.getNovaSenha());
+        requestBody.put("confirmarSenha", dto.getConfirmarSenha());
+
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
+
+        restTemplate.exchange(URL_Senha, HttpMethod.POST, entity, Void.class);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Senha alterada com sucesso!");
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Erro ao alterar senha. Tente novamente." );
+    }
+    return modelAndView;
+}
+
+
+    
 
 
     @GetMapping("/usuarios")
@@ -64,6 +134,10 @@ public class UsuarioController {
         if (!authService.verificarTokenValido(session)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
+        }
+
+        if(!session.getAttribute("role").toString().equals("ADMINISTRADOR")){
+            return new ModelAndView("redirect:/");
         }
 
         RestTemplate restTemplate = new RestTemplate();
@@ -106,6 +180,9 @@ public class UsuarioController {
             return new ModelAndView("redirect:/login");
         }
 
+        if(!session.getAttribute("role").toString().equals("ADMINISTRADOR")){
+            return new ModelAndView("redirect:/");
+        }
        
         if(session.getAttribute("userId").toString().equals(id.toString())){
             return new ModelAndView("redirect:/usuarios");
@@ -142,6 +219,9 @@ public class UsuarioController {
         if (!authService.verificarTokenValido(session)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
+        }
+        if(!session.getAttribute("role").toString().equals("ADMINISTRADOR")){
+            return new ModelAndView("redirect:/");
         }
         
         if(session.getAttribute("userId").toString().equals(id.toString())){

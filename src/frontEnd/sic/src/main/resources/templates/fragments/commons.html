@@ -49,7 +49,6 @@
                     </button>
                 </div>
         
-                <!-- Agora aqui dentro -->
                 <div id="searchResultsDesktop"
                      class="dropdown-menu show p-3 shadow animated--grow-in position-absolute w-100 mt-2"
                      style="max-height: 200px; overflow-y: auto; display: none; z-index: 999;">
@@ -57,34 +56,33 @@
             </div>
         </form>
         
-<!-- Ícone de busca - MOBILE -->
-<ul class="navbar-nav ml-auto">
-    <li class="nav-item dropdown no-arrow d-sm-none">
-        <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-search fa-fw"></i>
-        </a>
 
-        <!-- Dropdown de busca - MOBILE -->
-        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-             aria-labelledby="searchDropdown">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown no-arrow d-sm-none">
+                    <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-search fa-fw"></i>
+                    </a>
 
-            <form class="form-inline mr-auto w-100 navbar-search">
-                <div class="input-group">
-                    <input id="searchInput" type="text" class="form-control bg-light border-0 small"
-                           placeholder="Pesquisar Relatório" aria-label="Search" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="button">
-                            <i class="fas fa-search fa-sm"></i>
-                        </button>
+                    <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                        aria-labelledby="searchDropdown">
+
+                        <form class="form-inline mr-auto w-100 navbar-search">
+                            <div class="input-group">
+                                <input id="searchInput" type="text" class="form-control bg-light border-0 small"
+                                    placeholder="Pesquisar Relatório" aria-label="Search" aria-describedby="basic-addon2">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="button">
+                                        <i class="fas fa-search fa-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div id="searchResults" class="mt-2" style="max-height: 200px; overflow-y: auto;"></div>
                     </div>
-                </div>
-            </form>
-
-            <div id="searchResults" class="mt-2" style="max-height: 200px; overflow-y: auto;"></div>
-        </div>
-    </li>
-</ul>
+                </li>
+            </ul>
 
             </li>
         
@@ -92,8 +90,8 @@
             <li class="nav-item dropdown no-arrow" style="list-style: none;">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Fellipe Patrick</span>
-                    <img class="img-profile rounded-circle" th:src="@{../../imgs/home/fellipe.jpg}">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small" th:text="${session.nome}"></span>
+                    <img class="img-profile rounded-circle" th:src="@{../../imgs/home/user.jpg}" width="100">
                 </a>
                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                     aria-labelledby="userDropdown">
@@ -101,10 +99,10 @@
                         <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                         Perfil
                     </a>
-                    <a class="dropdown-item" th:href="@{/usuarios}">
+                    <a class="dropdown-item" th:href="@{/usuarios}" th:if="${session.role == 'ADMINISTRADOR'}">
                         <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                         Usuários
-                    </a>
+                    </a>                    
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                         <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
