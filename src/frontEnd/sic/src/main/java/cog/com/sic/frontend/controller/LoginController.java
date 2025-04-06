@@ -36,6 +36,7 @@ public class LoginController {
         if (session.getAttribute("token") != null) {
             return new ModelAndView("redirect:/");
         } else {
+            
             return new ModelAndView("login/index");
         }   
     }

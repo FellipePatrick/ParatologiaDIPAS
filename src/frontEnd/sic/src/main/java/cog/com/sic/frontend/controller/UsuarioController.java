@@ -99,14 +99,15 @@ public class UsuarioController {
     }
 
     @GetMapping("/usuarios/editar/{id}")
-    public ModelAndView doEdite(@PathVariable Long id, RedirectAttributes redirectAttributes){ 
+    public ModelAndView doEdite(@PathVariable Integer id, RedirectAttributes redirectAttributes){ 
 
         if (!authService.verificarTokenValido(session)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
         }
 
-        if(!session.getAttribute("userId").equals(id.toString())){
+       
+        if(session.getAttribute("userId").toString().equals(id.toString())){
             return new ModelAndView("redirect:/usuarios");
         }
 
@@ -142,30 +143,32 @@ public class UsuarioController {
             redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
             return new ModelAndView("redirect:/login");
         }
-        if(session.getAttribute("userId").equals(id.toString())){
-            RestTemplate restTemplate = new RestTemplate();
-            ModelAndView modelAndView = new ModelAndView("redirect:/usuarios");
-    
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
-    
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-            try {
-                restTemplate.exchange(
-            URL + "/" + id,
-            HttpMethod.DELETE,
-            entity,
-            Void.class
-        );
-                redirectAttributes.addFlashAttribute("successMessage", "Usuário deletado com sucesso!");
-    
-            } catch (Exception e) {
-                e.printStackTrace();
-                redirectAttributes.addFlashAttribute("errorMessage", "Erro ao deletar o usuário.");
-            }
-            return modelAndView;
+        
+        if(session.getAttribute("userId").toString().equals(id.toString())){
+            return new ModelAndView("redirect:/usuarios");
         }
-        return new ModelAndView("redirect:/usuarios");
+        
+        RestTemplate restTemplate = new RestTemplate();
+        ModelAndView modelAndView = new ModelAndView("redirect:/usuarios");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        try {
+            restTemplate.exchange(
+        URL + "/" + id,
+        HttpMethod.DELETE,
+        entity,
+        Void.class
+    );
+            redirectAttributes.addFlashAttribute("successMessage", "Usuário deletado com sucesso!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao deletar o usuário.");
+        }
+        return modelAndView;
         
     }
 
@@ -178,7 +181,7 @@ public class UsuarioController {
             return new ModelAndView("redirect:/login");
         }
         
-        if(!session.getAttribute("userId").equals(id.toString())){
+        if(session.getAttribute("userId").toString().equals(id.toString())){
             return new ModelAndView("redirect:/usuarios");
         }
         
@@ -186,9 +189,10 @@ public class UsuarioController {
         ModelAndView modelAndView = new ModelAndView("redirect:/usuarios/editar/" + id);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + (String) session.getAttribute("token"));
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-    
+        headers.setContentType(MediaType.APPLICATION_JSON); 
+        
+        HttpEntity<UsuarioUpdateRequestDTO> entity = new HttpEntity<>(usuarioRequestDTO, headers);
+        
         try {
             String url = URL + "/" + id;
             ResponseEntity<UsuarioResponseDTO> response = restTemplate.exchange(
@@ -197,6 +201,7 @@ public class UsuarioController {
                 entity,
                 UsuarioResponseDTO.class
             );
+        
     
             if (response.getStatusCode().is2xxSuccessful()) {
                 redirectAttributes.addFlashAttribute("successMessage", "Usuário atualizado com sucesso!");

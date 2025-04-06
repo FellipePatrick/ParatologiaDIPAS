@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.sic.backend.domain.Usuario;
@@ -40,14 +41,32 @@ public class UsuarioController {
     private final UsuarioService service;
     private final ModelMapper mapper;
 
+
+    private boolean isAdmin(){
+        return retornaUser().getRole().equals(Usuario.Role.ADMINISTRADOR);
+    }
+
+    private Usuario retornaUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Usuario user = service.findByEmail(username).get();
+        return user;
+    }
+
     @GetMapping
     public Page<UsuarioResponseDTO> listAll(Pageable pageable) {
+        if(!isAdmin()){
+            return null;
+        }
         Page<Usuario> usuariosPage = service.findAllUsers(pageable);
         return usuariosPage.map(this::convertToDto);
     }
 
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> create(@Valid @RequestBody UsuarioRequestDTO usuario) {
+        if(!isAdmin()){
+            return null;
+        }
         usuario.setRole(usuario.getRole().toUpperCase());
         Optional<Usuario> u = service.findByEmail(usuario.getEmail());
         if(u.isPresent()){
@@ -88,19 +107,36 @@ public class UsuarioController {
     
     @GetMapping("{id}")
     public ResponseEntity<UsuarioResponseDTO> listById(@PathVariable("id") Long id) {
-        Usuario p = service.findById(id);
-        UsuarioResponseDTO dto = mapper.map(p, UsuarioResponseDTO.class);
-        return ResponseEntity.ok(dto);
+        if(isAdmin() || retornaUser().getId().equals(id)){
+            Usuario p = service.findById(id);
+            UsuarioResponseDTO dto = mapper.map(p, UsuarioResponseDTO.class);
+            return ResponseEntity.ok(dto);
+        }
+        return null;
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable("id") Long id) {
-        service.deleteById(id);
+        if (!isAdmin()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Apenas administradores podem deletar usuários.");
+        }
+
+        if (!retornaUser().getId().equals(id)) {
+            service.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Você não pode deletar a si mesmo.");
+        }
     }
+
 
     @PutMapping("{id}")
     public ResponseEntity<UsuarioResponseDTO> update(@Valid @RequestBody UsuarioRequestUpdateDTO requestDto, @PathVariable("id") Long id) {
+        if(!isAdmin())
+            return null;
+
+        if((retornaUser().getId().equals(id)))
+            return null;
         try {
             @SuppressWarnings("unused")
             Usuario p = service.findById(id);
