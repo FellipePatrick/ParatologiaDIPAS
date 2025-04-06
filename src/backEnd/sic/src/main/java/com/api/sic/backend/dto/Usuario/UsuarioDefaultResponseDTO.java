@@ -13,4 +13,5 @@ public class UsuarioDefaultResponseDTO extends RepresentationModel<UsuarioDefaul
     private String nome;
     private String telefone;
     private String email;
+    private String matricula;
 }

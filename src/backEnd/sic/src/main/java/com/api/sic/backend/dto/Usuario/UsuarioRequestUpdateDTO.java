@@ -19,10 +19,6 @@ public class UsuarioRequestUpdateDTO {
     private String telefone;
     @NotNull(message = "A role não pode ser nula.")
     private String role; 
-    // @Size(min = 8, message = "A senha deve ter no mínimo 8 caracteres.")
-    // @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).+$", 
-    //          message = "A senha deve conter pelo menos uma letra minúscula, uma letra maiúscula e um caractere especial.")
-    // private String senha;
     @NotBlank(message = "O email não pode estar em branco.")
     @Email(message = "O email deve ser válido.")
     @Column(unique = true)
