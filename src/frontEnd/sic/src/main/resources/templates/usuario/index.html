@@ -88,6 +88,7 @@
                                         <td>
                                             <a th:if="${usuario.email != email}" th:href="@{'/usuarios/editar/' + ${usuario.id}}" class="btn btn-sm btn-warning">Editar</a>
                                             <a th:if="${usuario.email == email}" class="btn btn-sm btn-warning" readonly>Editar</a>
+                                            <a th:href="@{'/usuarios/redefinir/' + ${usuario.id}}" class="btn btn-sm btn-info">Redefinir Senha</a>
                                             <a th:if="${usuario.email != email}" class="btn btn-sm btn-danger" th:href="@{'/usuarios/delete/' + ${usuario.id}}">Excluir</a>
                                             <a th:if="${usuario.email == email}" class="btn btn-sm btn-danger" readonly>Excluir</a>
                                             </td>

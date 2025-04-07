@@ -12,9 +12,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.time.Year;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +28,7 @@ public class Usuario extends AbstractEntity implements UserDetails {
     @NotBlank(message = "O nome não pode estar em branco.")
     private String nome;
 
-    private Boolean admin; // Renomeado de isAdmin para evitar conflitos com Lombok
+    private Boolean admin;
 
     @NotBlank(message = "O email não pode estar em branco.")
     @Column(unique = true)
@@ -54,15 +51,6 @@ public class Usuario extends AbstractEntity implements UserDetails {
     private String matricula;
 
     private String pathImage;
-
-     @PrePersist
-     private void gerarMatrículaESenha() {
-        this.matricula = Usuario.gerarMatricula();
-        //this.password = Usuario.gerarSenha(8) + "@Sic";
-        System.out.println(Usuario.gerarSenha(8) + "@Sic");
-        PasswordEncoder e = new BCryptPasswordEncoder();
-        this.password = e.encode("admin123");
-   }
 
    public static String gerarMatricula() {
         Random random = new Random();

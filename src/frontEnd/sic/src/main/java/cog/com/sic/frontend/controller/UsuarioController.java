@@ -41,6 +41,8 @@ public class UsuarioController {
     private static final String URL = "http://localhost:8081/usuarios/";
     
     private static final String URL_Senha = "http://localhost:8081/resetpassword/";
+
+    private static final String URL_RedefinirSenha = "http://localhost:8081/redefinirpassword/";
     
     private final HttpSession session;
 
@@ -247,6 +249,52 @@ public ModelAndView redefineSenha(HttpSession session,
         return modelAndView;
         
     }
+
+    @GetMapping("/usuarios/redefinir/{id}")
+    public ModelAndView redefinirPassword(@PathVariable("id") Long id,
+                                        RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
+
+        if (!session.getAttribute("role").toString().equals("ADMINISTRADOR") &&
+            !session.getAttribute("role").toString().equals("GESTOR")) {
+            return new ModelAndView("redirect:/");
+        }
+
+        RestTemplate restTemplate = new RestTemplate();
+        ModelAndView modelAndView = new ModelAndView("redirect:/usuarios");
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + session.getAttribute("token"));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Long> body = new HashMap<>();
+        body.put("id", id);
+
+        HttpEntity<Map<String, Long>> entity = new HttpEntity<>(body, headers);
+
+        try {
+            ResponseEntity<Void> response = restTemplate.exchange(
+                URL_RedefinirSenha,
+                HttpMethod.POST,
+                entity,
+                Void.class
+            );
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                redirectAttributes.addFlashAttribute("successMessage", "Senha redefinida com sucesso!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Erro ao redefinir a senha.");
+            }
+
+        } catch (HttpClientErrorException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Erro ao redefinir a senha: " + ex.getMessage());
+        }
+
+        return modelAndView;
+    }
+
 
     @PostMapping("/usuarios/editar/{id}")
     public ModelAndView editarUsuario(@PathVariable("id") Long id,

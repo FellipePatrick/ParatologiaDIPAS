@@ -48,6 +48,10 @@ public class UsuarioService extends GenericService<Usuario, Long, UsuarioReposit
         return Optional.ofNullable(repository.findByEmail(email));
     }
 
+    public Optional<Usuario> findByEmailAtivo(String email){
+        return Optional.ofNullable(repository.findByEmailAtivo(email));
+    }
+
     public Optional<Usuario> findByMatricula(String matricula){
         return  Optional.ofNullable(repository.findByMatricula(matricula));
     }
@@ -57,6 +61,7 @@ public class UsuarioService extends GenericService<Usuario, Long, UsuarioReposit
         if(existingUsuario == null){
             throw new RuntimeException("Usuário não encontrado");
         }
+
         existingUsuario.setNome(usuario.getNome());
         existingUsuario.setTelefone(usuario.getTelefone());
         existingUsuario.setRole(usuario.getRole());

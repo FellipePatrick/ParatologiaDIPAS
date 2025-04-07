@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/file/")
-
 public class FileController {
     private final FileStorageService fileStorageService;
     private final ImageProcessService imageProcessService;

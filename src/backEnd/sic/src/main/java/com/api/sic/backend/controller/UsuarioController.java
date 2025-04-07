@@ -4,6 +4,15 @@ import java.net.URI;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,17 +30,10 @@ import com.api.sic.backend.domain.Usuario.Role;
 import com.api.sic.backend.dto.Usuario.UsuarioRequestDTO;
 import com.api.sic.backend.dto.Usuario.UsuarioRequestUpdateDTO;
 import com.api.sic.backend.dto.Usuario.UsuarioResponseDTO;
+import com.api.sic.backend.service.EmailService;
 import com.api.sic.backend.service.UsuarioService;
 
 import jakarta.validation.Valid;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -40,6 +42,8 @@ import lombok.AllArgsConstructor;
 public class UsuarioController {
     private final UsuarioService service;
     private final ModelMapper mapper;
+    @Autowired
+    private EmailService emailService;
 
 
     private boolean isAdmin(){
@@ -81,7 +85,13 @@ public class UsuarioController {
         usuario.setRole(usuario.getRole().toUpperCase());
         Optional<Usuario> u = service.findByEmail(usuario.getEmail());
         if(u.isPresent()){
+            Optional<Usuario> p = service.findByEmailAtivo(usuario.getEmail());
+                
             Usuario us = u.get();
+            if(p.isPresent()){
+                us = enviarMensagem(p.get());
+            }
+
             if(isAdmin()){
                 switch (usuario.getRole()) {
                     case "ADMINISTRADOR":
@@ -101,8 +111,9 @@ public class UsuarioController {
             us.setNome(usuario.getNome());
             us.setTelefone(usuario.getTelefone());
             Usuario UsuarioUpdated = service.update(us, us.getId());
-            return ResponseEntity.ok(convertToDto(UsuarioUpdated));
+            return ResponseEntity.ok(convertToDto(UsuarioUpdated));       
         }else{
+            System.out.println("Não passou presente");
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             Usuario gestor = service.findByEmail(username).get();
@@ -110,8 +121,9 @@ public class UsuarioController {
             usuario.setGestor(gestor);
             if(isGestor())
                 usuario.setRole("USUARIO");
-
-            Usuario created = service.create(convertToEntity(usuario));
+            Usuario usB = convertToEntity(usuario);
+            usB = enviarMensagem(usB);
+            Usuario created = service.create(usB);
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("{id}")
@@ -192,4 +204,18 @@ public class UsuarioController {
         Usuario entityPessoa = mapper.map(usuario, Usuario.class);
         return entityPessoa;
     }
+
+    private Usuario enviarMensagem(Usuario u){
+        PasswordEncoder e = new BCryptPasswordEncoder();
+        u.setPassword((Usuario.gerarSenha(8) + "@Sic"));
+        u.setMatricula(Usuario.gerarMatricula());
+        emailService.enviarEmailSimples(
+            u.getEmail(),
+            u.getMatricula(),
+            u.getPassword()
+        );
+        u.setPassword(e.encode(u.getPassword()));
+        return u;
+    }
+    
 }

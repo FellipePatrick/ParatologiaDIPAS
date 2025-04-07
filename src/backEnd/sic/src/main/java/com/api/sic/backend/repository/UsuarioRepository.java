@@ -16,6 +16,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     
     boolean existsByMatricula(String matricula);
 
+    @Query("SELECT u FROM usuario u WHERE u.deletedAt IS NOT NULL AND u.email = :email")
+    Usuario findByEmailAtivo(@Param("email") String email);
+
+
    @Query(value = "SELECT u FROM usuario u WHERE u.deletedAt IS NULL", nativeQuery = true)
    List<Usuario> findAllWhereDeletedAtIsNull();
 

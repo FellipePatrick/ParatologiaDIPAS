@@ -24,6 +24,17 @@ spring:
       ddl-auto: update
       #ddl-auto: create-drop
     # show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: fellipe.patrick678@gmail.com
+    password: bdmy ushj ncjd mswl
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 server:
   port: 8081
 
