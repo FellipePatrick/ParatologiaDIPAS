@@ -58,46 +58,40 @@ public class SicApplication implements WebMvcConfigurer {
         return new ModelMapper();
     }
 
-      @Bean
+    @Bean
     CommandLineRunner initDatabase(UsuarioRepository usuarioRepository, BCryptPasswordEncoder encoder, UsuarioService uService) {
         PasswordEncoder e = new BCryptPasswordEncoder();
         return args -> {
             if (usuarioRepository.count() == 0) {
 
-                Usuario user = new Usuario();
-                user.setNome("Fellipe Gestor");
-                user.setEmail("gestor@sic.com");
-                user.setPassword(e.encode("admin123"));
-                user.setRole(Role.GESTOR);
-                user.setAdmin(false);
-                usuarioRepository.save(user);
-
-                Usuario g2 = new Usuario();
-                g2.setNome("Fellipe Gestor");
-                g2.setEmail("gestor2@sic.com");
-                g2.setPassword(e.encode("admin123"));
-                g2.setRole(Role.GESTOR);
-                g2.setAdmin(false);
-                usuarioRepository.save(g2);
-                
+                Usuario gestor = new Usuario();
+                gestor.setNome("Gestor SIC");
+                gestor.setEmail("gestor@sic.com");
+                gestor.setPassword(e.encode("admin123"));
+                gestor.setMatricula(Usuario.gerarMatricula());
+                gestor.setRole(Role.GESTOR);
+                gestor.setAdmin(false);
+                usuarioRepository.save(gestor);
 
                 Usuario admin = new Usuario();
-                admin.setNome("Fellipe Admin");
+                admin.setNome("Administrador SIC");
                 admin.setEmail("admin@sic.com");
                 admin.setPassword(e.encode("admin123"));
+                admin.setMatricula(Usuario.gerarMatricula());
                 admin.setRole(Role.ADMINISTRADOR);
                 admin.setAdmin(true);
                 admin.setGestor(uService.findByEmail("gestor@sic.com").get());
                 usuarioRepository.save(admin);
 
-                Usuario comum = new Usuario();
-                comum.setNome("Fellipe User");
-                comum.setEmail("user@sic.com");
-                comum.setPassword(e.encode("admin123"));
-                comum.setRole(Role.USUARIO);
-                comum.setAdmin(true);
-                comum.setGestor(uService.findByEmail("gestor2@sic.com").get());
-                usuarioRepository.save(comum);
+                Usuario usuario = new Usuario();
+                usuario.setNome("Usuario SIC");
+                usuario.setMatricula(Usuario.gerarMatricula());
+                usuario.setEmail("user@sic.com");
+                usuario.setPassword(e.encode("admin123"));
+                usuario.setRole(Role.USUARIO);
+                usuario.setAdmin(true);
+                usuario.setGestor(uService.findByEmail("gestor@sic.com").get());
+                usuarioRepository.save(usuario);
 
                 System.out.println("Usuários criados com sucesso!");
             }
