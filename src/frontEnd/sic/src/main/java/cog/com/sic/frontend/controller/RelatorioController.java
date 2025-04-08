@@ -175,7 +175,7 @@ public class RelatorioController {
                     case "PENDENTE":
                         andamento++;
                         break;
-                    case "APROVADO":
+                    case "FINALIZADO":
                         finalizados++;
                         break;
                     case "RASCUNHO":

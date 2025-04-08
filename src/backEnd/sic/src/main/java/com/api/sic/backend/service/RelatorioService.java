@@ -19,8 +19,8 @@ public class RelatorioService extends GenericService<Relatorio, Long, RelatorioR
 
     @Override
     public Relatorio create(Relatorio entity) {
-        if ( entity.getGestor() == null || !entity.getGestor().getRole().toString().equalsIgnoreCase("GESTOR")) {
-            throw new IllegalArgumentException("Somente Gestores podem orientar um relatorio");
+        if ( entity.getGestor() == null) {
+            throw new IllegalArgumentException("O gestor não pode ser nulo.");
         }
         return this.repository.save(entity);
     }

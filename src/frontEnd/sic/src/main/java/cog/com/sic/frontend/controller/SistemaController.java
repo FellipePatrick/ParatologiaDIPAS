@@ -153,15 +153,6 @@ public class SistemaController {
         return new ModelAndView("suporte/index");
     }
 
-    @GetMapping("/contato")
-    public ModelAndView contato(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
-        if (!authService.verificarTokenValido(session)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
-            return new ModelAndView("redirect:/login");
-        }
-        return new ModelAndView("suporte/contato");
-    }
-
     @GetMapping("/politicas")
     public ModelAndView politicas(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
         if (!authService.verificarTokenValido(session)) {
@@ -169,6 +160,15 @@ public class SistemaController {
             return new ModelAndView("redirect:/login");
         }
         return new ModelAndView("suporte/politics");
+    }
+
+    @GetMapping("/duvidas")
+    public ModelAndView duvidas(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
+        if (!authService.verificarTokenValido(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sessão expirada. Faça login novamente.");
+            return new ModelAndView("redirect:/login");
+        }
+        return new ModelAndView("suporte/duvidas");
     }
 
 
