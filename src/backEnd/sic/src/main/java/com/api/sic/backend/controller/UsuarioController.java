@@ -113,7 +113,6 @@ public class UsuarioController {
             Usuario UsuarioUpdated = service.update(us, us.getId());
             return ResponseEntity.ok(convertToDto(UsuarioUpdated));       
         }else{
-            System.out.println("Não passou presente");
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             Usuario gestor = service.findByEmail(username).get();
