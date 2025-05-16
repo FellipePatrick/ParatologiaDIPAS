@@ -17,12 +17,12 @@ package main.java.org.example;
 public class Main {
     public static void main(String[] args) {
 
-       main.java.org.example.Image.resetDiretorio("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\imgZoom\\result");
-
+       main.java.org.example.Image.resetDiretorio("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img\\result");
+       //main.java.org.example.Image.resetDiretorio("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img\\result");
         //Segmentando uma pasta de imagens
-        main.java.org.example.Image.segmentImages("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\imgZoom", "jpeg" , 87, "sim");
+        //main.java.org.example.Image.segmentImages("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\imgZoom", "jpeg" , 87, "não");
 
         //Segmentando apenas uma imagem especifica
-        //main.java.org.example.Image.segmentImage("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\imgZoom", 2 , "sim");
+        main.java.org.example.Image.segmentImage("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\img", 2, "nao");
     }
 }

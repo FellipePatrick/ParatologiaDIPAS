@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -115,65 +116,103 @@ public class Image {
      *
      */
     public static List<Mat> findBlackRegion(Mat imageOriginal, Mat inputImage, String outputPath, int cont, String zoom) {
-        // Verificar se a imagem de entrada é vazia
         if (inputImage.empty()) {
             throw new IllegalArgumentException("A imagem de entrada está vazia");
         }
 
         Mat grayImage = inputImage;
-
-        // Aplicar um limiar para binarizar a imagem (50 -> preto, 255 -> branco)
         Mat binaryImage = new Mat();
         Imgproc.threshold(grayImage, binaryImage, 50, 255, Imgproc.THRESH_BINARY_INV);
 
-        // Encontrar contornos na imagem binarizada
+        Imgproc.GaussianBlur(binaryImage, binaryImage, new Size(5, 5), 0);
+
+        Mat dilatedImage = new Mat();
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
+        Imgproc.dilate(binaryImage, dilatedImage, kernel);
+
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
-        Imgproc.findContours(binaryImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(dilatedImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // Lista para armazenar as regiões cortadas
         List<Mat> croppedImages = new ArrayList<>();
         int x = 5;
         double area;
         double perimeter;
         double circularity;
         double maxObject = 500;
-        if(zoom.equalsIgnoreCase("sim")){
-            maxObject =  imageOriginal.rows()*5;
-        }else{
-            if(imageOriginal.cols() > 1280){
+
+        if (zoom.equalsIgnoreCase("sim")) {
+            maxObject = imageOriginal.rows() * 5;
+        } else {
+            if (imageOriginal.cols() > 1280) {
                 maxObject = 2500;
             }
         }
 
-        // Processar cada contorno que atenda aos critérios de área e circularidade
+        Mat largestContourImage = new Mat(imageOriginal.size(), imageOriginal.type(), new Scalar(0, 0, 0));
+
         for (MatOfPoint contour : contours) {
             Rect rect = Imgproc.boundingRect(contour);
             area = rect.area();
+
             if (area >= maxObject) {
-                // Calcular a circularidade
                 perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
                 circularity = 4 * Math.PI * area / (perimeter * perimeter);
-                if(circularity > 0.2){
-                    // Criar uma imagem de saída destacando a região com alta concentração de preto
-                    Mat outputImage = inputImage.clone();
-                    Imgproc.rectangle(outputImage, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
 
-                    // Salvar a imagem de saída com a região destacada
-                    //Imgcodecs.imwrite(outputPath + "blackimg" + x + cont + ".jpeg", outputImage);
+                if (circularity > 0.2) {
+                    Mat mask = Mat.zeros(imageOriginal.size(), CvType.CV_8UC1);
+                    Imgproc.drawContours(mask, contours, contours.indexOf(contour), new Scalar(255), -1);
 
-                    // Cortar a região encontrada da imagem original
-                    Mat croppedImage = new Mat(imageOriginal, rect);
+                    Mat foreground = new Mat();
+                    imageOriginal.copyTo(foreground, mask);
+                    Mat croppedImage = new Mat(foreground, rect);
                     croppedImages.add(croppedImage);
 
-                    // Salvar a imagem cortada (opcional)
-                    Imgcodecs.imwrite(outputPath + "blackimgcurted" + x + cont + ".jpeg", croppedImage);
+                    String nomeBase = "blackimgcurted" + x + cont;
+                    //Imgcodecs.imwrite(outputPath + nomeBase + ".jpeg", croppedImage);
+
+                    // >>>>>> NOVO PROCESSAMENTO <<<<<<
+                    try {
+                        // 1. Converter para escala de cinza
+                        Mat gray = new Mat();
+                        Imgproc.cvtColor(croppedImage, gray, Imgproc.COLOR_BGR2GRAY);
+
+                        // 2. Suavização
+                        Mat blur = new Mat();
+                        Imgproc.GaussianBlur(gray, blur, new Size(5, 5), 0);
+
+                        // 3. Contorno do maior objeto na imagem recortada
+                        List<MatOfPoint> subContours = new ArrayList<>();
+                        Mat subHierarchy = new Mat();
+                        Imgproc.findContours(blur, subContours, subHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+                        if (!subContours.isEmpty()) {
+                            MatOfPoint maior = Collections.max(subContours, Comparator.comparingDouble(Imgproc::contourArea));
+
+                            // 4. Reamostrar para 16 pontos
+                            MatOfPoint reamostrado = Analitic.resample(maior, 16);
+
+                            // 5. Destacar a fronteira
+                            Mat destaque = Analitic.destacarFronteira(croppedImage.clone(), reamostrado);
+
+                            // 6. Salvar imagem com destaque
+                            Imgcodecs.imwrite(outputPath + nomeBase + "_destaque.jpeg", destaque);
+
+                            // 7. Codigo de Cadeia
+                            List<Integer> codigoCadeia = Analitic.gerarCodigoCadeia(reamostrado);
+                            System.out.println("Código de Cadeia para o contorno " + nomeBase + ": " + codigoCadeia);
+                        }
+
+                    } catch (Exception e) {
+                        System.err.println("Erro ao processar recorte " + nomeBase + ": " + e.getMessage());
+                    }
 
                     cont++;
                 }
             }
         }
 
+        Imgcodecs.imwrite(outputPath + "largestObject" + x + cont + ".jpeg", largestContourImage);
         return croppedImages;
     }
 
@@ -355,11 +394,59 @@ public class Image {
             }
         }
 
-        // Aplicar a limiarização binária com o limiar encontrado por Otsu
-
+// 1. Suavização antes da binarização
+        Imgproc.medianBlur(grayImage, grayImage, 5);
+// 2. Aplicar a limiarização binária com o limiar de Otsu ajustado
         Mat outputImage = new Mat();
+        Imgproc.threshold(grayImage, outputImage, (threshold - (averageBrightness * 0.10)), 255, Imgproc.THRESH_BINARY);
 
-        Imgproc.threshold(grayImage, outputImage, (threshold-(averageBrightness*0.10)), 255, Imgproc.THRESH_BINARY);
+// 3. Operações morfológicas
+// 3.1. Abertura para remover pequenos ruídos brancos
+        Mat kernelOpen = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5, 5));
+        Imgproc.morphologyEx(outputImage, outputImage, Imgproc.MORPH_OPEN, kernelOpen);
+
+// 3.2. Fechamento para preencher pequenos buracos em objetos brancos
+        Mat kernelClose = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(15, 15));
+        Imgproc.morphologyEx(outputImage, outputImage, Imgproc.MORPH_CLOSE, kernelClose);
+
+// 4. Remover contornos pequenos (ruídos brancos restantes)
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(outputImage.clone(), contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        for (int i = 0; i < contours.size(); i++) {
+            double area = Imgproc.contourArea(contours.get(i));
+            if (area < 100) { // ajuste conforme necessário
+                Imgproc.drawContours(outputImage, contours, i, new Scalar(0), -1); // apaga ruídos brancos
+            }
+        }
+
+// 5. Inverter imagem para tratar os pontinhos pretos restantes
+        Mat inverted = new Mat();
+        Core.bitwise_not(outputImage, inverted);
+
+// 6. Remover contornos pequenos (agora brancos, mas originalmente pretos)
+        List<MatOfPoint> holeContours = new ArrayList<>();
+        Mat hierarchyHoles = new Mat();
+        Imgproc.findContours(inverted.clone(), holeContours, hierarchyHoles, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        for (int i = 0; i < holeContours.size(); i++) {
+            double area = Imgproc.contourArea(holeContours.get(i));
+            if (area < 700) { // ajuste esse valor também
+                Imgproc.drawContours(inverted, holeContours, i, new Scalar(0), -1); // apaga os pequenos buracos pretos
+            }
+        }
+
+
+// 7. Inverter de volta para obter a imagem final
+        Core.bitwise_not(inverted, outputImage);
+
+// Kernel pequeno para remover ruídos isolados restantes
+        Mat smallKernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(1, 1));
+
+// Outra rodada de abertura e fechamento mais delicada
+        Imgproc.morphologyEx(outputImage, outputImage, Imgproc.MORPH_OPEN, smallKernel);
+        Imgproc.morphologyEx(outputImage, outputImage, Imgproc.MORPH_CLOSE, smallKernel);
 
         return outputImage;
     }
