@@ -9,7 +9,8 @@ def remover_fundo(path_imagem):
 
     with Image.open(path_imagem) as img:
         imagem_sem_fundo = remove(img)
-        imagem_sem_fundo.save("C:\\Users\\felli\Pictures\\Imagens DIPAS\\imgZoom\\result" + imagem_saida)
+        imagem_sem_fundo.save("C:\\Users\\felli\\Pictures\\Imagens DIPAS\\imgZoom\\result\\" + imagem_saida)
+
         print(f"Fundo removido e salvo como {imagem_saida}")
 
 if __name__ == "__main__":
