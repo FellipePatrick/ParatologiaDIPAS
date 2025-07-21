@@ -6,6 +6,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import jakarta.servlet.http.HttpSession;
@@ -13,12 +14,44 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.client.HttpClientErrorException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 @Service
 public class AuthService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+
+   public ModelAndView enviarEmailForgotPassword(String email, HttpSession session) {
+        String url = "http://localhost:8081/forgotpassword/";
+
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("email", email);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return new ModelAndView("password/index")
+                    .addObject("successMessage", "Mensagem enviada, por favor verifique sua caixa de email!");
+            } else {
+                return new ModelAndView("password/index")
+                    .addObject("errorMessage", "Falha ao enviar o email!");
+            }
+        } catch (Exception e) {
+            return new ModelAndView("password/index")
+                .addObject("errorMessage", "Usuário inexistente ou erro de conexão.");
+        }
+    }
+
 
     public ModelAndView realizarLogin(String credencialMatricula, String senha, HttpSession session) {
         String url = "http://localhost:8081/login/";
@@ -78,8 +111,50 @@ public class AuthService {
             e.printStackTrace();
         }
     }
-
-    return false; 
+    return false;    
 }
+
+
+// ...
+
+public ModelAndView redefineSenha(String senha, String confirmarSenha, String token, HttpSession session) {
+    String url = "http://localhost:8081/forgotpassword/" + token;
+
+    Map<String, String> requestBody = new HashMap<>();
+    requestBody.put("novaSenha", senha);
+    requestBody.put("confirmarSenha", confirmarSenha);
+
+    try {
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestBody, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return new ModelAndView("password/edit")
+                .addObject("successMessage", "Senha redefinida com sucesso!");
+        } else {
+            return new ModelAndView("login/index")
+                .addObject("errorMessage", "Falha ao redefinir senha!");
+        }
+
+    } catch (HttpClientErrorException e) {
+        try {
+            String responseBody = e.getResponseBodyAsString();
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> body = mapper.readValue(responseBody, new TypeReference<>() {});
+            Map<String, String> errors = (Map<String, String>) body.get("errors");
+
+            // Pega a primeira mensagem de erro, se existir
+            String mensagem = errors.values().stream().findFirst().orElse("Erro ao redefinir senha.");
+
+            return new ModelAndView("password/edit").addObject("errorMessage", mensagem);
+
+        } catch (Exception ex) {
+            return new ModelAndView("password/edit").addObject("errorMessage", "Token expirado ou inativo.");
+        }
+    } catch (Exception e) {
+        return new ModelAndView("password/edit").addObject("errorMessage", "Token expirado ou inativo.");
+    }
+}
+
 }
 

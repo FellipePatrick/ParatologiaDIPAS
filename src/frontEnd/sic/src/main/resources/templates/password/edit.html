@@ -38,7 +38,7 @@
                 <div class="col-lg-6 py-3">
                     <div class="card2 card border-0 px-4 py-5">
                         <div class="row mb-4 px-3 d-flex justify-content-center" th:fragment="headerINF">
-                            <h6 class="mb-0 mr-4 mt-2 d-flex justify-content-center mb-3">Entre no</h6>
+                            <h6 class="mb-0 mr-4 mt-2 d-flex justify-content-center mb-3">Redefinir Senha</h6>
                             <div class="linkedin text-center mr-3 mx-1 efeito">S</div>
                             <div class="twitter text-center mr-3 mx-1 efeito">I</div>
                             <div class="linkedin text-center mr-3 mx-1 efeito">C</div>
@@ -47,38 +47,30 @@
                             <div class="line"></div>
                             <div class="line"></div>
                         </div>
-                        <form th:action="@{/login}" method="post">
-                            <div class="row px-3">
-                                <div class="offset-md-2 col-md-8" style="text-align: center;" >
-                                    <label class="mb-1" >
-                                        <h6 class="mb-0 text-sm">Matrícula ou Email</h6>
-                                    </label>
-                                    <input class="mb-4 my-2" type="text" name="matricula" placeholder="Matrícula ou Email" required>
-                                </div>
-                            </div>
+                        <form th:action="@{'/forgotpassword/' + ${id}}" method="post">
                             <div class="row px-3">
                                 <div class="offset-md-2 col-md-8" style="text-align: center;" >
                                     <label class="mb-1">
-                                        <h6 class="mb-0 text-sm">Senha</h6>
+                                        <h6 class="mb-0 text-sm">Nova Senha</h6>
                                     </label>
-                                    <input type="password" class="my-2" name="senha"  placeholder="Senha" required>
+                                    <input type="password" class="my-2" name="novaSenha"  placeholder="Nova Senha" required>
+                                </div>
+                                <div class="offset-md-2 col-md-8" style="text-align: center;" >
+                                    <label class="mb-1">
+                                        <h6 class="mb-0 text-sm">Confirmação de Senha</h6>
+                                    </label>
+                                    <input type="password" class="my-2" name="confirmarSenha"  placeholder="Confirmar Senha" required>
                                 </div>
                             </div>
-                            <div class="row px-3 mb-4">
-                                <div class="d-flex justify-content-center py-3">
-                                    <div class="custom-control custom-checkbox">
-                                        <input id="chk1" type="checkbox" name="lembrar" class="">
-                                    </div>
-                                    <label for="chk1" class="custom-control-label text-sm mx-2">Lembre-se de mim</label>
-                                </div>
-                                <div class="form-group">
-                                    <a th:href="@{'/forgotpassword'}"  class="d-flex justify-content-center ml-auto mb-0 text-sm mx-2"
-                                        >Esqueceu a senha?</a>
-                                </div>
+                            <div class="row px-3 mb-4">      
+                                <a th:href="@{'/login'}"  class="d-flex justify-content-center ml-auto mb-0 text-sm mx-2"
+                                    >Voltar</a>
+                            </div>
                             <div class="row mb-3 px-3 py-3 d-flex justify-content-center">
-                                <button type="submit" class="btn btn-blue text-center">Entrar</button>
+                                <button type="submit" class="btn btn-blue text-center">Enviar</button>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>
@@ -90,9 +82,6 @@
                 </div>
         </div>
     </div>
-
-
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('currentYear').textContent = new Date().getFullYear();

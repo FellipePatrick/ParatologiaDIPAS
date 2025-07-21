@@ -93,6 +93,16 @@ public class SicApplication implements WebMvcConfigurer {
                 usuario.setGestor(uService.findByEmail("gestor@sic.com").get());
                 usuarioRepository.save(usuario);
 
+                Usuario fellipe = new Usuario();
+                fellipe.setNome("Fellipe SIC");
+                fellipe.setMatricula(Usuario.gerarMatricula());
+                fellipe.setEmail("fellipe.brito.060@ufrn.edu.br");
+                fellipe.setPassword(e.encode("admin123"));
+                fellipe.setRole(Role.USUARIO);
+                fellipe.setAdmin(true);
+                fellipe.setGestor(uService.findByEmail("gestor@sic.com").get());
+                usuarioRepository.save(fellipe);
+
                 System.out.println("Usuários criados com sucesso!");
             }
         };
