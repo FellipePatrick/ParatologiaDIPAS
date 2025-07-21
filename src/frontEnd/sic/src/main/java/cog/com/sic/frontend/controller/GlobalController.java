@@ -83,6 +83,7 @@ public class GlobalController {
         String titulo = dados.get("titulo").toString();
         String descricao = dados.get("descricao").toString();
         String status = dados.get("status").toString();
+        String diagnostico = dados.get("diagnostico").toString();
 
         @SuppressWarnings("unchecked")
         Map<String, Object> usuario = (Map<String, Object>) dados.get("usuario");
@@ -101,7 +102,7 @@ public class GlobalController {
 
         data = dateTime.format(formatter);
 
-        return new RelatorioRequestDTO(titulo, descricao, id, status, dono, gestor, data);
+        return new RelatorioRequestDTO(titulo, descricao, id, status, dono, gestor, data, diagnostico);
     }
 
 }

@@ -83,6 +83,10 @@ public class FileController {
         r.setUsuario(usuario.get());
         r.setGestor(usuario.get().getGestor());
         
+        //Setando diagnostico
+        r.setDiagnostico("Após análise da imagem realizada pela inteligência artificial do " +
+         "SIC, foi identificado que a imagem tem presente o Toxocara canis.");
+
         relatorioService.create(r);
 
         List<String> savedFileNames = new ArrayList<>();
@@ -102,4 +106,5 @@ public class FileController {
     private String getFileExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."));
     }
+
 }

@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 public class Relatorio extends AbstractEntity {
     private String titulo;
     private String descricao;
+    private String diagnostico;
     @Enumerated(EnumType.STRING)
     private StatusRelatorio status;
     private LocalDateTime dataModificacao;

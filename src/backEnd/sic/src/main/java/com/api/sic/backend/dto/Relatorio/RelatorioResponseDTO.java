@@ -23,6 +23,7 @@ public class RelatorioResponseDTO extends RepresentationModel<RelatorioResponseD
     private Long id;
     private String titulo;
     private String descricao;
+    private String diagnostico;
     private String status;
     private LocalDateTime dataModificacao;
     private UsuarioDefaultResponseDTO usuario;
