@@ -84,8 +84,12 @@ public class FileController {
         r.setGestor(usuario.get().getGestor());
         
         //Setando diagnostico
-        r.setDiagnostico("Após análise da imagem realizada pela inteligência artificial do " +
-         "SIC, foi identificado que a imagem tem presente o Toxocara canis.");
+        r.setDiagnostico("A análise da imagem identificou a presença de elementos " + //
+                        "compatíveis com parasitas do gênero Toxocara spp. " + //
+                        "Esta zoonose pode ser transmitida para humanos e animais " + //
+                        "através da ingestão de ovos do parasita. " + //
+                        "Recomenda-se a consulta com um veterinário para confirmação do " + //
+                        "diagnóstico e aplicação do tratamento adequado.");
 
         relatorioService.create(r);
 

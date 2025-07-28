@@ -14,5 +14,6 @@ import java.util.List;
 public class UploadResponseMobileDTO {
     private String message;
     private List<String> imageUrls;  // Lista para armazenar os URLs das imagens
+    private String diagnostico;
 
 }

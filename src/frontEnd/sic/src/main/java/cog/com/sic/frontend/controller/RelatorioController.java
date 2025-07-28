@@ -385,4 +385,5 @@ public class RelatorioController {
 
         return new RelatorioRequestDTO(titulo, descricao, id, status, dono, gestor, data, diagnostico);
     }
+
 }

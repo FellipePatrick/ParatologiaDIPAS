@@ -40,6 +40,7 @@
         </button>
 
         <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search position-relative">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <div class="input-group">
                 <input id="searchInputDesktop" type="text" class="form-control bg-light border-0 small"
                        placeholder="Pesquisar Relatório" aria-label="Search" aria-describedby="basic-addon2">
@@ -68,6 +69,7 @@
                         aria-labelledby="searchDropdown">
 
                         <form class="form-inline mr-auto w-100 navbar-search">
+                           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <div class="input-group">
                                 <input id="searchInput" type="text" class="form-control bg-light border-0 small"
                                     placeholder="Pesquisar Relatório" aria-label="Search" aria-describedby="basic-addon2">

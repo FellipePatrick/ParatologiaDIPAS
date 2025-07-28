@@ -23,7 +23,7 @@ public class MobileFileController {
 
     private final FileStorageService fileStorageService;
     private final ImageProcessService imageProcessService;
-    public final String servidor = "http://192.168.0.101:8081/images/Circulada";
+    public final String servidor = "http://192.168.0.104:8081/images/Circulada";
 
     public MobileFileController( FileStorageService fileStorageService, ImageProcessService imageProcessService) {
         this.fileStorageService = fileStorageService;
@@ -33,9 +33,10 @@ public class MobileFileController {
     @PostMapping
     public ResponseEntity<UploadResponseMobileDTO> uploadImages(@RequestParam("files") List<MultipartFile> files, @RequestParam("zoom") boolean zoom) {
         if (files.isEmpty()) {
-            return ResponseEntity.badRequest().body(new UploadResponseMobileDTO("A lista de arquivos não pode estar vazia.", null));
+            return ResponseEntity.badRequest().body(new UploadResponseMobileDTO("A lista de arquivos não pode estar vazia.", null,null));
         }
 
+        
         List<String> savedFileNames = new ArrayList<>();
         List<String> imageUrls = new ArrayList<>(); 
         for (MultipartFile file : files) {
@@ -51,7 +52,15 @@ public class MobileFileController {
                 imageProcessService.processarImagem(uniqueFileName, cdd, zoom);
             }
         }
-        return ResponseEntity.ok(new UploadResponseMobileDTO("Imagens salvas com sucesso.", imageUrls));
+
+        String diagnostico = "A análise da imagem identificou a presença de elementos\r\n" + //
+                        "compatíveis com parasitas do gênero Toxocara spp.\r\n" + //
+                        "Esta zoonose pode ser transmitida para humanos e animais\r\n" + //
+                        "através da ingestão de ovos do parasita.\r\n" + //
+                        "Recomenda-se a consulta com um veterinário para confirmação do\r\n" + //
+                        "diagnóstico e aplicação do tratamento adequado.";
+        
+        return ResponseEntity.ok(new UploadResponseMobileDTO("Imagens salvas com sucesso.", imageUrls, diagnostico));
     }
 
 

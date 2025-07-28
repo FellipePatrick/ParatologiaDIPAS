@@ -48,6 +48,7 @@
                             <div class="line"></div>
                         </div>
                         <form th:action="@{'/forgotpassword/' + ${id}}" method="post">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <div class="row px-3">
                                 <div class="offset-md-2 col-md-8" style="text-align: center;" >
                                     <label class="mb-1">

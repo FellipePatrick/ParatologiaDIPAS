@@ -17,6 +17,7 @@
                         </div>
                         <div class="card-body">
                             <form id="cadastroForm" method="post" th:action="@{/usuarios/editar/{id}(id=${usuario.id})}">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <div th:if="${errorMessage != null}" class="alert alert-danger">
                                     <span th:text="${errorMessage}"></span>
                                 </div>

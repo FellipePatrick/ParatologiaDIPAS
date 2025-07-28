@@ -44,14 +44,8 @@ public class RedefinirPasswordController {
 
         Usuario user = optionalUser.get();
 
-        if (!(user.getRole().equals(Usuario.Role.ADMINISTRADOR) || user.getRole().equals(Usuario.Role.GESTOR))) {
+        if (!(user.getRole().equals(Usuario.Role.ADMINISTRADOR))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Você não tem permissão para redefinir senhas.");
-        }
-
-        if (user.getRole().equals(Usuario.Role.GESTOR)) {
-            if (usuarioService.findByIdGestor(idUser, user) == null) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Você não tem acesso a este usuário.");
-            }
         }
 
         Usuario us = usuarioService.findById(idUser);

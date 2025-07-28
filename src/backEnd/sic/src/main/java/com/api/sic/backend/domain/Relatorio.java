@@ -6,6 +6,7 @@ import org.hibernate.annotations.SQLRestriction;
 import com.api.sic.backend.domain.enumerates.StatusRelatorio;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,10 +29,16 @@ import java.time.LocalDateTime;
 @Data
 public class Relatorio extends AbstractEntity {
     private String titulo;
+
+    @Column(length = 30000)
     private String descricao;
+
+    @Column(length = 30000)
     private String diagnostico;
+   
     @Enumerated(EnumType.STRING)
     private StatusRelatorio status;
+    
     private LocalDateTime dataModificacao;
     
     @ManyToOne(cascade = CascadeType.PERSIST)
