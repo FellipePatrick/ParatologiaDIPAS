@@ -3,11 +3,9 @@
 
 <head th:replace="~{fragments/commons :: head}">
     <style>
-        /* Definir tamanho pequeno para as imagens */
         .img-thumbnail-small {
             max-width: 120px;
-            /* Ajuste o tamanho conforme necessário */
-            height: 100p´x;
+            height: 100px;
         }
     </style>
 </head>
@@ -21,6 +19,7 @@
                 <div class="container-fluid">
                     <div th:replace="~{fragments/commons :: headerMain (name='Novo Relatorio')}"></div>
                     <form th:action="@{/relatorio}" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <div class="card card-waves mb-4 mt-5">
                             <div class="card-body">
                                 <input type="number" hidden th:value="${idRelatorio}" id="id" name="id">
@@ -54,7 +53,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Exibindo imagens processadas -->
                                     <div class="col-md-6 mb-4" th:each="imagem : ${imagensProcessada}">
                                         <div class="card">
                                             <img th:src="${baseImageUrl} + ${imagem.path}"
@@ -71,7 +69,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary mt-3">Salvar Relatório</button>
+                        <button type="submit" class="btn btn-primary mt-3">Diagnosticar Imagem</button>
                     </form>
                 </div>
             </div>

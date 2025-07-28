@@ -15,6 +15,7 @@
                     <div class="card card-waves mb-4 mt-5">
                         <div class="card-body">
                             <form th:action="@{/images}" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <div class="form-group mt-3">
                                     <label for="zoom">Imagens com zoom</label>
                                     <div class="custom-control custom-switch">
@@ -25,9 +26,10 @@
                                     </div>
                                 </div>     
                                 <div class="form-group mt-3">
-                                    <label for="imagem">Envio de Imagens</label>
-                                    <input type="file" class="form-control-file" id="imagens" name="imagens" accept="image/*" multiple required>
-                                </div>                           
+                                    <label for="imagens">Envio de Imagem</label>
+                                    <input type="file" class="form-control-file" id="imagens" name="imagens" accept="image/*" required>
+                                </div>
+                     
                                 <button type="submit" class="btn btn-primary mt-3">Analisar</button>
                             </form>
                         </div>

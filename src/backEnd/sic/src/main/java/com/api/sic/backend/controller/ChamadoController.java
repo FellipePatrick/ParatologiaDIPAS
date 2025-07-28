@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.sic.backend.domain.Chamado;
+import com.api.sic.backend.domain.Usuario;
 import com.api.sic.backend.domain.enumerates.StatusChamado;
 import com.api.sic.backend.dto.chamado.ChamadoRequestDTO;
 import com.api.sic.backend.dto.chamado.ChamadoResponseDTO;
 import com.api.sic.backend.dto.chamado.ChamadoUpdateRequestDTO;
 import com.api.sic.backend.service.ChamadoService;
+import com.api.sic.backend.service.UsuarioService;
 
 import jakarta.validation.Valid;
 
@@ -26,6 +28,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import lombok.AllArgsConstructor;
 
@@ -34,11 +38,21 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ChamadoController {
     private final ChamadoService service;
+    private final UsuarioService usuarioService;
     private final ModelMapper mapper;
 
     @GetMapping
     public Page<ChamadoResponseDTO> listAll(Pageable pageable) {
-        Page<Chamado> chamadoPage = service.listAll(pageable);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Usuario usuario = usuarioService.findByEmail(username).get();
+
+        if( usuario.getRole().equals(Usuario.Role.ADMINISTRADOR)){
+            Page<Chamado> chamadoPage = service.listAll(pageable);
+            return chamadoPage.map(this::convertToDto);
+        }
+
+        Page<Chamado> chamadoPage = service.findByEmail(username, pageable);
         return chamadoPage.map(this::convertToDto);
     }
 
@@ -49,7 +63,13 @@ public class ChamadoController {
 
     @PostMapping
     public ResponseEntity<ChamadoResponseDTO> create(@Valid @RequestBody ChamadoRequestDTO chamado) {
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Usuario usuario = usuarioService.findByEmail(username).get();
+        chamado.setDono(usuario);
         Chamado created = service.create(convertToEntity(chamado));
+
         
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -59,22 +79,44 @@ public class ChamadoController {
 
         return ResponseEntity.created(location).body(convertToDto(created));
     }
+
     @GetMapping("{id}")
     public ResponseEntity<ChamadoResponseDTO> listById(@PathVariable("id") Long id) {
-        Chamado chamado = service.findById(id);
-        ChamadoResponseDTO dto = mapper.map(chamado, ChamadoResponseDTO.class);
+
+        if (id == null || id <= 0) 
+           return null;
+
+        
+        Chamado c = service.findById(id);
+        if(c == null || !isDonoAdminGestor(c))
+            return null;
+        
+        ChamadoResponseDTO dto = mapper.map(c, ChamadoResponseDTO.class);
         return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable("id") Long id) {
-        service.deleteById(id);
+        Chamado c = new Chamado();
+        if (id != null || id > 0) 
+            c = service.findById(id);
+
+        if(!(c == null || !isDonoAdminGestor(c)) && !(id == null || id <= 0) )
+            service.deleteById(id);
     }
 
     @PutMapping("{id}")
     public ResponseEntity<ChamadoResponseDTO> update(@Valid @PathVariable("id") Long id, @RequestBody ChamadoUpdateRequestDTO chamadoUpdate) {
         Chamado entityToUpdate = convertToEntity(chamadoUpdate);
+       
+        if (id == null || id <= 0) 
+        return null;
+     
+        entityToUpdate = service.findById(id);
+        if(entityToUpdate == null || !isDonoAdminGestor(entityToUpdate))
+            return null;
+        
         switch (chamadoUpdate.getStatus()) {
             case "ABERTO":
                 entityToUpdate.setStatus(StatusChamado.ABERTO);       
@@ -101,5 +143,13 @@ public class ChamadoController {
     private Chamado convertToEntity(ChamadoRequestDTO chamadoUpdate) {
         Chamado entityChamado = mapper.map(chamadoUpdate, Chamado.class);
         return entityChamado;
+    }
+
+    private boolean isDonoAdminGestor(Chamado chamado){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Usuario usuario = usuarioService.findByEmail(username).get();
+
+        return chamado.getDono().getEmail().equals(usuario.getEmail()) || usuario.getRole().equals(Usuario.Role.ADMINISTRADOR);
     }
 }

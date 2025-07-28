@@ -12,15 +12,35 @@
                     <div th:replace="~{fragments/commons :: warnings}"></div>
                     <div class="card shadow-sm border-0 rounded-lg mb-4 mt-5">
                         <div class="card-header bg-primary text-center">
-                            <h5 class=" text-white">Tabela de Chamados</h5>
+                            
+                            <h5 class=" text-white" th:if="${adm}">Tabela de Chamados</h5>
+                            <h5 class=" text-white" th:if="${!adm}">Meus Chamados</h5>
                         </div>
                         <div class="card-body">
+
+                            <!-- Inputs de Filtro -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <select id="filtroStatus" class="form-control">
+                                        <option value="">Filtrar por status...</option>
+                                        <option value="ABERTO">ABERTO</option>
+                                        <option value="EM ANDANMENTO">EM ANDANMENTO</option>
+                                        <option value="CONCLUIDO">CONCLUIDO</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="date" id="filtroData" class="form-control" placeholder="Filtrar por data...">
+                                </div>
+                            </div>
+                        
+                            <!-- Tabela -->
                             <table class="table table-bordered">
                                 <thead class="thead-dark">
                                     <tr>
                                         <th>#</th>
                                         <th>Assunto</th>
                                         <th>Descrição</th>
+                                        <th th:if="${adm}">Dono</th>
                                         <th>Status</th>
                                         <th>Data de Abertura</th>
                                         <th>Ações</th>
@@ -28,7 +48,7 @@
                                 </thead>
                                 <tbody th:if="${#lists.isEmpty(chamados)}">
                                     <tr>
-                                        <td colspan="6" class="text-center">Nenhum chamado encontrado</td>
+                                        <td colspan="7" class="text-center">Nenhum chamado encontrado</td>
                                     </tr>
                                 </tbody>
                                 <tbody th:each="chamado, stat : ${chamados}" th:unless="${#lists.isEmpty(chamados)}">
@@ -36,6 +56,7 @@
                                         <td th:text="${stat.count}"></td>
                                         <td th:text="${chamado.assunto}"></td>
                                         <td th:text="${chamado.descricao}"></td>
+                                        <td th:if="${adm}" th:text="${chamado.dono.nome}"></td>
                                         <td th:text="${chamado.status}"></td>
                                         <td th:text="${chamado.createdAt}"></td>
                                         <td>
@@ -46,6 +67,8 @@
                                 </tbody>
                             </table>
                         </div>
+                        
+                        
                     </div>
                     
                     <div class="card shadow-sm border-0 rounded-lg mb-4 mt-5">
@@ -54,6 +77,7 @@
                         </div>
                         <div class="card-body">
                             <form method="post" th:action="@{/chamados}">
+                              <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <div class="form-group">
                                     <label for="subject">Assunto</label>
                                     <input type="text" name="assunto" class="form-control" id="subject" placeholder="Assunto do chamado" required>
@@ -73,5 +97,32 @@
             <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputStatus = document.getElementById("filtroStatus");
+            const inputData = document.getElementById("filtroData");
+            const linhas = document.querySelectorAll("tbody tr");
+        
+            function aplicarFiltros() {
+                const termoStatus = inputStatus.value.toLowerCase();
+                const termoData = inputData.value;
+        
+                linhas.forEach(function (linha) {
+                    const status = linha.querySelector("td:nth-child(5)")?.textContent.toLowerCase();
+                    const data = linha.querySelector("td:nth-child(6)")?.textContent;
+        
+                    const correspondeStatus = !termoStatus || status.includes(termoStatus);
+                    const correspondeData = !termoData || data.includes(termoData);
+        
+                    linha.style.display = (correspondeStatus && correspondeData) ? "" : "none";
+                });
+            }
+        
+            inputStatus.addEventListener("change", aplicarFiltros);
+            inputData.addEventListener("change", aplicarFiltros);
+        });
+        </script>
+        
+        
 </body>
 </html>

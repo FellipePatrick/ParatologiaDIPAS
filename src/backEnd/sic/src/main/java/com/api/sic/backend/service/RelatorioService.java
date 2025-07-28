@@ -3,6 +3,8 @@ package com.api.sic.backend.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.api.sic.backend.domain.Relatorio;
@@ -17,8 +19,8 @@ public class RelatorioService extends GenericService<Relatorio, Long, RelatorioR
 
     @Override
     public Relatorio create(Relatorio entity) {
-        if ( entity.getGestor() == null || !entity.getGestor().getRole().toString().equalsIgnoreCase("GESTOR")) {
-            throw new IllegalArgumentException("Somente Gestores podem orientar um relatorio");
+        if ( entity.getGestor() == null) {
+            throw new IllegalArgumentException("O gestor não pode ser nulo.");
         }
         return this.repository.save(entity);
     }
@@ -32,6 +34,9 @@ public class RelatorioService extends GenericService<Relatorio, Long, RelatorioR
         return this.repository.saveAndFlush(entity);
     }
 
+    public Page<Relatorio> findByEmail(String email, Pageable pageable) {
+        return this.repository.findByUsuarioEmail(email, pageable);
+    }
 
 
     @Override

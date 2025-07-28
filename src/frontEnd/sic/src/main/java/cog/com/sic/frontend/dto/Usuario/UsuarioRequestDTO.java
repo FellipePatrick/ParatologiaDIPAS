@@ -11,4 +11,6 @@ public class UsuarioRequestDTO {
     private String telefone;
     private String role; 
     private String email;
+
+    
 }

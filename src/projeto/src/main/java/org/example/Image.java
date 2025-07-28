@@ -4,9 +4,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -32,7 +31,7 @@ public class Image {
      */
 
 
-    public static void segmentImages(String path, String extension, int qtdImages, String zoom){
+    public static void segmentImages(String path, String extension, int qtdImages, boolean zoom, boolean machineLearnig){
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         for (int cont = 1; cont <= qtdImages; cont++) {
             // Carrega a imagem da vez
@@ -42,7 +41,7 @@ public class Image {
                 System.out.println("Erro ao carregar a imagem!");
                 return;
             }
-            segmentImage(path, cont, zoom);
+            segmentImage(path, cont, zoom, machineLearnig);
         }
     }
 
@@ -55,7 +54,7 @@ public class Image {
      * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
      *
      */
-    public static void segmentImage(String path, int cont, String zoom){
+    public static void segmentImage(String path, int cont, boolean zoom, boolean machineLearning){
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         // Carrega a imagem
         Mat image = Imgcodecs.imread(path +"\\image" + cont + ".jpeg");
@@ -68,13 +67,16 @@ public class Image {
         }
         Mat result;
         Mat orig;
-       if(zoom.equalsIgnoreCase("sim")){
+       if(zoom){
            result = ajustaBrilhoContrasteZoom(image);
            //Salva a imagem
            Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
            String outputPath = path+"\\result\\";
-
-           List<Mat> outputImage = findBlackRegion(image, result, outputPath, cont, zoom);
+           if(machineLearning){
+                List<Mat> outputImage = findBlackRegionDeepLearning(image, result, outputPath, cont, zoom);
+           }else {
+               List<Mat> outputImage = findBlackRegion(image, result, outputPath, cont, zoom);
+           }
 
        }
        else{
@@ -93,7 +95,11 @@ public class Image {
 
            String outputPath = path+"\\result\\";
 
-           List<Mat> outputImage = findBlackRegion(orig, result, outputPath, cont, zoom);
+           if(machineLearning){
+               List<Mat> outputImage = findBlackRegionDeepLearning(image, result, outputPath, cont, zoom);
+           }else {
+               List<Mat> outputImage = findBlackRegion(image, result, outputPath, cont, zoom);
+           }
        }
 
     }
@@ -102,19 +108,14 @@ public class Image {
     }
 
 
-    /**
-     * O método findBlackRegion é usado para encontrar na imagem as regiões pretas, que possivelmente são os foregrounds procurados,
-     * possiveis objetos.
-     *
-     * @param imageOriginal É uma versão original da imagem tratada.
-     * @param inputImage É a imagem depois de ajustar o brilho e o contraste.
-     * @param outputPath É o path de saída para armazenar os objetos encontrados.
-     * @param cont É o numero da imagem (imagem1.jpeg, cont = 1).
-     * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
-     * @return Retorna uma lista de objetos encontrados na imagem.
-     *
-     */
-    public static List<Mat> findBlackRegion(Mat imageOriginal, Mat inputImage, String outputPath, int cont, String zoom) {
+
+
+
+
+
+
+
+    public static List<Mat> findBlackRegion(Mat imageOriginal, Mat inputImage, String outputPath, int cont, boolean zoom) {
         // Verificar se a imagem de entrada é vazia
         if (inputImage.empty()) {
             throw new IllegalArgumentException("A imagem de entrada está vazia");
@@ -134,12 +135,10 @@ public class Image {
         // Lista para armazenar as regiões cortadas
         List<Mat> croppedImages = new ArrayList<>();
         int x = 5;
-        double area;
-        double perimeter;
-        double circularity;
         double maxObject = 500;
-        if(zoom.equalsIgnoreCase("sim")){
-            maxObject =  imageOriginal.rows()*5;
+
+        if(zoom){
+            maxObject = imageOriginal.rows()*5;
         }else{
             if(imageOriginal.cols() > 1280){
                 maxObject = 2500;
@@ -149,24 +148,26 @@ public class Image {
         // Processar cada contorno que atenda aos critérios de área e circularidade
         for (MatOfPoint contour : contours) {
             Rect rect = Imgproc.boundingRect(contour);
-            area = rect.area();
+            double area = rect.area();
             if (area >= maxObject) {
                 // Calcular a circularidade
-                perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
-                circularity = 4 * Math.PI * area / (perimeter * perimeter);
+                double perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
+                double circularity = 4 * Math.PI * area / (perimeter * perimeter);
+
                 if(circularity > 0.2){
-                    // Criar uma imagem de saída destacando a região com alta concentração de preto
-                    Mat outputImage = inputImage.clone();
-                    Imgproc.rectangle(outputImage, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
+                    // Criar máscara apenas para este contorno (com mesmo tamanho da imagem original)
+                    Mat mask = Mat.zeros(imageOriginal.size(), CvType.CV_8UC1);
+                    Imgproc.drawContours(mask, Arrays.asList(contour), -1, new Scalar(255), Imgproc.FILLED);
 
-                    // Salvar a imagem de saída com a região destacada
-                    //Imgcodecs.imwrite(outputPath + "blackimg" + x + cont + ".jpeg", outputImage);
+                    // Aplicar a máscara na imagem original
+                    Mat maskedImage = new Mat(imageOriginal.size(), imageOriginal.type(), new Scalar(0));
+                    imageOriginal.copyTo(maskedImage, mask);
 
-                    // Cortar a região encontrada da imagem original
-                    Mat croppedImage = new Mat(imageOriginal, rect);
+                    // Cortar apenas a região do retângulo delimitador
+                    Mat croppedImage = new Mat(maskedImage, rect);
                     croppedImages.add(croppedImage);
 
-                    // Salvar a imagem cortada (opcional)
+                    // Salvar a imagem cortada
                     Imgcodecs.imwrite(outputPath + "blackimgcurted" + x + cont + ".jpeg", croppedImage);
 
                     cont++;
@@ -177,6 +178,87 @@ public class Image {
         return croppedImages;
     }
 
+
+
+
+    /**
+     * O método findBlackRegion é usado para encontrar na imagem as regiões pretas, que possivelmente são os foregrounds procurados,
+     * possiveis objetos.
+     *
+     * @param imageOriginal É uma versão original da imagem tratada.
+     * @param inputImage É a imagem depois de ajustar o brilho e o contraste.
+     * @param outputPath É o path de saída para armazenar os objetos encontrados.
+     * @param cont É o numero da imagem (imagem1.jpeg, cont = 1).
+     * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
+     * @return Retorna uma lista de objetos encontrados na imagem.
+     *
+     */
+    public static List<Mat> findBlackRegionDeepLearning(Mat imageOriginal, Mat inputImage, String outputPath, int cont, boolean zoom) {
+        if (inputImage.empty()) {
+            throw new IllegalArgumentException("A imagem de entrada está vazia");
+        }
+
+        Mat grayImage = inputImage;
+
+        Mat binaryImage = new Mat();
+        Imgproc.threshold(grayImage, binaryImage, 50, 255, Imgproc.THRESH_BINARY_INV);
+
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(binaryImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        List<Mat> croppedImages = new ArrayList<>();
+        int x = 5;
+        double area;
+        double maxObject = 500;
+
+        if (zoom) {
+            maxObject = imageOriginal.rows() * 5;
+        } else {
+            if (imageOriginal.cols() > 1280) {
+                maxObject = 2500;
+            }
+        }
+
+        for (MatOfPoint contour : contours) {
+            Rect rect = Imgproc.boundingRect(contour);
+            area = rect.area();
+
+            if (area >= maxObject && contour.toArray().length >= 5) {
+                // Verificar se é ovalado ou redondo
+                if (ehOvaladoOuRedondo(contour)) {
+                    // Cortar a região da imagem original
+                    Mat croppedImage = new Mat(imageOriginal, rect);
+                    croppedImages.add(croppedImage);
+
+                    // Salvar imagem antes de remover fundo
+                    String outputFile = outputPath + "blackimgcurted" + x + cont + ".jpeg";
+                    Imgcodecs.imwrite(outputFile, croppedImage);
+
+                    // Remove fundo com Rembg ou outro método
+                    Remove.Remove(outputFile);
+
+                    cont++;
+                }
+            }
+        }
+
+        return croppedImages;
+    }
+
+    // Função auxiliar para verificar se o contorno é ovalado ou redondo
+    private static boolean ehOvaladoOuRedondo(MatOfPoint contour) {
+        RotatedRect ellipse = Imgproc.fitEllipse(new MatOfPoint2f(contour.toArray()));
+        double a = Math.max(ellipse.size.height, ellipse.size.width) / 2.0;
+        double b = Math.min(ellipse.size.height, ellipse.size.width) / 2.0;
+
+        if (a == 0) return false;
+
+        double excentricidade = Math.sqrt(1 - (b * b) / (a * a));
+
+        // Limite mais tolerante para considerar oval (0.75)
+        return excentricidade <= 0.75;
+    }
 
     /**
      * O método ajustaBrilhoContraste serve para ajustar o brilho de uma imagem já processada, para facilitar o encontro
@@ -363,7 +445,6 @@ public class Image {
 
         return outputImage;
     }
-
 
     /**
      * O método processImagePhone serve para tratar a imagem recebida do celular com reflexos e outras coisas diversas, e como resultado

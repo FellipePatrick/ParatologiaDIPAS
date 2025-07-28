@@ -16,6 +16,7 @@ public abstract class GenericService<T, ID, REPO extends JpaRepository<T, ID>> i
         this.repository = repository;
     }
 
+
     @Override
     public void deleteById(ID id) {
         Optional<T> entity = repository.findById(id);

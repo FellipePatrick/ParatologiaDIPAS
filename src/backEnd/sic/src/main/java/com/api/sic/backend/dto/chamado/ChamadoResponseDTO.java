@@ -4,6 +4,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import com.api.sic.backend.controller.ChamadoController;
 import com.api.sic.backend.domain.Chamado;
+import com.api.sic.backend.dto.Usuario.UsuarioDefaultResponseDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +24,7 @@ public class ChamadoResponseDTO extends RepresentationModel<ChamadoResponseDTO> 
     private String descricao;
     private String status;
     private  LocalDate createdAt;
-    // private UsuarioDefaultResponseDTO dono;
+    private UsuarioDefaultResponseDTO dono;
 
      public void addLinks(Chamado chamado){
         this.add(linkTo(ChamadoController.class).slash(chamado.getId()).withSelfRel());

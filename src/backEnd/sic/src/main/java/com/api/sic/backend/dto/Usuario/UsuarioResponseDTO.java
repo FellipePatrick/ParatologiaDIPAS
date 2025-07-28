@@ -23,10 +23,8 @@ public class UsuarioResponseDTO extends RepresentationModel<UsuarioResponseDTO>{
     private String role; 
     private String email;
     private String matricula;
-    private String senha;
     private Long id;
     private LocalDate deletedAt;
-    private String pathImage;
 
     public void addLinks(Usuario usuario){
         this.add(linkTo(UsuarioController.class).slash(usuario.getId()).withSelfRel());

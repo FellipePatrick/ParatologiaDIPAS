@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-SicApplication<sic>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.api.sic.SicApplication",
+            "projectName": "sic",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

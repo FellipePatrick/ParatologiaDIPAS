@@ -8,26 +8,47 @@
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <nav th:replace="~{fragments/commons :: nav}"></nav>
-                <div th:replace="~{fragments/commons :: warnings}"></div>
-                <div class="container-fluid">
-                    <div th:replace="~{fragments/commons :: headerMain (name='Relatorios')}"></div>
+                <div class="container-fluid">               
+                    <div th:replace="~{fragments/commons :: headerMain (name='Relatórios')}"></div>
+                    <div th:replace="~{fragments/commons :: warnings}"></div>
                     <div class="card shadow-sm border-0 rounded-lg mb-4 mt-5">
                         <div class="card-header bg-primary text-center">
-                            <h5 class="text-white">Vínculos</h5>
+                            <h5 class="text-white">Relatórios</h5>
                         </div>
                         <div class="card-body">
-                            <table class="table table-bordered ">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <select id="filtroStatus" class="form-control">
+                                        <option value="">Filtrar por status...</option>
+                                        <option value="RASCUNHO">RASCUNHO</option>
+                                        <option value="PENDENTE">PENDENTE</option>
+                                        <option value="AVALIANDO">AVALIANDO</option>
+                                        <option value="FINALIZADO">FINALIZADO</option>
+                                        <option value="REJEITADO">REJEITADO</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="date" id="filtroData" class="form-control" placeholder="Filtrar por data...">
+                                </div>
+                            </div>
+                        
+                            <table class="table table-bordered">
                                 <thead class="thead-dark">
                                     <tr>
                                         <th>ID</th>
                                         <th>Titulo</th>
-                                        <th>Usuario</th>
+                                        <th>Dono</th>
                                         <th>Status</th>
                                         <th>Data</th>
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody th:if="${#lists.isEmpty(relatorios)}">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Nenhum relatorio encontrado</td>
+                                    </tr>
+                                </tbody>
+                                <tbody th:unless="${#lists.isEmpty(relatorios)}">
                                     <tr th:each="relatorio, iter : ${relatorios}">
                                         <td th:text="${iter.index + 1}"></td>
                                         <td th:text="${relatorio.titulo}"></td>
@@ -36,13 +57,13 @@
                                         <td th:text="${relatorio.data}"></td>
                                         <td>
                                             <a class="btn btn-sm btn-info" th:href="@{'/relatorios/' + ${relatorio.id}}">Visualizar</a>
-                                            <a class="btn btn-sm btn-danger"  th:href="@{'/relatorios/delete/' + ${relatorio.id}}">Fechar</a>
+                                            <a class="btn btn-sm btn-danger" th:href="@{'/relatorios/delete/' + ${relatorio.id}}">Fechar</a>
                                         </td>
                                     </tr>
                                 </tbody>
-                                
                             </table>
                         </div>
+                        
                     </div>
                     <div class="card-waves">
                      
@@ -124,7 +145,7 @@
                     </div>
                     <div class="card-waves">
                         <div class="p-3">
-                            <h5 class="text-gray-800 mb-4">Documentos Recentes</h5>
+                            <h5 class="text-gray-800 mb-4" th:unless="${#lists.isEmpty(relatorios)}">Documentos Recentes</h5>
                             <div class="row gx-4">
                                 <div class="col-md-4 mb-4" th:each="relatorio : ${relatorios}">
                                     <a class="card shadow-sm h-100" style="text-decoration: none;" th:href="@{'/relatorios/' + ${relatorio.id}}">
@@ -137,7 +158,7 @@
                                             
                                             <div class="mt-auto">
                                                 <p class="text-muted small">
-                                                    Gestor: <span th:text="${relatorio.dono}"></span>
+                                                    Dono: <span th:text="${relatorio.dono}"></span>
                                                 </p>
                                                 
                                                 <p class="text-muted small">
@@ -156,6 +177,40 @@
             <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4">
             </footer>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const inputStatus = document.getElementById("filtroStatus");
+                const inputData = document.getElementById("filtroData");
+                const linhas = document.querySelectorAll("tbody tr");
+            
+                function formatarDataParaComparacao(dataTexto) {
+                    const partes = dataTexto.split("/");
+                    if (partes.length !== 3) return ""; 
+                    const [dia, mes, ano] = partes;
+                    return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+                }
+            
+                function aplicarFiltros() {
+                    const termoStatus = inputStatus.value.toLowerCase();
+                    const termoData = inputData.value;
+            
+                    linhas.forEach(function (linha) {
+                        const status = linha.querySelector("td:nth-child(4)")?.textContent.toLowerCase().trim();
+                        const dataTexto = linha.querySelector("td:nth-child(5)")?.textContent.trim();
+                        const dataConvertida = formatarDataParaComparacao(dataTexto);
+            
+                        const correspondeStatus = !termoStatus || status.includes(termoStatus);
+                        const correspondeData = !termoData || dataConvertida === termoData;
+            
+                        linha.style.display = (correspondeStatus && correspondeData) ? "" : "none";
+                    });
+                }
+            
+                inputStatus.addEventListener("change", aplicarFiltros);
+                inputData.addEventListener("change", aplicarFiltros);
+            });
+            </script>
+            
     </div>
 </body>
 </html>

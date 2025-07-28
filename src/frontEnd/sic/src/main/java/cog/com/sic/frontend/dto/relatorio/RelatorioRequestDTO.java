@@ -28,4 +28,6 @@ public class RelatorioRequestDTO {
 
     private String data;
 
+    private String diagnostico;
+
 }

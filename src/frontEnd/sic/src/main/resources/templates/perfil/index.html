@@ -11,36 +11,37 @@
                     <div th:replace="~{fragments/commons :: headerMain(name='Perfil do Usuário')}"></div>
                     
                     <div class="card card-waves mb-4 mt-5">
+                        <div th:replace="~{fragments/commons :: warnings}"></div>
                         <div class="card-header bg-primary text-center">
                             <h4 class="text-white">Informações do Usuário</h4>
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-4 text-center">
-                                    <img th:src="@{../../imgs/home/fellipe.jpg}" alt="Imagem do perfil" class="img " width="150">
-                                    <div class="mt-3">
-                                        <button class="btn btn-primary btn-sm">Alterar Imagem</button>
-                                    </div>
-                                </div>
+                                <div class="col-md-4 text-center my-5 d-flex flex-column align-items-center">
+                                    <img th:src="@{../../imgs/home/capa.jpg}" style="border-radius:5px;" alt="Imagem do perfil" class="img" width="300">
+                                    <button class="btn btn-primary btn-sm my-4" style="pointer-events: none;">
+                                        SIC - Zoonoses
+                                    </button>                                      
+                                </div>                                
                                 <div class="col-md-8">
-                                    <form>
+                                    <div>
                                         <div class="form-group">
                                             <label for="nome">Nome</label>
-                                            <input type="text" class="form-control" id="nome" value="Nome do Usuário" readonly>
+                                            <input type="text" class="form-control" id="nome" th:value="${nome}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            <input type="email" class="form-control" id="email" value="email@usuario.com" readonly>
+                                            <input type="email" class="form-control" id="email" th:value="${email}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="telefone">Telefone</label>
-                                            <input type="text" class="form-control" id="telefone" value="(00) 00000-0000" readonly>
+                                            <input type="text" class="form-control" id="telefone" th:value="${session.telefone}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="matricula">Matricula</label>
-                                            <input type="text" class="form-control" id="matricula" value="Matricula do Usuário" readonly>
+                                            <input type="text" class="form-control" id="matricula" th:value="${matricula}" readonly>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -51,17 +52,18 @@
                             <h4 cl>Configurações da Conta</h4>
                         </div>
                         <div class="card-body">
-                            <form>
-                                <div class="form-group">
-                                    <label for="alterarSenha">Alterar Senha</label>
-                                    <input type="password" class="form-control" id="alterarSenha" placeholder="Digite sua nova senha">
-                                </div>
-                                <div class="form-group">
-                                    <label for="confirmarSenha">Confirmar Senha</label>
-                                    <input type="password" class="form-control" id="confirmarSenha" placeholder="Confirme sua nova senha">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                            </form>
+                            <form method="post" th:action="@{/password}">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <div class="form-group">
+                                <label for="alterarSenha">Alterar Senha</label>
+                                <input type="password" class="form-control" id="alterarSenha" name="novaSenha" placeholder="Digite sua nova senha">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmarSenha">Confirmar Senha</label>
+                                <input type="password" class="form-control" id="confirmarSenha" name="confirmarSenha" placeholder="Confirme sua nova senha">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </form>
                         </div>
                     </div>
                 </div>            
@@ -69,5 +71,27 @@
             <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
         </div>
     </div>
+    <script>
+        const telefoneInput = document.getElementById("telefone");
+    
+        let telefone = telefoneInput.value || ""; 
+        console.log("Telefone antes do tratamento:", telefone);
+    
+        if (!telefone || telefone.trim() === "" || telefone.length < 10) {
+            telefone = "00000000000";
+        }
+    
+        telefone = telefone.replace(/\D/g, "");
+    
+        let telefoneFormatado = telefone;
+    
+        if (telefone.length === 11) {
+            telefoneFormatado = telefone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+        } else if (telefone.length === 10) {
+            telefoneFormatado = telefone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+        }
+    
+        telefoneInput.value = telefoneFormatado;
+    </script>
 </body>
 </html>

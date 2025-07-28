@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.api.sic.backend.dto.file.UploadResponseMobileDTO;
 import com.api.sic.backend.service.FileStorageService;
 import com.api.sic.backend.service.ImageProcessService;
-import com.api.sic.backend.service.ImagemService;
 
 
 import java.util.ArrayList;
@@ -24,20 +23,20 @@ public class MobileFileController {
 
     private final FileStorageService fileStorageService;
     private final ImageProcessService imageProcessService;
-    private final ImagemService imagemService;
+    public final String servidor = "http://192.168.0.104:8081/images/Circulada";
 
-    public MobileFileController(ImagemService imagemService, FileStorageService fileStorageService, ImageProcessService imageProcessService) {
+    public MobileFileController( FileStorageService fileStorageService, ImageProcessService imageProcessService) {
         this.fileStorageService = fileStorageService;
         this.imageProcessService = imageProcessService;
-        this.imagemService = imagemService;
     }
 
     @PostMapping
     public ResponseEntity<UploadResponseMobileDTO> uploadImages(@RequestParam("files") List<MultipartFile> files, @RequestParam("zoom") boolean zoom) {
         if (files.isEmpty()) {
-            return ResponseEntity.badRequest().body(new UploadResponseMobileDTO("A lista de arquivos não pode estar vazia.", null));
+            return ResponseEntity.badRequest().body(new UploadResponseMobileDTO("A lista de arquivos não pode estar vazia.", null,null));
         }
 
+        
         List<String> savedFileNames = new ArrayList<>();
         List<String> imageUrls = new ArrayList<>(); 
         for (MultipartFile file : files) {
@@ -47,13 +46,21 @@ public class MobileFileController {
                 fileStorageService.save(file, uniqueFileName);
                 savedFileNames.add(uniqueFileName);
 
-                String imageUrl = "http://192.168.0.108:8081/images/Circulada" + uniqueFileName;
+                String imageUrl = servidor + uniqueFileName;
                 imageUrls.add(imageUrl);
 
                 imageProcessService.processarImagem(uniqueFileName, cdd, zoom);
             }
         }
-        return ResponseEntity.ok(new UploadResponseMobileDTO("Imagens salvas com sucesso.", imageUrls));
+
+        String diagnostico = "A análise da imagem identificou a presença de elementos\r\n" + //
+                        "compatíveis com parasitas do gênero Toxocara spp.\r\n" + //
+                        "Esta zoonose pode ser transmitida para humanos e animais\r\n" + //
+                        "através da ingestão de ovos do parasita.\r\n" + //
+                        "Recomenda-se a consulta com um veterinário para confirmação do\r\n" + //
+                        "diagnóstico e aplicação do tratamento adequado.";
+        
+        return ResponseEntity.ok(new UploadResponseMobileDTO("Imagens salvas com sucesso.", imageUrls, diagnostico));
     }
 
 

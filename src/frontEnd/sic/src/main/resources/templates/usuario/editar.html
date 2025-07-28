@@ -17,6 +17,7 @@
                         </div>
                         <div class="card-body">
                             <form id="cadastroForm" method="post" th:action="@{/usuarios/editar/{id}(id=${usuario.id})}">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <div th:if="${errorMessage != null}" class="alert alert-danger">
                                     <span th:text="${errorMessage}"></span>
                                 </div>
@@ -53,7 +54,7 @@
                                 <div class="form-group">
                                     <label for="email">Email</label>
                                     <input type="email" id="email" name="email" class="form-control"
-                                           th:value="${usuario.email}" placeholder="Email" required>
+                                           th:value="${usuario.email}" placeholder="Email" readonly>
                                     <div th:if="${emailError != null}" class="text-danger">
                                         <small th:text="${emailError}"></small>
                                     </div>
@@ -62,8 +63,8 @@
                                 <div class="form-group">
                                     <label for="tipoUsuario">Tipo de Usuário</label>
                                     <select id="tipoUsuario" name="role" class="form-control" required>
-                                        <option value="ADMINISTRADOR" th:selected="${usuario.role == 'ADMINISTRADOR'}">Administrador</option>
-                                        <option value="GESTOR" th:selected="${usuario.role == 'GESTOR'}">Gestor</option>
+                                        <option value="ADMINISTRADOR" th:selected="${usuario.role == 'ADMINISTRADOR'}" th:if="${session.role == 'ADMINISTRADOR'}">Administrador</option>
+                                        <option value="GESTOR" th:selected="${usuario.role == 'GESTOR'}" th:if="${session.role == 'ADMINISTRADOR'}">Gestor</option>
                                         <option value="USUARIO" th:selected="${usuario.role == 'USUARIO'}">Usuário</option>
                                     </select>
                                     <div th:if="${roleError != null}" class="text-danger">
@@ -84,6 +85,33 @@
             </footer>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const telefoneInput = document.getElementById("telefone");
+
+            telefoneInput.addEventListener("input", function (e) {
+                let valor = e.target.value.replace(/\D/g, "");
+
+                if (valor.length > 11) valor = valor.slice(0, 11);
+
+                let formatado = valor;
+
+                if (valor.length >= 11) {
+                    formatado = valor.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+                } else if (valor.length >= 10) {
+                    formatado = valor.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+                } else if (valor.length >= 6) {
+                    formatado = valor.replace(/(\d{2})(\d{4})/, "($1) $2");
+                } else if (valor.length >= 3) {
+                    formatado = valor.replace(/(\d{2})(\d{1,4})/, "($1) $2");
+                } else if (valor.length >= 1) {
+                    formatado = valor.replace(/(\d{1,2})/, "($1");
+                }
+
+                e.target.value = formatado;
+            });
+        });
+    </script>
 </body>
 
 </html>

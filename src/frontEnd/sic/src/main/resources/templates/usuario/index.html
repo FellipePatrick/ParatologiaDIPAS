@@ -17,6 +17,7 @@
                         </div>
                         <div class="card-body">
                             <form id="cadastroForm" method="post" th:action="@{/usuarios}">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <div class="form-group">
                                     <label for="nome">Nome</label>
                                     <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome completo" required>
@@ -44,8 +45,8 @@
                                 <div class="form-group">
                                     <label for="tipoUsuario">Tipo de Usuário</label>
                                     <select id="tipoUsuario" name="role" class="form-control" required>
-                                        <option value="ADMINISTRADOR">Administrador</option>
-                                        <option value="GESTOR">Gestor</option>
+                                        <option value="ADMINISTRADOR" th:if="${session.role == 'ADMINISTRADOR'}">Administrador</option>
+                                        <option value="GESTOR" th:if="${session.role == 'ADMINISTRADOR'}">Gestor</option>
                                         <option value="USUARIO">Usuario</option>
                                     </select>
                                     <div th:if="${roleError != null}" class="text-danger">
@@ -60,10 +61,9 @@
                     <div class="card mt-5">
                         <div class="card-header d-flex bg-primary justify-content-between align-items-center">
                             <h5 class="card-title text-white">Lista de Usuários</h5>
-                            <form class="form-inline">
+                            <div class="form-inline">
                                 <input class="form-control mr-sm-2" type="search" placeholder="Pesquisar por Email" aria-label="Search" id="searchEmail">
-                                <button class="btn btn-success my-2 my-sm-0" type="submit">Buscar</button>
-                            </form>
+                            </div>
                         </div>
 
                         <div class="card-body">
@@ -76,15 +76,23 @@
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody th:if="${#lists.isEmpty(usuarios)}">
+                                    <tr>
+                                        <td colspan="7" class="text-center">Nenhum usuario encontrado</td>
+                                    </tr>
+                                </tbody>
+                                <tbody th:each="chamado, stat : ${usuarios}" th:unless="${#lists.isEmpty(usuarios)}"></tbody>
                                     <tr th:each="usuario : ${usuarios}">
                                         <td th:text="${usuario.nome}">Nome do Usuário</td>
                                         <td th:text="${usuario.email}">email@email.com</td>
                                         <td th:text="${usuario.role}">Tipo de Usuário</td>
                                         <td>
-                                            <a th:href="@{'/usuarios/editar/' + ${usuario.id}}" class="btn btn-sm btn-warning">Editar</a>
-                                            <a class="btn btn-sm btn-danger" th:href="@{'/usuarios/delete/' + ${usuario.id}}">Excluir</a>
-                                        </td>
+                                            <a th:if="${usuario.email != email}" th:href="@{'/usuarios/editar/' + ${usuario.id}}" class="btn btn-sm btn-warning">Editar</a>
+                                            <a th:if="${usuario.email == email}" class="btn btn-sm btn-warning" readonly>Editar</a>
+                                            <a th:href="@{'/usuarios/redefinir/' + ${usuario.id}}" th:if="${session.role == 'ADMINISTRADOR'}" class="btn btn-sm btn-info">Redefinir Senha</a>
+                                            <a th:if="${usuario.email != email}" class="btn btn-sm btn-danger" th:href="@{'/usuarios/delete/' + ${usuario.id}}">Excluir</a>
+                                            <a th:if="${usuario.email == email}" class="btn btn-sm btn-danger" readonly>Excluir</a>
+                                            </td>
                                     </tr>
                                   
                                 </tbody>
@@ -99,5 +107,50 @@
             </footer>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputBusca = document.getElementById("searchEmail");
+            const linhasTabela = document.querySelectorAll("tbody tr");
+        
+            inputBusca.addEventListener("keyup", function () {
+                const termo = inputBusca.value.toLowerCase(); 
+        
+                linhasTabela.forEach(function (linha) {
+                    const nome = linha.querySelector("td:nth-child(1)").textContent.toLowerCase();
+                    const email = linha.querySelector("td:nth-child(2)").textContent.toLowerCase();
+                    const tipo = linha.querySelector("td:nth-child(3)").textContent.toLowerCase();
+        
+                    const corresponde = nome.includes(termo) || email.includes(termo) || tipo.includes(termo);
+        
+                    linha.style.display = corresponde ? "" : "none";
+                });
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            const telefoneInput = document.getElementById("telefone");
+
+            telefoneInput.addEventListener("input", function (e) {
+                let valor = e.target.value.replace(/\D/g, "");
+
+                if (valor.length > 11) valor = valor.slice(0, 11);
+
+                let formatado = valor;
+
+                if (valor.length >= 11) {
+                    formatado = valor.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+                } else if (valor.length >= 10) {
+                    formatado = valor.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+                } else if (valor.length >= 6) {
+                    formatado = valor.replace(/(\d{2})(\d{4})/, "($1) $2");
+                } else if (valor.length >= 3) {
+                    formatado = valor.replace(/(\d{2})(\d{1,4})/, "($1) $2");
+                } else if (valor.length >= 1) {
+                    formatado = valor.replace(/(\d{1,2})/, "($1");
+                }
+
+                e.target.value = formatado;
+            });
+        });
+        </script>       
 </body>
 </html>
