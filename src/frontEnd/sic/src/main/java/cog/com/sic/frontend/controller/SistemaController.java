@@ -34,6 +34,7 @@ public class SistemaController {
 
     
 
+    @SuppressWarnings("unchecked")
     @GetMapping("/")
     public ModelAndView indexHome(@ModelAttribute String s, RedirectAttributes redirectAttributes) {
        
@@ -49,6 +50,7 @@ public class SistemaController {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
+        @SuppressWarnings("rawtypes")
         ResponseEntity<Map> responseEntity = restTemplate.exchange(
             RELATORIO_URL, 
             HttpMethod.GET, 
@@ -57,7 +59,6 @@ public class SistemaController {
         );
 
         Map<String, Object> response = responseEntity.getBody();
-        @SuppressWarnings("unchecked")
         List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
 
         int totais = 0;
