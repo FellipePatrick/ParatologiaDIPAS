@@ -104,6 +104,7 @@ public class SicApplication implements WebMvcConfigurer {
                 usuarioRepository.save(fellipe);
 
                 System.out.println("Usuários criados com sucesso!");
+
             }
         };
     }

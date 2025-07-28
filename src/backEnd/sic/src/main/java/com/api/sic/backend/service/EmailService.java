@@ -7,6 +7,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.api.sic.backend.core.ConfigEnvs;
+
 @Service
 public class EmailService {
 
@@ -100,7 +102,8 @@ public class EmailService {
         MimeMessage mensagem = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mensagem, true, "UTF-8");
 
-        String linkRedefinicao = "http://localhost:8080/forgotpassword/" + token;
+
+        String linkRedefinicao = ConfigEnvs.pagina_web_senha + token;
 
         String conteudoHtml = String.format("""
             <html>

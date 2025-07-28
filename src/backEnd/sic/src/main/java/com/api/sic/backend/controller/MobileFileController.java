@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.api.sic.backend.core.ConfigEnvs;
 import com.api.sic.backend.dto.file.UploadResponseMobileDTO;
 import com.api.sic.backend.service.FileStorageService;
 import com.api.sic.backend.service.ImageProcessService;
@@ -23,7 +24,9 @@ public class MobileFileController {
 
     private final FileStorageService fileStorageService;
     private final ImageProcessService imageProcessService;
-    public final String servidor = "http://192.168.0.104:8081/images/Circulada";
+    
+    //Variavel de ambiente que aponta para o servidor na resposta para o mobile
+    public final String servidor = ConfigEnvs.servidor_to_mobile;
 
     public MobileFileController( FileStorageService fileStorageService, ImageProcessService imageProcessService) {
         this.fileStorageService = fileStorageService;
