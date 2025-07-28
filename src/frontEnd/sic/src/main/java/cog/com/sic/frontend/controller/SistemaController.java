@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import cog.com.sic.frontend.core.ConfigEnvs;
 import cog.com.sic.frontend.dto.relatorio.RelatorioRequestDTO;
 import cog.com.sic.service.AuthService;
 import jakarta.servlet.http.HttpSession;
@@ -23,7 +24,7 @@ import org.springframework.http.HttpHeaders;
 
 @Controller
 public class SistemaController {
-    private static final String RELATORIO_URL = "http://localhost:8081/relatorios/";
+    private static final String RELATORIO_URL = ConfigEnvs.servidor + "/relatorios/";
     private final AuthService authService;
     private final HttpSession session;
 

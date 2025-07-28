@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.client.RestTemplate;
 
+import cog.com.sic.frontend.core.ConfigEnvs;
 import cog.com.sic.frontend.dto.relatorio.RelatorioRequestDTO;
 import jakarta.servlet.http.HttpSession;
 
@@ -45,7 +46,7 @@ public class GlobalController {
 
     @ModelAttribute("ChamadosSearch")
     public List<RelatorioRequestDTO> getChamadosSearch(HttpSession session) {
-        final String RELATORIO_URL = "http://localhost:8081/relatorios/";
+        final String RELATORIO_URL = ConfigEnvs.servidor + "/relatorios/";
 
         if (session.getAttribute("token") != null) {
             RestTemplate restTemplate = new RestTemplate();
@@ -55,6 +56,7 @@ public class GlobalController {
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
             try {
+                @SuppressWarnings("rawtypes")
                 ResponseEntity<Map> responseEntity = restTemplate.exchange(
                     RELATORIO_URL,
                     HttpMethod.GET,
@@ -62,6 +64,7 @@ public class GlobalController {
                     Map.class
                 );
 
+                @SuppressWarnings("unchecked")
                 Map<String, Object> response = responseEntity.getBody();
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");

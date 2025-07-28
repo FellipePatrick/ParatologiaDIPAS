@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cog.com.sic.frontend.core.ConfigEnvs;
 import cog.com.sic.frontend.dto.Usuario.ResetPasswordDTO;
 import cog.com.sic.frontend.dto.Usuario.UsuarioPagedResponseDTO;
 import cog.com.sic.frontend.dto.Usuario.UsuarioRequestDTO;
@@ -38,11 +39,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 public class UsuarioController {
 
     //URL da API
-    private static final String URL = "http://localhost:8081/usuarios/";
+    private static final String URL = ConfigEnvs.servidor + "/usuarios/";
     
-    private static final String URL_Senha = "http://localhost:8081/resetpassword/";
+    private static final String URL_Senha = ConfigEnvs.servidor + "/resetpassword/";
 
-    private static final String URL_RedefinirSenha = "http://localhost:8081/redefinirpassword/";
+    private static final String URL_RedefinirSenha = ConfigEnvs.servidor + "/redefinirpassword/";
     
     private final HttpSession session;
 

@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import cog.com.sic.frontend.core.ConfigEnvs;
 import cog.com.sic.frontend.dto.chamado.ChamadoPagedResponseDTO;
 import cog.com.sic.frontend.dto.chamado.ChamadoRequestDTO;
 import cog.com.sic.frontend.dto.chamado.ChamadoRequestUpdateStatus;
@@ -26,7 +27,7 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ChamadoController {
-    private static final String URL = "http://localhost:8081/chamados/";
+    private static final String URL = ConfigEnvs.servidor + "/chamados/";
     /**
      *
      */

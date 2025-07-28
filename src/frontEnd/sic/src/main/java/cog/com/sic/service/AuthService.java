@@ -16,6 +16,9 @@ import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.HttpClientErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import cog.com.sic.frontend.core.ConfigEnvs;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 
 @Service
@@ -26,7 +29,7 @@ public class AuthService {
 
 
    public ModelAndView enviarEmailForgotPassword(String email, HttpSession session) {
-        String url = "http://localhost:8081/forgotpassword/";
+        String url = ConfigEnvs.servidor + "/forgotpassword/";
 
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("email", email);
@@ -54,7 +57,7 @@ public class AuthService {
 
 
     public ModelAndView realizarLogin(String credencialMatricula, String senha, HttpSession session) {
-        String url = "http://localhost:8081/login/";
+        String url = ConfigEnvs.servidor + "/login/";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("matricula", credencialMatricula);
         requestBody.put("password", senha);
@@ -93,7 +96,7 @@ public class AuthService {
    public boolean verificarTokenValido(HttpSession session) {
     String token = (String) session.getAttribute("token");
 
-    String url = "http://localhost:8081/validarToken/";
+    String url = ConfigEnvs.servidor + "/validarToken/";
 
     if (token != null) {
         HttpHeaders headers = new HttpHeaders();
@@ -118,7 +121,7 @@ public class AuthService {
 // ...
 
 public ModelAndView redefineSenha(String senha, String confirmarSenha, String token, HttpSession session) {
-    String url = "http://localhost:8081/forgotpassword/" + token;
+    String url = ConfigEnvs.servidor + "/forgotpassword/" + token;
 
     Map<String, String> requestBody = new HashMap<>();
     requestBody.put("novaSenha", senha);

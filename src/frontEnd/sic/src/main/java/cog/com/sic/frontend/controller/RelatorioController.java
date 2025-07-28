@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cog.com.sic.frontend.core.ConfigEnvs;
 import cog.com.sic.frontend.dto.imagem.ImagemRequestDTO;
 import cog.com.sic.frontend.dto.relatorio.RelatorioRequestDTO;
 import cog.com.sic.service.AuthService;
@@ -37,9 +38,9 @@ import java.util.stream.Collectors;
 
 @Controller
 public class RelatorioController {
-    private static final String URL = "http://localhost:8081/file/";
+    private static final String URL = ConfigEnvs.servidor + "/file/";
 
-    private static final String RELATORIO_URL = "http://localhost:8081/relatorios/";
+    private static final String RELATORIO_URL = ConfigEnvs.servidor + "/relatorios/";
 
     private final AuthService authService;
     private final HttpSession session;
@@ -82,7 +83,7 @@ public class RelatorioController {
                         .filter(imagem -> "Circulada".equals(imagem.getNome()))
                         .collect(Collectors.toList());
 
-                modelAndView.addObject("baseImageUrl", "http://localhost:8081/images/");
+                modelAndView.addObject("baseImageUrl", ConfigEnvs.servidor + "/images/");
                 modelAndView.addObject("imagensOriginal", imagensOriginal);
                 modelAndView.addObject("imagensProcessada", imagensProcessada);
                 modelAndView.addObject("idRelatorio", idRelatorio);
@@ -152,6 +153,7 @@ public class RelatorioController {
     
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
+            @SuppressWarnings("rawtypes")
             ResponseEntity<Map> responseEntity = restTemplate.exchange(
                 RELATORIO_URL,
                 HttpMethod.GET,
@@ -237,11 +239,12 @@ public class RelatorioController {
                         .filter(imagem -> "Circulada".equals(imagem.getNome()))
                         .collect(Collectors.toList());
     
-                modelAndView.addObject("baseImageUrl", "http://localhost:8081/images/");
+                modelAndView.addObject("baseImageUrl", ConfigEnvs.servidor + "/images/");
                 modelAndView.addObject("imagensOriginal", imagensOriginal);
                 modelAndView.addObject("imagensProcessada", imagensProcessada);
             }
     
+            @SuppressWarnings("rawtypes")
             ResponseEntity<Map> response = restTemplate.exchange(
                 RELATORIO_URL + "?page=0&size=1000", 
                 HttpMethod.GET,
