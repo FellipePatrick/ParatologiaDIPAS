@@ -3,68 +3,120 @@
 <head th:replace="~{fragments/commons :: head}"></head>
 <body id="page-top">
     <div id="wrapper">
-        <!-- Sidebar -->
         <div th:replace="~{fragments/commons :: sidebar}"></div>
 
-        <!-- Content -->
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
-                <!-- Navbar -->
                 <nav th:replace="~{fragments/commons :: nav}"></nav>
-                <!-- Main Container -->
-                <div class="container py-5">
-                    <div th:replace="~{fragments/commons :: headerMain(name='Dúvidas')}" s></div>
-                    <!-- Título da Página -->
-                    <div class="text-center mb-5">
-                        <h2 class="text-primary font-weight-bold">Entendendo as Imagens Aceitas</h2>
-                        <p class="text-muted">Saiba quais tipos de imagens o sistema aceita e como elas são processadas</p>
-                    </div>
+               <div class="container-fluid  bg-light rounded-3 shadow-sm">
+                <div th:replace="~{fragments/commons :: headerMain(name='Dúvidas')}"></div>
+                <div class="container-fluid py-5 px-4 bg-white">
+                    <section class="text-center mb-5">
+                        <h1 class="display-4 fw-bold text-dark">Entenda quais Imagens o Sistema Aceita</h1>
+                        <p class="lead text-muted mt-3">
+                            Para garantir uma análise eficiente, é importante saber quais tipos de imagens podem ser utilizadas no sistema.
+                            Abaixo, você verá os dois formatos aceitos e suas características.
+                        </p>
+                    </section>
 
-                    <!-- Cards de Tipos de Imagem -->
-                    <div class="row justify-content-center">
-                        <!-- Card: Imagem com Zoom -->
-                        <div class="col-md-5 mx-3 mb-4">
-                            <div class="card shadow-lg border-0 rounded-lg h-100">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
+                    <section class="row align-items-stretch justify-content-center g-5">
+                        <div class="col-lg-5">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body px-4 py-5">
+                                    <div class="d-flex justify-content-center mb-4">
                                         <i class="fa fa-search-plus fa-3x text-primary"></i>
                                     </div>
-                                    <h5 class="card-title font-weight-bold">Imagem com Zoom</h5>
-                                    <p class="card-text text-muted">
-                                        Capturada diretamente do microscópio. A imagem tem maior nitidez e aproximação, o que permite ao sistema realizar uma análise mais precisa e detalhada.
+                                    <h3 class="fw-semibold text-center text-dark mb-3">Imagem com Zoom</h3>
+                                    <p class="text-muted text-center">
+                                        Capturada diretamente do microscópio, essa imagem possui alta nitidez e aproximação.
+                                        Esse formato permite ao sistema extrair detalhes com mais precisão, aumentando a eficiência da análise.
                                     </p>
-                                    <img th:src="@{../../imgs/duvidas/zoom.jpeg}" alt="Imagem com Zoom" class="img-fluid rounded shadow-sm mt-3" style="max-height: 200px;">
+                                    <div class="text-center mt-4">
+                                        <img th:src="@{../../imgs/duvidas/zoom.jpeg}" alt="Imagem com Zoom"
+                                            class="img-fluid rounded-3 shadow-sm" style="max-height: 250px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Card: Imagem sem Zoom -->
-                        <div class="col-md-5 mx-3 mb-4">
-                            <div class="card shadow-lg border-0 rounded-lg h-100">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
+                        <div class="col-lg-5">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body px-4 py-5">
+                                    <div class="d-flex justify-content-center mb-4">
                                         <i class="fa fa-camera fa-3x text-info"></i>
                                     </div>
-                                    <h5 class="card-title font-weight-bold">Imagem sem Zoom</h5>
-                                    <p class="card-text text-muted">
-                                        Capturada com câmera comum, sem estar diretamente no microscópio. Possui campo de visão mais aberto e pode ter menor qualidade para análise.
+                                    <h3 class="fw-semibold text-center text-dark mb-3">Imagem sem Zoom</h3>
+                                    <p class="text-muted text-center">
+                                        Capturada com uma câmera comum, essa imagem possui um campo de visão mais amplo.
+                                        Embora seja aceita pelo sistema, a qualidade pode ser inferior, impactando na identificação dos elementos.
                                     </p>
-                                    <img th:src="@{../../imgs/duvidas/semzoom.jpeg}" alt="Imagem sem Zoom" class="img-fluid rounded shadow-sm mt-3" style="max-height: 200px;">
+                                    <div class="text-center mt-4">
+                                        <img th:src="@{../../imgs/duvidas/semzoom.jpeg}" alt="Imagem sem Zoom"
+                                            class="img-fluid rounded-3 shadow-sm" style="max-height: 250px;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <!-- Observação final -->
-                    <div class="text-center mt-4">
-                        <small class="text-muted">
-                            Ambos os tipos de imagem são aceitos, mas recomenda-se o uso da imagem com zoom para melhores resultados.
-                        </small>
-                    </div>
+                    <section class="mt-5 text-center">
+                        <div class="bg-light border-start border-4 border-warning p-4 d-inline-block rounded-3 shadow-sm">
+                            <p class="mb-0 text-muted fs-6">
+                                <strong class="text-dark">Recomendação:</strong> Ambos os formatos são aceitos,
+                                mas para uma melhor performance e precisão, recomenda-se o uso de imagens com zoom direto do microscópio.
+                            </p>
+                        </div>
+                    </section>
+
+                    <section class="mt-5 px-2">
+                        <div class="text-center mb-4">
+                            <h2 class="fw-bold text-dark">Vídeos Explicativos</h2>
+                            <p class="text-muted fs-5">Assista aos vídeos abaixo para entender melhor como o SIC funciona.</p>
+                        </div>
+
+                        <div class="row justify-content-center g-4" id="youtube-videos">
+
+                        <div class="col-md-6 col-lg-4">
+                                <div class="card border-0 shadow-sm rounded-3 h-100">
+                                    <div class="ratio ratio-16x9">
+                                        <iframe 
+                                            src="https://www.youtube.com/embed/1Jno3MyG7wo"
+                                            title="Como capturar imagem com microscópio"
+                                            frameborder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-semibold text-dark">Apresentação do Sistema</h5>
+                                        <p class="card-text text-muted">Esse vídeo apresenta todas as funcionalidades do SIC.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card border-0 shadow-sm rounded-3 h-100">
+                                    <div class="ratio ratio-16x9">
+                                        <iframe 
+                                            src="https://www.youtube.com/embed/1Jno3MyG7wo"
+                                            title="Como capturar imagem com microscópio"
+                                            frameborder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title fw-semibold text-dark">Apresentação do Sistema - Usuarios</h5>
+                                        <p class="card-text text-muted">Esse vídeo apresenta todas as funcionalidades do SIC.</p>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                        </div>
+                    </section>
+
                 </div>
             </div>
-
-            <!-- Footer -->
             <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
         </div>
     </div>
