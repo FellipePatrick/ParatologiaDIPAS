@@ -53,7 +53,7 @@
                                         <small th:text="${roleError}"></small>
                                     </div>
                                 </div>                    
-                                <button type="submit" class="btn btn-primary">Cadastrar</button>
+                                <button type="submit" class="btn btn-primary" id="btnEnviar">Cadastrar</button>
                             </form>
                         </div>
                     </div>
@@ -89,7 +89,12 @@
                                         <td>
                                             <a th:if="${usuario.email != email}" th:href="@{'/usuarios/editar/' + ${usuario.id}}" class="btn btn-sm btn-warning">Editar</a>
                                             <a th:if="${usuario.email == email}" class="btn btn-sm btn-warning" readonly>Editar</a>
-                                            <a th:href="@{'/usuarios/redefinir/' + ${usuario.id}}" th:if="${session.role == 'ADMINISTRADOR'}" class="btn btn-sm btn-info">Redefinir Senha</a>
+                                            <a href="#" 
+                                                th:href="@{'/usuarios/redefinir/' + ${usuario.id}}" 
+                                                th:if="${session.role == 'ADMINISTRADOR'}" 
+                                                class="btn btn-sm btn-info redefinir-link">
+                                                Redefinir Senha
+                                            </a>
                                             <a th:if="${usuario.email != email}" class="btn btn-sm btn-danger" th:href="@{'/usuarios/delete/' + ${usuario.id}}">Excluir</a>
                                             <a th:if="${usuario.email == email}" class="btn btn-sm btn-danger" readonly>Excluir</a>
                                             </td>
@@ -108,6 +113,17 @@
         </div>
     </div>
     <script>
+         document.querySelectorAll('.redefinir-link').forEach(link => {
+            link.addEventListener('click', function () {
+            this.style.pointerEvents = 'none';
+            this.style.opacity = '0.6';
+            });
+        });
+        document.getElementById('cadastroForm').addEventListener('submit', function () {
+            const botao = document.getElementById('btnEnviar');
+          
+            botao.disabled = true;
+            });
         document.addEventListener("DOMContentLoaded", function () {
             const inputBusca = document.getElementById("searchEmail");
             const linhasTabela = document.querySelectorAll("tbody tr");

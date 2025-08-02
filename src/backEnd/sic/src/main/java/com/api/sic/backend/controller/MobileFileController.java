@@ -34,37 +34,35 @@ public class MobileFileController {
     }
 
     @PostMapping
-    public ResponseEntity<UploadResponseMobileDTO> uploadImages(@RequestParam("files") List<MultipartFile> files, @RequestParam("zoom") boolean zoom) {
-        if (files.isEmpty()) {
-            return ResponseEntity.badRequest().body(new UploadResponseMobileDTO("A lista de arquivos não pode estar vazia.", null,null));
+    public ResponseEntity<UploadResponseMobileDTO> uploadImage(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("zoom") boolean zoom) {
+
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                new UploadResponseMobileDTO("O arquivo não pode estar vazio.", null, null)
+            );
         }
 
-        
-        List<String> savedFileNames = new ArrayList<>();
-        List<String> imageUrls = new ArrayList<>(); 
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                String cdd = UUID.randomUUID().toString();
-                String uniqueFileName = cdd + getFileExtension(file.getOriginalFilename());
-                fileStorageService.save(file, uniqueFileName);
-                savedFileNames.add(uniqueFileName);
+        String cdd = UUID.randomUUID().toString();
+        String uniqueFileName = cdd + getFileExtension(file.getOriginalFilename());
+        fileStorageService.save(file, uniqueFileName);
 
-                String imageUrl = servidor + uniqueFileName;
-                imageUrls.add(imageUrl);
+        String imageUrl = servidor + uniqueFileName;
+        imageProcessService.processarImagem(uniqueFileName, cdd, zoom);
 
-                imageProcessService.processarImagem(uniqueFileName, cdd, zoom);
-            }
-        }
+        String diagnostico = "A análise da imagem identificou a presença de elementos " + 
+            "compatíveis com parasitas do gênero Toxocara spp. " + 
+            "Esta zoonose pode ser transmitida para humanos e animais" + 
+            "através da ingestão de ovos do parasita. " + 
+            "Recomenda-se a consulta com um veterinário para confirmação do " + 
+            "diagnóstico e aplicação do tratamento adequado.";
 
-        String diagnostico = "A análise da imagem identificou a presença de elementos\r\n" + //
-                        "compatíveis com parasitas do gênero Toxocara spp.\r\n" + //
-                        "Esta zoonose pode ser transmitida para humanos e animais\r\n" + //
-                        "através da ingestão de ovos do parasita.\r\n" + //
-                        "Recomenda-se a consulta com um veterinário para confirmação do\r\n" + //
-                        "diagnóstico e aplicação do tratamento adequado.";
-        
-        return ResponseEntity.ok(new UploadResponseMobileDTO("Imagens salvas com sucesso.", imageUrls, diagnostico));
+        return ResponseEntity.ok(
+            new UploadResponseMobileDTO("Imagem salva com sucesso.", List.of(imageUrl), diagnostico)
+        );
     }
+
 
 
     private String getFileExtension(String fileName) {

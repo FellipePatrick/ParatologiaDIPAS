@@ -11,6 +11,15 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link th:href="@{../../css/login/style.css}" rel="stylesheet" type="text/css">
 </head>
+<style>
+    a.linkedin {
+  text-decoration: none !important;
+}
+
+a.linkedin:hover {
+  text-decoration: none !important;
+}
+</style>
 
 <body>
 
@@ -39,9 +48,12 @@
                     <div class="card2 card border-0 px-4 py-5">
                         <div class="row mb-4 px-3 d-flex justify-content-center" th:fragment="headerINF">
                             <h6 class="mb-0 mr-4 mt-2 d-flex justify-content-center mb-3">Entre no</h6>
-                            <div class="linkedin text-center mr-3 mx-1 efeito">S</div>
-                            <div class="twitter text-center mr-3 mx-1 efeito">I</div>
-                            <div class="linkedin text-center mr-3 mx-1 efeito">C</div>
+                            <a th:href="@{'/login'}" class="mb-0 mr-4 mt-2 d-flex justify-content-center mb-3">
+                                <div th:href="@{'/login'}" class="linkedin text-center mr-3 mx-1 efeito" >S</div>
+                                <div th:href="@{'/login'}" class="twitter text-center mr-3 mx-1 efeito">I</div>
+                                <div th:href="@{'/login'}" class="linkedin text-center mr-3 mx-1 efeito">C</div>
+                            </a>
+                            
                         </div>
                         <div class="row px-3 mb-4 " th:fragment="headerLines">
                             <div class="line"></div>
