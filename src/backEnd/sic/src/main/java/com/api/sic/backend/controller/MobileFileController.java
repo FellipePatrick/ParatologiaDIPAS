@@ -13,7 +13,6 @@ import com.api.sic.backend.service.FileStorageService;
 import com.api.sic.backend.service.ImageProcessService;
 
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

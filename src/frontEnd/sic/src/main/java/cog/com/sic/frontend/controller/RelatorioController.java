@@ -74,6 +74,7 @@ public class RelatorioController {
             
             List<ImagemRequestDTO> imagens = response.getBody();
 
+            
             if (imagens != null && !imagens.isEmpty()) {
                 List<ImagemRequestDTO> imagensOriginal = imagens.stream()
                         .filter(imagem -> "Original".equals(imagem.getNome()))
@@ -238,7 +239,13 @@ public class RelatorioController {
                 List<ImagemRequestDTO> imagensProcessada = imagens.stream()
                         .filter(imagem -> "Circulada".equals(imagem.getNome()))
                         .collect(Collectors.toList());
-    
+                
+                        
+                List<ImagemRequestDTO> imagensParasita = imagens.stream()
+                        .filter(imagem -> "Parasita".equals(imagem.getNome()))
+                        .collect(Collectors.toList());
+                
+                modelAndView.addObject("imagensParasitas", imagensParasita);
                 modelAndView.addObject("baseImageUrl", ConfigEnvs.servidor + "/images/");
                 modelAndView.addObject("imagensOriginal", imagensOriginal);
                 modelAndView.addObject("imagensProcessada", imagensProcessada);
@@ -320,8 +327,8 @@ public class RelatorioController {
     }
     
 
-    @PostMapping("/images")
-    public ModelAndView enviarImagens(@RequestParam("imagens") List<MultipartFile> arquivos,
+    @PostMapping("/imagem")
+    public ModelAndView enviarImagens(@RequestParam("imagem") MultipartFile arquivo,
             @RequestParam(value = "zoom", required = false) String zoom,
             RedirectAttributes redirectAttributes) {
 
@@ -334,9 +341,8 @@ public class RelatorioController {
         try {
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
-            for (MultipartFile arquivo : arquivos) {
-                body.add("files", arquivo.getResource());
-            }
+            body.add("file", arquivo.getResource());
+          
 
             body.add("zoom", zoom != null ? "true" : "false");
 

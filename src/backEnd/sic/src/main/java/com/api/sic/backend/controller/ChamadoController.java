@@ -99,7 +99,7 @@ public class ChamadoController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable("id") Long id) {
         Chamado c = new Chamado();
-        if (id != null || id > 0) 
+        if (id != null) 
             c = service.findById(id);
 
         if(!(c == null || !isDonoAdminGestor(c)) && !(id == null || id <= 0) )

@@ -64,8 +64,8 @@ public class FileController {
     
 
     @PostMapping
-    public ResponseEntity<UploadResponseDTO> uploadImages(@RequestParam("files") List<MultipartFile> files, @RequestParam("zoom") boolean zoom) {
-        if (files.isEmpty()) {
+    public ResponseEntity<UploadResponseDTO> uploadImages(@RequestParam("file") MultipartFile file, @RequestParam("zoom") boolean zoom) {
+        if (file.isEmpty()) {
             return ResponseEntity.badRequest().body(new UploadResponseDTO("A lista de arquivos não pode estar vazia.", null));
         }
 
@@ -94,16 +94,14 @@ public class FileController {
         relatorioService.create(r);
 
         List<String> savedFileNames = new ArrayList<>();
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                String cdd = UUID.randomUUID().toString();
-                String uniqueFileName = cdd + getFileExtension(file.getOriginalFilename());
-                fileStorageService.save(file, uniqueFileName);
-                savedFileNames.add(uniqueFileName);
-                imageProcessService.processarImagem(uniqueFileName, r.getId(), cdd, zoom);
-            }
+        if (!file.isEmpty()) {
+            String cdd = UUID.randomUUID().toString();
+            String uniqueFileName = cdd + getFileExtension(file.getOriginalFilename());
+            fileStorageService.save(file, uniqueFileName);
+            savedFileNames.add(uniqueFileName);
+            imageProcessService.processarImagem(uniqueFileName, r.getId(), cdd, zoom);
         }
-
+        
         return ResponseEntity.ok(new UploadResponseDTO("Imagens salvas com sucesso: " + String.join(", ", savedFileNames), r.getId()));
     }
 

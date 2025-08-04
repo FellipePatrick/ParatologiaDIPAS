@@ -6,10 +6,10 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.springframework.stereotype.Service;
 
-import nu.pattern.OpenCV;
+// import nu.pattern.OpenCV;
 
 import java.io.File;
-import java.io.FilenameFilter;
+// import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +19,7 @@ public class Image {
     /**
      * Classe Image, que fornece métodos para análise de imagens.
      *
-     * @author Fellipe Patrick e Vitor Carvalho
+     * @author Fellipe Patrick
      * @version 1.0
      * */
 
@@ -59,16 +59,17 @@ public class Image {
      * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
      *
      */
-    public static void segmentImage(String path, String im, String imName, boolean zoom){
+    public static List<String> segmentImage(String path, String im, String imName, boolean zoom){
   
-        int cont = 1;
+        // int cont = 1;
 
         Mat image = Imgcodecs.imread(im);
 
-        Mat ims = image.clone();
+        // Mat ims = image.clone();
         if (image.empty()) {
+            List<String> images = new ArrayList<>();
             System.out.println("Erro ao carregar a imagem!");
-            return;
+            return images;
         }
         Mat result;
         Mat orig;
@@ -77,13 +78,16 @@ public class Image {
             result = ajustaBrilhoContrasteZoom(image);
             String resultPath = path + File.separator + "result" + File.separator + "orig" + imName;
             Imgcodecs.imwrite(resultPath, result);
-            List<Mat> outputImage = findBlackRegion(image, image, result,path + File.separator, imName, zoom);
+            List<String> outputImage = findBlackRegion(image, image, result,path + File.separator, imName, zoom);
 
+            return outputImage;
         } else {
             result = processImagePhone(image);
             orig = result;
             result = ajustaBrilhoContraste(result);
-            List<Mat> outputImage = findBlackRegion(orig,image, result, path + File.separator, imName, zoom);
+            List<String> outputImage = findBlackRegion(orig,image, result, path + File.separator, imName, zoom);
+           
+            return outputImage;
         }
     }
 
@@ -99,8 +103,11 @@ public class Image {
      * @return Retorna uma lista de objetos encontrados na imagem.
      *
      */
-    public static List<Mat> findBlackRegion(Mat imageOriginal, Mat imOrig, Mat inputImage, String outputPath, String imName, boolean zoom) {
+    public static List<String> findBlackRegion(Mat imageOriginal, Mat imOrig, Mat inputImage, String outputPath, String imName, boolean zoom) {
         // Verificar se a imagem de entrada é vazia
+        
+        List<String> images = new ArrayList<>();
+
         if (inputImage.empty()) {
             throw new IllegalArgumentException("A imagem de entrada está vazia");
         }
@@ -115,7 +122,7 @@ public class Image {
         Imgproc.findContours(binaryImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
         List<Mat> croppedImages = new ArrayList<>();
-        int x = 5;
+        // int x = 5;
         double area;
         double perimeter;
         double circularity;
@@ -130,32 +137,34 @@ public class Image {
         }
 
         // Processar cada contorno que atenda aos critérios de área e circularidade
-        // for (MatOfPoint contour : contours) {
-        //     Rect rect = Imgproc.boundingRect(contour);
-        //     area = rect.area();
-        //     if (area >= maxObject) {
-        //         // Calcular a circularidade
-        //         perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
-        //         circularity = 4 * Math.PI * area / (perimeter * perimeter);
-        //         if(circularity > 0.2){
-        //             // Criar uma imagem de saída destacando a região com alta concentração de preto
-        //             Mat outputImage = inputImage.clone();
-        //             Imgproc.rectangle(outputImage, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
+        for (MatOfPoint contour : contours) {
+            Rect rect = Imgproc.boundingRect(contour);
+            area = rect.area();
+            if (area >= maxObject) {
+                // Calcular a circularidade
+                perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
+                circularity = 4 * Math.PI * area / (perimeter * perimeter);
+                if(circularity > 0.2){
+                    // Criar uma imagem de saída destacando a região com alta concentração de preto
+                    Mat outputImage = inputImage.clone();
+                    Imgproc.rectangle(outputImage, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
 
-        //             // Salvar a imagem de saída com a região destacada
-        //             Imgcodecs.imwrite(outputPath + "blackimg" + cont + imName, outputImage);
+                    // Salvar a imagem de saída com a região destacada
+                    // Imgcodecs.imwrite(outputPath + "blackimg" + cont + imName, outputImage);
 
-        //             // Cortar a região encontrada da imagem original
-        //             Mat croppedImage = new Mat(imageOriginal, rect);
-        //             croppedImages.add(croppedImage);
+                    // Cortar a região encontrada da imagem original
+                    Mat croppedImage = new Mat(imageOriginal, rect);
+                    croppedImages.add(croppedImage);
 
-        //             // Salvar a imagem cortada (opcional)
-        //             //Imgcodecs.imwrite(outputPath + "blackimgcurted" + cont + imName, croppedImage);
+                    // Salvar a imagem cortada (opcional)
+                    Imgcodecs.imwrite(outputPath + "blackimgcurted" + cont + imName, croppedImage);
 
-        //             cont++;
-        //         }
-        //     }
-        // }
+                    images.add("blackimgcurted" + cont + imName);
+
+                    cont++;
+                }
+            }
+        }
 
 
         Mat outputImage = imOrig.clone();
@@ -185,7 +194,7 @@ public class Image {
         // Salvar a imagem de saída com todas as regiões destacadas
         Imgcodecs.imwrite(outputPath + "Circulada" + imName, outputImage);
 
-        return croppedImages;
+        return images;
     }
 
 
@@ -458,52 +467,6 @@ public class Image {
 
         // Retornar a imagem cortada
         return croppedImage;
-    }
-
-
-    /**
-     * O método resetDiretorio é usado para limpar as imagens de um diretorio.
-     *
-     * @param path É o path do diretorio para ser limpo.
-     *
-     */
-    public static void resetDiretorio(String path){
-        // Substitua "seu/diretorio/caminho" pelo caminho do seu diretório
-        String directoryPath = path;
-        File directory = new File(directoryPath);
-
-        // Verifica se o caminho é um diretório
-        if (!directory.isDirectory()) {
-            System.out.println("O caminho fornecido não é um diretório.");
-            return;
-        }
-
-        // Cria um filtro para listar apenas os arquivos .jpeg
-        FilenameFilter jpegFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith(".jpeg");
-            }
-        };
-
-        // Lista todos os arquivos .jpeg no diretório
-        File[] jpegFiles = directory.listFiles(jpegFilter);
-
-        // Verifica se há arquivos .jpeg no diretório
-        if (jpegFiles == null || jpegFiles.length == 0) {
-            System.out.println("Nenhum arquivo .jpeg encontrado no diretório.");
-            return;
-        }
-
-        // Apaga todos os arquivos .jpeg
-        for (File jpegFile : jpegFiles) {
-            if (jpegFile.delete()) {
-                //System.out.println("Arquivo " + jpegFile.getName() + " foi apagado com sucesso.");
-            } else {
-                System.out.println("Falha ao apagar o arquivo " + jpegFile.getName() + ".");
-            }
-        }
-
     }
 
 }

@@ -1,6 +1,8 @@
 package com.api.sic.backend.service;
 
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.api.sic.backend.domain.Imagem;
@@ -38,13 +40,21 @@ public class ImageProcessService{
             imagemCirculada.setRelatorio(relatorioService.findById(idRelatorio));
             imagemService.create(imagemCirculada);
 
-            Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
+            List<String> images = Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
+
+            for(String i: images){
+                Imagem imagemParasita = new Imagem();
+                imagemParasita.setNome("Parasita");
+                imagemParasita.setCodigoIm(codigoIm);
+                imagemParasita.setPath(i);
+                imagemParasita.setRelatorio(relatorioService.findById(idRelatorio));
+                imagemService.create(imagemParasita);
+            }
         }
     } 
 
     public void processarImagem(String pathImage, String codigoIm, boolean zoom){ {
 
-    
         Imagem imagemOriginal = new Imagem();
         imagemOriginal.setNome("Original");
         imagemOriginal.setCodigoIm(codigoIm);
@@ -57,7 +67,15 @@ public class ImageProcessService{
         imagemCirculada.setPath("Circulada" + pathImage);
         imagemService.create(imagemCirculada);
 
-        Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
+        List<String> images = Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
+
+        for(String i: images){
+            Imagem imagemParasita = new Imagem();
+            imagemParasita.setNome("Parasita");
+            imagemParasita.setCodigoIm(codigoIm);
+            imagemParasita.setPath(i);
+            imagemService.create(imagemParasita);
+        }
     }
 } 
 }

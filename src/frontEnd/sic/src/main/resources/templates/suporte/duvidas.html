@@ -112,7 +112,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-lg-4">
+                            <div class="col-md-6 col-lg-4" th:if="${session.role == 'ADMINISTRADOR' or session.role == 'GESTOR'}">
                                 <div class="card border-0 shadow-sm rounded-3 h-100">
                                     <div class="ratio ratio-16x9">
                                         <iframe 
@@ -124,8 +124,8 @@
                                         </iframe>
                                     </div>
                                     <div class="card-body">
-                                        <h5 class="card-title fw-semibold text-dark">Apresentação do Sistema - Funcionalidades do Gerente</h5>
-                                        <p class="card-text text-muted">Esse vídeo apresenta todas as funcionalidades que o gerente consegue acessar no SIC.</p>
+                                        <h5 class="card-title fw-semibold text-dark">Apresentação do Sistema - Funcionalidades do Gestor</h5>
+                                        <p class="card-text text-muted">Esse vídeo apresenta todas as funcionalidades que o gestor consegue acessar no SIC.</p>
                                     </div>
                                 </div>
                             </div>
