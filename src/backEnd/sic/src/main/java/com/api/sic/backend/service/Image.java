@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 // import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class Image {
@@ -59,7 +62,7 @@ public class Image {
      * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
      *
      */
-    public static List<String> segmentImage(String path, String im, String imName, boolean zoom){
+    public static Map<String, String> segmentImage(String path, String im, String imName, boolean zoom){
   
         // int cont = 1;
 
@@ -67,7 +70,7 @@ public class Image {
 
         // Mat ims = image.clone();
         if (image.empty()) {
-            List<String> images = new ArrayList<>();
+            Map<String, String> images= new HashMap<>();
             System.out.println("Erro ao carregar a imagem!");
             return images;
         }
@@ -78,14 +81,14 @@ public class Image {
             result = ajustaBrilhoContrasteZoom(image);
             String resultPath = path + File.separator + "result" + File.separator + "orig" + imName;
             Imgcodecs.imwrite(resultPath, result);
-            List<String> outputImage = findBlackRegion(image, image, result,path + File.separator, imName, zoom);
+            Map<String, String> outputImage = findBlackRegion(image, image, result,path + File.separator, imName, zoom);
 
             return outputImage;
         } else {
             result = processImagePhone(image);
             orig = result;
             result = ajustaBrilhoContraste(result);
-            List<String> outputImage = findBlackRegion(orig,image, result, path + File.separator, imName, zoom);
+            Map<String, String> outputImage = findBlackRegion(orig,image, result, path + File.separator, imName, zoom);
            
             return outputImage;
         }
@@ -103,10 +106,10 @@ public class Image {
      * @return Retorna uma lista de objetos encontrados na imagem.
      *
      */
-    public static List<String> findBlackRegion(Mat imageOriginal, Mat imOrig, Mat inputImage, String outputPath, String imName, boolean zoom) {
+    public static Map<String, String> findBlackRegion(Mat imageOriginal, Mat imOrig, Mat inputImage, String outputPath, String imName, boolean zoom) {
         // Verificar se a imagem de entrada é vazia
         
-        List<String> images = new ArrayList<>();
+        Map<String, String> images = new HashMap<>();
 
         if (inputImage.empty()) {
             throw new IllegalArgumentException("A imagem de entrada está vazia");
@@ -123,9 +126,7 @@ public class Image {
 
         List<Mat> croppedImages = new ArrayList<>();
         // int x = 5;
-        double area;
-        double perimeter;
-        double circularity;
+
         double maxObject = 500;
         int cont = 1;
         if(zoom){
@@ -136,36 +137,65 @@ public class Image {
             }
         }
 
-        // Processar cada contorno que atenda aos critérios de área e circularidade
+        DecisionTree td = new DecisionTree();
+
         for (MatOfPoint contour : contours) {
             Rect rect = Imgproc.boundingRect(contour);
-            area = rect.area();
+            double area = rect.area();
             if (area >= maxObject) {
                 // Calcular a circularidade
-                perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
-                circularity = 4 * Math.PI * area / (perimeter * perimeter);
+                double perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
+                double circularity = 4 * Math.PI * area / (perimeter * perimeter);
+
                 if(circularity > 0.2){
-                    // Criar uma imagem de saída destacando a região com alta concentração de preto
-                    Mat outputImage = inputImage.clone();
-                    Imgproc.rectangle(outputImage, rect.tl(), rect.br(), new Scalar(0, 255, 0), 2);
+                    // Criar máscara apenas para este contorno (com mesmo tamanho da imagem original)
+                    Mat mask = Mat.zeros(imageOriginal.size(), CvType.CV_8UC1);
+                    Imgproc.drawContours(mask, Arrays.asList(contour), -1, new Scalar(255), Imgproc.FILLED);
 
-                    // Salvar a imagem de saída com a região destacada
-                    // Imgcodecs.imwrite(outputPath + "blackimg" + cont + imName, outputImage);
+                    // Aplicar a máscara na imagem original
+                    Mat maskedImage = new Mat(imageOriginal.size(), imageOriginal.type(), new Scalar(0));
+                    imageOriginal.copyTo(maskedImage, mask);
 
-                    // Cortar a região encontrada da imagem original
-                    Mat croppedImage = new Mat(imageOriginal, rect);
+                    // Cortar apenas a região do retângulo delimitador
+                    Mat croppedImage = new Mat(maskedImage, rect);
                     croppedImages.add(croppedImage);
 
-                    // Salvar a imagem cortada (opcional)
-                    Imgcodecs.imwrite(outputPath + "blackimgcurted" + cont + imName, croppedImage);
+                    // Salvar a imagem cortada se for parasita
 
-                    images.add("blackimgcurted" + cont + imName);
+                    String forma = verificarForma(croppedImage);
+
+                    if ("redondo".equals(forma) || "oval".equals(forma)) {
+                        Map<String, Object> resultado = td.diagnostico(croppedImage);
+
+                         if((boolean) resultado.get("Zoonose") || (boolean) resultado.get("Parasita")){
+
+                            if((boolean) resultado.get("Parasita")){
+                                Imgcodecs.imwrite(outputPath + "parasita" + cont + imName, croppedImage);
+                                images.put("parasita" + cont + imName, "Parasita");
+                            }
+
+                            if((boolean) resultado.get("Zoonose")){
+                                Imgcodecs.imwrite(outputPath + "zoonose" + cont + imName, croppedImage);
+                                images.put("zoonose" + cont + imName, "Zoonose");
+                            }
+
+                         }else {
+                            Imgcodecs.imwrite(outputPath + "desconhecido" + cont + imName, croppedImage);
+                            images.put("desconhecido" + cont + imName, "Desconhecido");
+                        }
+                    }
+
+                    // Imgcodecs.imwrite(outputPath + "blackimgcurted" + cont + imName+ ".jpeg", croppedImage);
 
                     cont++;
                 }
             }
         }
 
+       
+        double area;
+        double perimeter;
+        double circularity;
 
         Mat outputImage = imOrig.clone();
 
@@ -195,6 +225,39 @@ public class Image {
         Imgcodecs.imwrite(outputPath + "Circulada" + imName, outputImage);
 
         return images;
+    }
+
+      private static String verificarForma(Mat imagem) {
+        Mat gray = new Mat();
+        Imgproc.cvtColor(imagem, gray, Imgproc.COLOR_BGR2GRAY);
+
+        Mat bin = new Mat();
+        Imgproc.threshold(gray, bin, 0, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+
+        List<MatOfPoint> contornos = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(bin, contornos, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        if (contornos.isEmpty()) {
+            return "indefinido";
+        }
+
+        for (MatOfPoint contorno : contornos) {
+            double area = Imgproc.contourArea(contorno);
+            double perimetro = Imgproc.arcLength(new MatOfPoint2f(contorno.toArray()), true);
+
+            if (perimetro == 0) continue;
+
+            double circularidade = 4 * Math.PI * area / (perimetro * perimetro);
+
+            if (circularidade > 0.4) {
+                return "redondo";
+            } else if (circularidade > 0.65) {
+                return "oval";
+            }
+        }
+
+        return "irregular";
     }
 
 

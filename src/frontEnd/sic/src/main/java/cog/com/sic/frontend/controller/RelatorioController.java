@@ -81,7 +81,7 @@ public class RelatorioController {
                         .collect(Collectors.toList());
 
                 List<ImagemRequestDTO> imagensProcessada = imagens.stream()
-                        .filter(imagem -> "Circulada".equals(imagem.getNome()))
+                        .filter(imagem -> "Pré Processada".equals(imagem.getNome()))
                         .collect(Collectors.toList());
 
                 modelAndView.addObject("baseImageUrl", ConfigEnvs.servidor + "/images/");
@@ -233,22 +233,51 @@ public class RelatorioController {
     
             if (imagens != null && !imagens.isEmpty()) {
                 List<ImagemRequestDTO> imagensOriginal = imagens.stream()
-                        .filter(imagem -> "Original".equals(imagem.getNome()))
+                        .filter(imagem -> "Original".equalsIgnoreCase(imagem.getNome()))
                         .collect(Collectors.toList());
     
                 List<ImagemRequestDTO> imagensProcessada = imagens.stream()
-                        .filter(imagem -> "Circulada".equals(imagem.getNome()))
+                        .filter(imagem -> "Pré Processada".equalsIgnoreCase(imagem.getNome()))
                         .collect(Collectors.toList());
                 
                         
                 List<ImagemRequestDTO> imagensParasita = imagens.stream()
-                        .filter(imagem -> "Parasita".equals(imagem.getNome()))
+                        .filter(imagem -> "Parasita".equalsIgnoreCase(imagem.getNome()))
                         .collect(Collectors.toList());
+
+                List<ImagemRequestDTO> imagensDesconhecido = imagens.stream()
+                        .filter(imagem -> "Desconhecido".equalsIgnoreCase(imagem.getNome()))
+                        .collect(Collectors.toList());
+
+                List<ImagemRequestDTO> imagensZoonose = imagens.stream()
+                        .filter(imagem -> "Zoonose".equalsIgnoreCase(imagem.getNome()))
+                        .collect(Collectors.toList());
+
+                StringBuilder texto = new StringBuilder("A análise da amostra identificou:\n");
+
+            
+                    int count = imagensParasita.size();
+                    texto.append("- ").append(count).append(count == 1 ? " parasita.\n" : " parasitas.\n");
+                
+                    count = imagensZoonose.size();
+                    texto.append("- ").append(count).append(count == 1 ? " zoonose.\n" : " zoonoses.\n");
+
+                    count = imagensDesconhecido.size();
+                    texto.append("- ").append(count).append(count == 1 ? " objeto desconhecido.\n" : " objetos desconhecidos.\n");
+               
+
+                texto.append("\nRecomenda-se que todas as imagens sejam analisadas por um profissional habilitado, ");
+                texto.append("uma vez que o sistema ainda está em fase de desenvolvimento e os resultados podem requerer confirmação especializada.");
+
                 
                 modelAndView.addObject("imagensParasitas", imagensParasita);
                 modelAndView.addObject("baseImageUrl", ConfigEnvs.servidor + "/images/");
                 modelAndView.addObject("imagensOriginal", imagensOriginal);
                 modelAndView.addObject("imagensProcessada", imagensProcessada);
+                modelAndView.addObject("imagensDesconhecido", imagensDesconhecido);
+                modelAndView.addObject("imagensZoonose", imagensZoonose);
+
+                modelAndView.addObject("diagnostico", texto);
             }
     
             @SuppressWarnings("rawtypes")

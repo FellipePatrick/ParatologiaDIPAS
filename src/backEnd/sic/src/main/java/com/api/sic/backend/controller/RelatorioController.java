@@ -40,6 +40,7 @@ public class RelatorioController {
     private final RelatorioService service;
     private final UsuarioService usuarioService;
     private final ModelMapper mapper;
+    
 
     @GetMapping
     public Page<RelatorioResponseDTO> listAll(Pageable pageable) {
@@ -84,8 +85,9 @@ public class RelatorioController {
 
         if(relatorio== null || !isDonoAdminGestor(relatorio))
             return null;
-            
+
         RelatorioResponseDTO dto = mapper.map(relatorio, RelatorioResponseDTO.class);
+
         return ResponseEntity.ok(dto);
     }
 

@@ -1,7 +1,7 @@
 package com.api.sic.backend.service;
 
 
-import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -34,22 +34,23 @@ public class ImageProcessService{
             imagemService.create(imagemOriginal);
 
             Imagem imagemCirculada = new Imagem();
-            imagemCirculada.setNome("Circulada");
+            imagemCirculada.setNome("Pré Processada");
             imagemCirculada.setCodigoIm(codigoIm);
             imagemCirculada.setPath("Circulada" + pathImage);
             imagemCirculada.setRelatorio(relatorioService.findById(idRelatorio));
             imagemService.create(imagemCirculada);
 
-            List<String> images = Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
+            Map<String, String> images = Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
 
-            for(String i: images){
+            for (Map.Entry<String, String> entry : images.entrySet()) {
                 Imagem imagemParasita = new Imagem();
-                imagemParasita.setNome("Parasita");
+                imagemParasita.setPath(entry.getKey());
                 imagemParasita.setCodigoIm(codigoIm);
-                imagemParasita.setPath(i);
+                imagemParasita.setNome(entry.getValue()); 
                 imagemParasita.setRelatorio(relatorioService.findById(idRelatorio));
                 imagemService.create(imagemParasita);
             }
+
         }
     } 
 
@@ -62,20 +63,21 @@ public class ImageProcessService{
         imagemService.create(imagemOriginal);
 
         Imagem imagemCirculada = new Imagem();
-        imagemCirculada.setNome("Circulada");
+        imagemCirculada.setNome("Pré Processada");
         imagemCirculada.setCodigoIm(codigoIm);
         imagemCirculada.setPath("Circulada" + pathImage);
         imagemService.create(imagemCirculada);
 
-        List<String> images = Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
+        Map<String, String> images = Image.segmentImage(root, root+"\\"+pathImage,pathImage, zoom);
 
-        for(String i: images){
-            Imagem imagemParasita = new Imagem();
-            imagemParasita.setNome("Parasita");
-            imagemParasita.setCodigoIm(codigoIm);
-            imagemParasita.setPath(i);
-            imagemService.create(imagemParasita);
-        }
+         for (Map.Entry<String, String> entry : images.entrySet()) {
+                Imagem imagemParasita = new Imagem();
+                imagemParasita.setPath(entry.getKey()); 
+                imagemParasita.setCodigoIm(codigoIm);
+                imagemParasita.setNome(entry.getValue());
+                imagemService.create(imagemParasita);
+            }
+
     }
 } 
 }

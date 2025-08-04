@@ -1,4 +1,5 @@
-package main.java.org.example;
+package com.api.sic.backend.service;
+
 
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
@@ -7,7 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TreeDecision {
+public class DecisionTree {
 
     public Map<String, Object> diagnostico(Mat image) {
         Map<String, Object> resultado = new HashMap<>();
@@ -130,6 +131,8 @@ public class TreeDecision {
         }
     }
 
+
+    //estudar esses métodos depois
     private double calcularRoundness(Mat gray) {
         return 0.5;
     }

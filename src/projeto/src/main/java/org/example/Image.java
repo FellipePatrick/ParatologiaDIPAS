@@ -41,7 +41,7 @@ public class Image {
                 System.out.println("Erro ao carregar a imagem!");
                 return;
             }
-            segmentImage(path, cont, zoom, machineLearnig);
+            segmentImage(path, cont, zoom);
         }
     }
 
@@ -54,7 +54,7 @@ public class Image {
      * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
      *
      */
-    public static void segmentImage(String path, int cont, boolean zoom, boolean machineLearning){
+    public static void segmentImage(String path, int cont, boolean zoom){
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         // Carrega a imagem
         Mat image = Imgcodecs.imread(path +"\\image" + cont + ".jpeg");
@@ -72,11 +72,8 @@ public class Image {
            //Salva a imagem
            Imgcodecs.imwrite(path + "\\result\\orig"+ cont + ".jpeg" ,result);
            String outputPath = path+"\\result\\";
-           if(machineLearning){
-                List<Mat> outputImage = findBlackRegionDeepLearning(image, result, outputPath, cont, zoom);
-           }else {
-               List<Mat> outputImage = findBlackRegion(image, result, outputPath, cont, zoom);
-           }
+
+           List<Mat> outputImage = findBlackRegion(image, result, outputPath, cont, zoom);
 
        }
        else{
@@ -95,22 +92,14 @@ public class Image {
 
            String outputPath = path+"\\result\\";
 
-           if(machineLearning){
-               List<Mat> outputImage = findBlackRegionDeepLearning(image, result, outputPath, cont, zoom);
-           }else {
-               List<Mat> outputImage = findBlackRegion(image, result, outputPath, cont, zoom);
-           }
+           List<Mat> outputImage = findBlackRegion(image, result, outputPath, cont, zoom);
+
        }
 
     }
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
-
-
-
-
-
 
 
 
@@ -145,6 +134,8 @@ public class Image {
             }
         }
 
+        TreeDecision td = new TreeDecision();
+
         // Processar cada contorno que atenda aos critérios de área e circularidade
         for (MatOfPoint contour : contours) {
             Rect rect = Imgproc.boundingRect(contour);
@@ -167,7 +158,26 @@ public class Image {
                     Mat croppedImage = new Mat(maskedImage, rect);
                     croppedImages.add(croppedImage);
 
-                    // Salvar a imagem cortada
+                    // Salvar a imagem cortada se for parasita
+
+                    Map<String, Object> resultado = td.diagnostico(croppedImage);
+
+                    String forma = verificarForma(croppedImage);
+
+                    if ("redondo".equals(forma) || "oval".equals(forma)) {
+                         td.diagnostico(croppedImage);
+
+                         if((boolean) resultado.get("Zoonose") || (boolean) resultado.get("Parasita")){
+
+                             if((boolean) resultado.get("Parasita"))
+                                Imgcodecs.imwrite(outputPath + "parasita" + x + cont + ".jpeg", croppedImage);
+
+                            if((boolean) resultado.get("Zoonose"))
+                                Imgcodecs.imwrite(outputPath + "zoonose" + x + cont + ".jpeg", croppedImage);
+                         }else
+                            Imgcodecs.imwrite(outputPath + "oval" + x + cont + ".jpeg", croppedImage);
+                    }
+
                     Imgcodecs.imwrite(outputPath + "blackimgcurted" + x + cont + ".jpeg", croppedImage);
 
                     cont++;
@@ -178,87 +188,39 @@ public class Image {
         return croppedImages;
     }
 
+    private static String verificarForma(Mat imagem) {
+        Mat gray = new Mat();
+        Imgproc.cvtColor(imagem, gray, Imgproc.COLOR_BGR2GRAY);
 
+        Mat bin = new Mat();
+        Imgproc.threshold(gray, bin, 0, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
 
-
-    /**
-     * O método findBlackRegion é usado para encontrar na imagem as regiões pretas, que possivelmente são os foregrounds procurados,
-     * possiveis objetos.
-     *
-     * @param imageOriginal É uma versão original da imagem tratada.
-     * @param inputImage É a imagem depois de ajustar o brilho e o contraste.
-     * @param outputPath É o path de saída para armazenar os objetos encontrados.
-     * @param cont É o numero da imagem (imagem1.jpeg, cont = 1).
-     * @param zoom É o parametro que define se a imagem está ou não usando o zoom.
-     * @return Retorna uma lista de objetos encontrados na imagem.
-     *
-     */
-    public static List<Mat> findBlackRegionDeepLearning(Mat imageOriginal, Mat inputImage, String outputPath, int cont, boolean zoom) {
-        if (inputImage.empty()) {
-            throw new IllegalArgumentException("A imagem de entrada está vazia");
-        }
-
-        Mat grayImage = inputImage;
-
-        Mat binaryImage = new Mat();
-        Imgproc.threshold(grayImage, binaryImage, 50, 255, Imgproc.THRESH_BINARY_INV);
-
-        List<MatOfPoint> contours = new ArrayList<>();
+        List<MatOfPoint> contornos = new ArrayList<>();
         Mat hierarchy = new Mat();
-        Imgproc.findContours(binaryImage, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(bin, contornos, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        List<Mat> croppedImages = new ArrayList<>();
-        int x = 5;
-        double area;
-        double maxObject = 500;
+        if (contornos.isEmpty()) {
+            return "indefinido";
+        }
 
-        if (zoom) {
-            maxObject = imageOriginal.rows() * 5;
-        } else {
-            if (imageOriginal.cols() > 1280) {
-                maxObject = 2500;
+        for (MatOfPoint contorno : contornos) {
+            double area = Imgproc.contourArea(contorno);
+            double perimetro = Imgproc.arcLength(new MatOfPoint2f(contorno.toArray()), true);
+
+            if (perimetro == 0) continue;
+
+            double circularidade = 4 * Math.PI * area / (perimetro * perimetro);
+
+            if (circularidade > 0.4) {
+                return "redondo";
+            } else if (circularidade > 0.65) {
+                return "oval";
             }
         }
 
-        for (MatOfPoint contour : contours) {
-            Rect rect = Imgproc.boundingRect(contour);
-            area = rect.area();
-
-            if (area >= maxObject && contour.toArray().length >= 5) {
-                // Verificar se é ovalado ou redondo
-                if (ehOvaladoOuRedondo(contour)) {
-                    // Cortar a região da imagem original
-                    Mat croppedImage = new Mat(imageOriginal, rect);
-                    croppedImages.add(croppedImage);
-
-                    // Salvar imagem antes de remover fundo
-                    String outputFile = outputPath + "blackimgcurted" + x + cont + ".jpeg";
-                    Imgcodecs.imwrite(outputFile, croppedImage);
-
-                    // Remove fundo com Rembg ou outro método
-                    Remove.Remove(outputFile);
-
-                    cont++;
-                }
-            }
-        }
-
-        return croppedImages;
+        return "irregular";
     }
 
-    // Função auxiliar para verificar se o contorno é ovalado ou redondo
-    private static boolean ehOvaladoOuRedondo(MatOfPoint contour) {
-        RotatedRect ellipse = Imgproc.fitEllipse(new MatOfPoint2f(contour.toArray()));
-        double a = Math.max(ellipse.size.height, ellipse.size.width) / 2.0;
-        double b = Math.min(ellipse.size.height, ellipse.size.width) / 2.0;
-
-        if (a == 0) return false;
-
-        double excentricidade = Math.sqrt(1 - (b * b) / (a * a));
-
-        // Limite mais tolerante para considerar oval (0.75)
-        return excentricidade <= 0.75;
-    }
 
     /**
      * O método ajustaBrilhoContraste serve para ajustar o brilho de uma imagem já processada, para facilitar o encontro

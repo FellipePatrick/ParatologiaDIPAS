@@ -26,8 +26,14 @@
                                 </div>
                               <div class="form-group mt-3">
                             <label for="diagnostico">Diagnóstico</label>
-                            <textarea class="form-control" id="diagnostico" name="diagnostico" rows="3" th:text="${relatorio.diagnostico}" readonly></textarea>
-                        </div>
+                            <textarea class="form-control"
+                                    id="diagnostico"
+                                    name="diagnostico"
+                                    rows="3"
+                                    th:text="${diagnostico}"
+                                    readonly
+                                    style="overflow:hidden; resize:none;"></textarea>
+                            </div>
 
                         </div>
                     </div>
@@ -65,21 +71,73 @@
                     </div>
 
 
-                     <div class="card card-waves mt-5">
+                    <div class="card card-waves mt-5">
+                        <div class="card-body">
+                            <h5 class="card-title">Zoonoses Identificadas</h5>
+
+                            <div th:if="${#lists.isEmpty(imagensZoonose)}" class="text-center my-4">
+                                <p class="text-muted">Nenhuma zoonose identificada.</p>
+                            </div>
+
+                            <div th:if="${!#lists.isEmpty(imagensZoonose)}" id="parasitas-gallery" class="row my-4">
+                                <!-- Exibindo imagens originais -->
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4" th:each="imagem : ${imagensZoonose}">                                   
+                                    <img th:src="${baseImageUrl} + ${imagem.path}"
+                                        style="height: 150px; width: 100px;"
+                                        class="card-img-top img-thumbnail-small" alt="Imagem Original"
+                                        data-bs-toggle="modal" data-bs-target="#imageModal"
+                                        th:data-image-src="${baseImageUrl} + ${imagem.path}">
+                                    <div class="card-body">
+                                        <h6 class="card-title" th:text="${imagem.nome}"></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-waves mt-5">
                         <div class="card-body">
                             <h5 class="card-title">Parasitas Identificados</h5>
-                            <div id="parasitas-gallery" class="row my-4">
+
+                            <div th:if="${#lists.isEmpty(imagensParasitas)}" class="text-center my-4">
+                                <p class="text-muted">Nenhum parasita identificado.</p>
+                            </div>
+
+                            <div th:if="${!#lists.isEmpty(imagensParasitas)}" id="parasitas-gallery" class="row my-4">
                                 <!-- Exibindo imagens originais -->
                                 <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4" th:each="imagem : ${imagensParasitas}">                                   
-                                        <img th:src="${baseImageUrl} + ${imagem.path}"
-                                            style="height: 150px; width: 100px;"
-                                            class="card-img-top img-thumbnail-small" alt="Imagem Original"
-                                            data-bs-toggle="modal" data-bs-target="#imageModal"
-                                            th:data-image-src="${baseImageUrl} + ${imagem.path}">
-                                        <div class="card-body">
-                                            <h6 class="card-title" th:text="${imagem.nome}"></h6>
-                                        </div>
-                              
+                                    <img th:src="${baseImageUrl} + ${imagem.path}"
+                                        style="height: 150px; width: 100px;"
+                                        class="card-img-top img-thumbnail-small" alt="Imagem Original"
+                                        data-bs-toggle="modal" data-bs-target="#imageModal"
+                                        th:data-image-src="${baseImageUrl} + ${imagem.path}">
+                                    <div class="card-body">
+                                        <h6 class="card-title" th:text="${imagem.nome}"></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="card card-waves mt-5">
+                        <div class="card-body">
+                            <h5 class="card-title">Objetos não Identificados</h5>
+
+                            <div th:if="${#lists.isEmpty(imagensDesconhecido)}" class="text-center my-4">
+                                <p class="text-muted">Nenhum objeto não identificado detectado.</p>
+                            </div>
+
+                            <div th:if="${!#lists.isEmpty(imagensDesconhecido)}" id="parasitas-gallery" class="row my-4">
+                                <!-- Exibindo imagens originais -->
+                                <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4" th:each="imagem : ${imagensDesconhecido}">
+                                    <img th:src="${baseImageUrl} + ${imagem.path}"
+                                        style="height: 150px; width: 150px;"
+                                        class="card-img-top img-thumbnail-small" alt="Imagem Original"
+                                        data-bs-toggle="modal" data-bs-target="#imageModal"
+                                        th:data-image-src="${baseImageUrl} + ${imagem.path}">
+                                    <div class="card-body">
+                                        <h6 class="card-title" th:text="${imagem.nome}"></h6>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -140,6 +198,19 @@
                     });
                 });
             </script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const textarea = document.getElementById("diagnostico");
+
+                    function autoResize() {
+                        textarea.style.height = 'auto'; // resetar altura
+                        textarea.style.height = textarea.scrollHeight + 'px'; // ajustar à altura do conteúdo
+                    }
+
+                    autoResize(); // executa ao carregar
+                });
+            </script>
+
             <footer th:replace="~{fragments/commons :: footer}" class="bg-white text-dark py-4"></footer>
         </div>
     </div>
